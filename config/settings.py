@@ -23,3 +23,5 @@ class Settings(BaseSettings):
     DEBUG: bool = True
     DATABASE_URL: str = "sqlite:///./test.db"
     LOG_LEVEL: str = "INFO"
+
+    UPSTOX_ACCESS_TOKEN: str | None = None
