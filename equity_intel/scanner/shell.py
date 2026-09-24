@@ -24,7 +24,7 @@ from typing import List
 
 from equity_intel.contracts.market_data import InstrumentMember
 from equity_intel.contracts.scoring import ScoringConfig
-from equity_intel.scanner.execution_guard import assert_process_not_live
+from equity_intel.scanner.execution_guard import assert_no_forbidden_modules_loaded
 
 
 class ScanBlockedError(RuntimeError):
@@ -45,15 +45,17 @@ class ScanPipeline:
     Instantiating and running this class never produces a real universe,
     real market data, a real score, a real candidate, or a real watchlist
     row. It exists to establish the process boundary (separate from
-    main.py / continuous_engine.py) and to prove the execution-mode guard
-    runs before any stage.
+    algo_trader's main.py / core/continuous_engine.py) and to prove that
+    the forbidden-module guard (assert_no_forbidden_modules_loaded(),
+    checking FORBIDDEN_PREFIXES in execution_guard.py) runs before any
+    stage.
     """
 
     def __init__(self, scoring_config: ScoringConfig | None = None) -> None:
         self._scoring_config = scoring_config or ScoringConfig()
 
     def run(self) -> ScanPipelineResult:
-        assert_process_not_live()
+        assert_no_forbidden_modules_loaded()
         result = ScanPipelineResult()
         self._load_universe()
         result.stages_completed.append("load_universe")

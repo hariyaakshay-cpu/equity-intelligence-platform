@@ -1,33 +1,53 @@
-"""The one explicitly authorized trading-infrastructure dependency.
+"""Runtime guard against loading trading-infrastructure modules.
 
-Per the B1 freeze-policy exception (2026-09-21 row): "It uses the existing
-core.oms.execution_mode mechanism (no new trading-mode flag) and the scan
-raises RuntimeError if the process mode is LIVE." This module is the sole
-place in equity_intel/ that imports anything under core.oms, and it imports
-only core.oms.execution_mode -- never core.oms.db, core.oms.order_router,
-core.oms.execution_service, or core.oms.paper_oms_adapter, all of which
-remain on the forbidden-import list.
+This package has no live-vs-paper execution-mode concept: this repo has no
+OMS, broker, or order-execution system at all (see
+equity_intel/tests/test_import_boundaries.py for the static import-boundary
+check, which is the primary defense). There is no mode flag, no
+TRADING_MODE environment variable, and no execution-mode replacement here.
 
-`assert_not_live` is a pure function of an ExecutionMode value so it can be
-unit-tested without redeclaring the test process's own execution mode
-(core.oms.execution_mode.declare_mode is set-once per process).
+Instead, this guard performs a runtime check at scanner start: it raises if
+any module matching FORBIDDEN_PREFIXES is already present in sys.modules.
+This is a defense-in-depth check on top of the static import-boundary test:
+it protects against one of these modules being loaded into the same
+process by something other than equity_intel itself, not against
+equity_intel importing it directly (the static test already catches that).
+
+FORBIDDEN_PREFIXES is the single canonical forbidden-module list for this
+package: equity_intel/tests/test_import_boundaries.py imports it from here
+rather than defining its own copy, so the static test and this runtime
+guard can never drift apart. See
+docs/architecture/equity_intel_boundary_decision.md for the decision record.
 """
 from __future__ import annotations
 
-from core.oms.execution_mode import ExecutionMode, get_process_mode
+import sys
+
+FORBIDDEN_PREFIXES = (
+    "brokers",
+    "core.paper_engine",
+    "core.continuous_engine",
+    "core.execution_engine",
+    "core.oms",
+    "core.risk_manager",
+    "strategies",
+    "main",
+    "core.historical_data",
+)
 
 
-def assert_not_live(mode: ExecutionMode) -> None:
-    """Raise RuntimeError if `mode` is LIVE. No-op otherwise."""
-    if mode == ExecutionMode.LIVE:
+def assert_no_forbidden_modules_loaded() -> None:
+    """Raise RuntimeError if any forbidden trading-infrastructure module is
+    already present in sys.modules. No-op otherwise."""
+    loaded = sorted(
+        name
+        for name in sys.modules
+        for forbidden in FORBIDDEN_PREFIXES
+        if name == forbidden or name.startswith(forbidden + ".")
+    )
+    if loaded:
         raise RuntimeError(
-            "Equity Intelligence scan refused: process execution mode is LIVE. "
-            "This package is PAPER TRADING ONLY and may never run under a LIVE "
-            "process (B1 freeze-policy exception, 2026-09-21 row)."
+            "Equity Intelligence scan refused: forbidden trading-infrastructure "
+            f"module(s) already loaded in this process: {loaded}. This package "
+            f"must never run in the same process as: {', '.join(FORBIDDEN_PREFIXES)}."
         )
-
-
-def assert_process_not_live() -> None:
-    """Convenience wrapper that reads the real process mode and applies
-    the guard above. Called once at the top of the scanner shell."""
-    assert_not_live(get_process_mode())
