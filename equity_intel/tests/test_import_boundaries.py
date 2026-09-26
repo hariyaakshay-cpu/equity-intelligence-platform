@@ -33,10 +33,13 @@ EXPECTED_FORBIDDEN_PREFIXES = (
 )
 
 # This repo's own data-layer packages, which are NOT trading infrastructure
-# and must remain importable even as FORBIDDEN_PREFIXES evolves.
+# and must remain importable even as FORBIDDEN_PREFIXES evolves. core.database
+# is intentionally NOT allowed here: equity_intel's own persistence work goes
+# through db_path_guard.py plus raw sqlite3, never this repo's core.database
+# or sqlalchemy -- see equity_intel/tests/test_db_connection_boundary.py,
+# which bans both anywhere in this package.
 ALLOWED_CORE_PREFIXES = (
     "core.providers",
-    "core.database",
     "core.models",
 )
 
@@ -84,7 +87,7 @@ def test_no_core_oms_import_exists_anywhere_with_no_exception():
     assert oms_imports == [], f"core.oms import found (no exception permitted): {oms_imports}"
 
 
-def test_core_providers_database_and_models_are_not_treated_as_forbidden():
+def test_core_providers_and_models_are_not_treated_as_forbidden():
     for allowed in ALLOWED_CORE_PREFIXES:
         for forbidden in FORBIDDEN_PREFIXES:
             assert not (allowed == forbidden or allowed.startswith(forbidden + ".")), (
