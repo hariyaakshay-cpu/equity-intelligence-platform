@@ -8,8 +8,10 @@ logging, and uses credentials from the application settings.
 """
 
 import logging
+import re
 from datetime import datetime, UTC
 from typing import List, Dict, Optional, Any
+from urllib.parse import quote
 import time
 import requests
 from tenacity import (
@@ -76,15 +78,22 @@ class UpstoxProvider(BaseDataProvider):
         session: Authenticated requests session for API communication.
     """
 
-    # Supported candle intervals mapped to Upstox API values
+    # Supported candle intervals, mapped to the V3 API's (unit, interval)
+    # path-segment pair (https://upstox.com/developer/api-documentation/v3/get-historical-candle-data/):
+    # unit in {minutes, hours, days, weeks, months}; interval is numeric per unit.
     SUPPORTED_INTERVALS = {
-        "1minute": "1minute",
-        "5minute": "5minute",
-        "15minute": "15minute",
-        "30minute": "30minute",
-        "1hour": "1hour",
-        "1day": "1day",
+        "1minute": ("minutes", "1"),
+        "5minute": ("minutes", "5"),
+        "15minute": ("minutes", "15"),
+        "30minute": ("minutes", "30"),
+        "1hour": ("hours", "1"),
+        "1day": ("days", "1"),
     }
+
+    # Upstox instrument_key format: "<SEGMENT>|<id>", e.g. "NSE_EQ|INE745G01043"
+    # or "NSE_INDEX|Nifty 500". SEGMENT is uppercase letters/underscore; the id
+    # (ISIN or index display name) may contain spaces but never a colon.
+    _INSTRUMENT_KEY_SEGMENT_PATTERN = re.compile(r"^[A-Z_]+\|.+$")
 
     def __init__(self, settings: Settings):
         """
@@ -224,16 +233,19 @@ class UpstoxProvider(BaseDataProvider):
         end_date: Optional[datetime] = None,
     ) -> List[HistoricalCandle]:
         """
-        Fetch historical OHLCV candle data from Upstox.
+        Fetch historical OHLCV candle data from Upstox's V3 historical-candle endpoint.
 
         Args:
-            symbol: Instrument symbol (must include exchange prefix, e.g., 'NSE:RELIANCE').
+            symbol: Upstox instrument_key in '<SEGMENT>|<id>' form, e.g.
+                'NSE_EQ|INE745G01043' or 'NSE_INDEX|Nifty 500'.
             interval: Candle interval (must be in SUPPORTED_INTERVALS).
             start_date: Start datetime for historical data.
             end_date: End datetime, defaults to current UTC time.
 
         Returns:
-            List of normalized HistoricalCandle objects.
+            List of normalized HistoricalCandle objects, sorted oldest to
+            newest by timestamp (the V3 API's own response ordering is not
+            documented, so this method does not rely on it).
 
         Raises:
             InvalidIntervalError: If the requested interval is not supported.
@@ -246,28 +258,42 @@ class UpstoxProvider(BaseDataProvider):
         if interval not in self.SUPPORTED_INTERVALS:
             valid_intervals = ", ".join(self.SUPPORTED_INTERVALS.keys())
             raise InvalidIntervalError(f"Unsupported interval '{interval}'. Valid intervals: {valid_intervals}")
-        
-        if ":" not in symbol:
-            raise InvalidSymbolError("Symbol must include exchange prefix (e.g., 'NSE:RELIANCE')")
+
+        if ":" in symbol or not self._INSTRUMENT_KEY_SEGMENT_PATTERN.match(symbol):
+            raise InvalidSymbolError(
+                "Symbol must be an Upstox instrument_key in '<SEGMENT>|<id>' form "
+                "(e.g., 'NSE_EQ|INE745G01043' or 'NSE_INDEX|Nifty 500'), not ':'-delimited"
+            )
 
         end_date = end_date or datetime.now(UTC)
         logger.info(f"Fetching historical data for {symbol} ({interval}) from {start_date.date()} to {end_date.date()}")
 
-        # Extract instrument key (Upstox requires the full symbol)
-        instrument_key = symbol
+        # Upstox requires the instrument_key's "|" (and any spaces, e.g. in
+        # index display names like "Nifty 500") percent-encoded in the URL path.
+        encoded_key = quote(symbol, safe="")
+        unit, v3_interval = self.SUPPORTED_INTERVALS[interval]
 
         # Format dates for Upstox API
         start_str = start_date.strftime("%Y-%m-%d")
         end_str = end_date.strftime("%Y-%m-%d")
 
-        endpoint = f"historical/candles/{instrument_key}/{self.SUPPORTED_INTERVALS[interval]}/{start_str}/{end_str}"
+        # V3 path order is to_date before from_date. Daily ("days") data is
+        # documented as available from January 2000, with a maximum
+        # retrieval window of 1 decade ending at to_date; this method does
+        # not chunk or validate against that limit.
+        endpoint = f"historical-candle/{encoded_key}/{unit}/{v3_interval}/{end_str}/{start_str}"
         response = self._make_api_request("GET", endpoint)
 
         candles = []
         for candle_data in response.get("data", {}).get("candles", []):
             try:
-                # Upstox candle format: [timestamp, open, high, low, close, volume]
+                # Upstox candle format: [timestamp, open, high, low, close, volume, open_interest]
                 timestamp = datetime.fromisoformat(candle_data[0].replace("Z", "+00:00"))
+                open_interest = (
+                    int(candle_data[6])
+                    if len(candle_data) > 6 and candle_data[6] is not None
+                    else None
+                )
                 candle = HistoricalCandle(
                     timestamp=timestamp,
                     open=float(candle_data[1]),
@@ -275,11 +301,14 @@ class UpstoxProvider(BaseDataProvider):
                     low=float(candle_data[3]),
                     close=float(candle_data[4]),
                     volume=int(candle_data[5]),
+                    open_interest=open_interest,
                 )
                 candles.append(candle)
             except (IndexError, ValueError) as e:
                 logger.warning(f"Skipping malformed candle data: {e}")
                 continue
+
+        candles.sort(key=lambda c: c.timestamp)
 
         logger.info(f"Successfully fetched {len(candles)} historical candles for {symbol}")
         return candles
