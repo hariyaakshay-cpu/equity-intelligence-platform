@@ -33,6 +33,12 @@ initialize_schema() against the real data/equity_intel.db.
 """
 from __future__ import annotations
 
+# SCHEMA_VERSION 3 adds scan_runs.instrument_map_provenance_json (Phase 2:
+# instrument-master fetch provenance -- fetched_at, total/NSE-EQ/matched
+# instrument counts, unmatched ISINs -- recorded on every run so a run
+# that silently matched zero or few ISINs is diagnosable after the fact,
+# not just visible via abort_reason=INSTRUMENT_MAP_EMPTY).
+#
 # SCHEMA_VERSION 2 adds three read-only indexes for the Phase 4 dashboard
 # (dashboard/queries.py) -- no column or table shape changed, and no data
 # migration is needed: data/equity_intel.db does not exist yet in this
@@ -41,7 +47,7 @@ from __future__ import annotations
 # database raises SchemaVersionMismatch rather than migrating silently),
 # so this bump is safe only because the real database has never been
 # created.
-SCHEMA_VERSION = 2
+SCHEMA_VERSION = 3
 
 SCHEMA_STATEMENTS: tuple[str, ...] = (
     """
@@ -65,6 +71,7 @@ SCHEMA_STATEMENTS: tuple[str, ...] = (
         calendar_verification   TEXT,
         latest_closed_session   TEXT,
         calendar_dates_json     TEXT,
+        instrument_map_provenance_json TEXT,
         price_source            TEXT,
         requested_symbols       INTEGER,
         successful_symbols      INTEGER,
