@@ -33,7 +33,15 @@ initialize_schema() against the real data/equity_intel.db.
 """
 from __future__ import annotations
 
-SCHEMA_VERSION = 1
+# SCHEMA_VERSION 2 adds three read-only indexes for the Phase 4 dashboard
+# (dashboard/queries.py) -- no column or table shape changed, and no data
+# migration is needed: data/equity_intel.db does not exist yet in this
+# repo, so there is nothing to migrate. connection.initialize_schema()
+# has no upgrade path (a version mismatch on an already-initialized
+# database raises SchemaVersionMismatch rather than migrating silently),
+# so this bump is safe only because the real database has never been
+# created.
+SCHEMA_VERSION = 2
 
 SCHEMA_STATEMENTS: tuple[str, ...] = (
     """
@@ -105,6 +113,13 @@ SCHEMA_STATEMENTS: tuple[str, ...] = (
         SELECT RAISE(ABORT, 'a scan_run must be created as RUNNING');
     END
     """,
+    # Dashboard Overview and Scan History both list/filter scan_runs by
+    # status and order by recency (e.g. "the latest COMPLETE run", "all
+    # runs newest first") -- run_id (the primary key) is not time-ordered,
+    # so without this index those queries would be a full table scan.
+    """
+    CREATE INDEX idx_scan_runs_status_started_at ON scan_runs (status, started_at)
+    """,
     """
     CREATE TABLE price_fetch_snapshots (
         scan_run_id              TEXT NOT NULL REFERENCES scan_runs(run_id),
@@ -151,6 +166,12 @@ SCHEMA_STATEMENTS: tuple[str, ...] = (
     BEGIN
         SELECT RAISE(ABORT, 'price_fetch_snapshots may only be written while the owning scan_run is RUNNING');
     END
+    """,
+    # The Stock Details page's "fetch history across runs" for one symbol
+    # is not scoped to a single scan_run_id (the table's primary key
+    # prefix), so it needs its own index to avoid a full table scan.
+    """
+    CREATE INDEX idx_price_fetch_snapshots_symbol ON price_fetch_snapshots (symbol, trading_date)
     """,
     """
     CREATE TABLE symbol_scan_results (
@@ -200,6 +221,14 @@ SCHEMA_STATEMENTS: tuple[str, ...] = (
     BEGIN
         SELECT RAISE(ABORT, 'symbol_scan_results may only be deleted while the owning scan_run is RUNNING');
     END
+    """,
+    # The Stock Explorer page filters one run's symbol_scan_results by
+    # symbol_data_status (e.g. "show only FAILED"); scan_run_id alone is
+    # already the primary-key prefix, so this index adds just the status
+    # column needed to avoid scanning every row of a run to apply the filter.
+    """
+    CREATE INDEX idx_symbol_scan_results_run_status
+        ON symbol_scan_results (scan_run_id, symbol_data_status)
     """,
     # Unused in V1 (no code writes to this table): kept, not deleted, per
     # Akshay's explicit instruction (2026-09-27) -- B2/watchlist work is

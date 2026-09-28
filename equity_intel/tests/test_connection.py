@@ -160,7 +160,7 @@ def test_get_read_only_connection_can_read_but_not_write(temp_db_path):
     reader = connection.get_read_only_connection(temp_db_path)
     try:
         row = reader.execute("SELECT version FROM schema_version").fetchone()
-        assert row[0] == 1
+        assert row[0] == SCHEMA_VERSION
         with pytest.raises(sqlite3.OperationalError):
             reader.execute("INSERT INTO schema_version (version, applied_at) VALUES (99, 'x')")
     finally:
@@ -181,6 +181,6 @@ def test_get_read_only_connection_works_when_the_path_contains_a_space(monkeypat
     reader = connection.get_read_only_connection(path_with_space)
     try:
         row = reader.execute("SELECT version FROM schema_version").fetchone()
-        assert row[0] == 1
+        assert row[0] == SCHEMA_VERSION
     finally:
         reader.close()

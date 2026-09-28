@@ -10,3 +10,4 @@ logs/
 !.env.example
 data/reference/*.json.gz
 data/reference/candles/
+data/equity_intel_demo.db
