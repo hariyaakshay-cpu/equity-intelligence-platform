@@ -1,9 +1,9 @@
-"""Persistence layer -- schema definitions and abstract repositories only.
+"""Persistence layer for data/equity_intel.db.
 
-This subpackage does NOT create data/equity_intel.db. No module here opens
-a database connection, writes a file, or contains a hardcoded path to any
-existing OMS/trading database. The schema below is DDL text only, provided
-so its shape can be reviewed and parsed (e.g. in an in-memory SQLite
-connection, which persists nothing to disk) before a real database is ever
-created by a separately authorized task.
+equity_intel/persistence/connection.py is the one module in this package
+(and in equity_intel/ as a whole) authorized to import sqlite3 -- see
+equity_intel/tests/test_db_connection_boundary.py. Every connection it opens
+is validated against db_path_guard.py's canonical path first. No module
+here contains a hardcoded path to any existing OMS/trading database, and
+none of schema.py's DDL references a broker/OMS table or a B2 threshold.
 """
