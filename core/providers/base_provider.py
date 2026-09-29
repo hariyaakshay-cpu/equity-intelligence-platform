@@ -45,22 +45,22 @@ class Instrument:
 
 class HistoricalCandle:
     """Normalized data transfer object representing OHLCV historical candle data."""
-    timestamp: datetime
-    open: float
-    high: float
-    low: float
-    close: float
-    volume: int
+    timestamp: Optional[datetime]
+    open: Optional[float]
+    high: Optional[float]
+    low: Optional[float]
+    close: Optional[float]
+    volume: Optional[float]
     open_interest: Optional[int]
 
     def __init__(
         self,
-        timestamp: datetime,
-        open: float,
-        high: float,
-        low: float,
-        close: float,
-        volume: int,
+        timestamp: Optional[datetime],
+        open: Optional[float],
+        high: Optional[float],
+        low: Optional[float],
+        close: Optional[float],
+        volume: Optional[float],
         open_interest: Optional[int] = None,
     ):
         self.timestamp = timestamp

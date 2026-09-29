@@ -14,13 +14,6 @@ from typing import List, Dict, Optional, Any
 from urllib.parse import quote
 import time
 import requests
-from tenacity import (
-    retry,
-    stop_after_attempt,
-    wait_exponential,
-    retry_if_exception_type,
-    before_sleep_log,
-)
 
 from config import Settings
 from .base_provider import (
@@ -131,12 +124,6 @@ class UpstoxProvider(BaseDataProvider):
         })
         return session
 
-    @retry(
-        stop=stop_after_attempt(3),
-        wait=wait_exponential(multiplier=1, min=2, max=10),
-        retry=retry_if_exception_type((ProviderConnectionError, ProviderAPIError)),
-        before_sleep=before_sleep_log(logger, logging.WARNING),
-    )
     def _make_api_request(self, method: str, endpoint: str, **kwargs) -> Dict[str, Any]:
         """
         Make an API request to Upstox with automatic retry logic for transient failures.
@@ -157,29 +144,36 @@ class UpstoxProvider(BaseDataProvider):
         url = f"{self.base_url}/{endpoint.lstrip('/')}"
         logger.debug(f"Making Upstox API request: {method} {url}")
 
-        try:
-            response = self.session.request(method, url, timeout=30, **kwargs)
-            response.raise_for_status()
-            return response.json()
-        except requests.exceptions.ConnectionError as e:
-            logger.error(f"Network connection error while accessing Upstox API: {e}")
-            raise ProviderConnectionError(f"Failed to connect to Upstox API: {e}") from e
-        except requests.exceptions.Timeout as e:
-            logger.error(f"Request timeout while accessing Upstox API: {e}")
-            raise ProviderConnectionError(f"Upstox API request timed out: {e}") from e
-        except requests.exceptions.HTTPError as e:
-            if response.status_code == 401:
-                logger.error("Upstox API authentication failed (401 Unauthorized)")
-                raise AuthenticationError("Invalid Upstox API credentials") from e
-            elif response.status_code == 404:
-                logger.error(f"Upstox API resource not found: {url}")
-                raise ProviderAPIError(f"Requested resource not found: {url}") from e
-            else:
-                logger.error(f"Upstox API returned error status {response.status_code}: {response.text}")
-                raise ProviderAPIError(f"Upstox API error: {response.status_code} - {response.text}") from e
-        except Exception as e:
-            logger.error(f"Unexpected error during Upstox API request: {e}", exc_info=True)
-            raise ProviderError(f"Unexpected error: {e}") from e
+        # Retry only transient transport failures and 429/5xx responses. Other
+        # client errors (including invalid keys/parameters) fail immediately.
+        for attempt in range(3):
+            try:
+                response = self.session.request(method, url, timeout=30, **kwargs)
+                if response.status_code == 401:
+                    raise AuthenticationError("Invalid Upstox API credentials")
+                if response.status_code >= 400:
+                    if response.status_code == 404:
+                        raise ProviderAPIError(f"Upstox resource not found (404): {endpoint}")
+                    error = ProviderAPIError(f"Upstox API returned HTTP {response.status_code}")
+                    if response.status_code not in (429, 500, 502, 503, 504) or attempt == 2:
+                        raise error
+                    logger.warning("Transient Upstox HTTP %s; retry %s/2", response.status_code, attempt + 1)
+                    time.sleep(2 ** attempt)
+                    continue
+                return response.json()
+            except (requests.exceptions.ConnectionError, requests.exceptions.Timeout) as e:
+                if attempt == 2:
+                    raise ProviderConnectionError("Upstox request failed after 3 attempts") from e
+                logger.warning("Transient Upstox transport failure; retry %s/2", attempt + 1)
+                time.sleep(2 ** attempt)
+            except (AuthenticationError, ProviderAPIError):
+                raise
+            except requests.exceptions.RequestException as e:
+                raise ProviderConnectionError("Upstox request failed") from e
+            except Exception as e:
+                logger.error("Unexpected Upstox response failure: %s", type(e).__name__)
+                raise ProviderError(f"Unexpected Upstox response failure: {type(e).__name__}") from e
+        raise ProviderConnectionError("Upstox request failed after 3 attempts")
 
     def get_instruments(self, exchange: Optional[str] = None) -> List[Instrument]:
         """
@@ -286,29 +280,33 @@ class UpstoxProvider(BaseDataProvider):
 
         candles = []
         for candle_data in response.get("data", {}).get("candles", []):
-            try:
-                # Upstox candle format: [timestamp, open, high, low, close, volume, open_interest]
-                timestamp = datetime.fromisoformat(candle_data[0].replace("Z", "+00:00"))
-                open_interest = (
-                    int(candle_data[6])
-                    if len(candle_data) > 6 and candle_data[6] is not None
-                    else None
-                )
-                candle = HistoricalCandle(
-                    timestamp=timestamp,
-                    open=float(candle_data[1]),
-                    high=float(candle_data[2]),
-                    low=float(candle_data[3]),
-                    close=float(candle_data[4]),
-                    volume=int(candle_data[5]),
-                    open_interest=open_interest,
-                )
-                candles.append(candle)
-            except (IndexError, ValueError) as e:
-                logger.warning(f"Skipping malformed candle data: {e}")
-                continue
+            # Keep malformed rows so the acquisition validator can reject the
+            # dataset explicitly instead of silently shortening its history.
+            def number_at(index):
+                try:
+                    value = candle_data[index]
+                    return None if value is None else float(value)
+                except (IndexError, TypeError, ValueError, OverflowError):
+                    return None
 
-        candles.sort(key=lambda c: c.timestamp)
+            try:
+                raw_timestamp = candle_data[0]
+                timestamp = datetime.fromisoformat(raw_timestamp.replace("Z", "+00:00"))
+            except (IndexError, AttributeError, TypeError, ValueError):
+                timestamp = None
+            open_interest = number_at(6)
+            candles.append(HistoricalCandle(timestamp, number_at(1), number_at(2), number_at(3),
+                                             number_at(4), number_at(5), open_interest))
+
+        def candle_sort_key(candle):
+            if candle.timestamp is None:
+                return (1, 0.0)
+            stamp = candle.timestamp
+            if stamp.tzinfo is None:
+                stamp = stamp.replace(tzinfo=UTC)
+            return (0, stamp.timestamp())
+
+        candles.sort(key=candle_sort_key)
 
         logger.info(f"Successfully fetched {len(candles)} historical candles for {symbol}")
         return candles

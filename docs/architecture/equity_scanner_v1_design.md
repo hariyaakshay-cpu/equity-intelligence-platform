@@ -1,10 +1,14 @@
 # Equity Scanner v1 — Design (data-only, no scoring)
 
-Status: DESIGN DRAFT. Non-functional design only; nothing in this document
-authorizes a threshold, a scoring rule, or a candidate/watchlist decision.
-B2 remains BLOCKED (`docs/architecture/equity_intel_boundary_decision.md`);
-this design does not touch scoring, classification, candidate selection, or
-the watchlist in any way.
+Status: E1-E3 design reference. Its data acquisition scope is implemented
+in `equity_intel/acquisition/` and `scripts/equity_data_acquisition.py`.
+It does not authorize or implement any B2 scoring, ranking, classification,
+candidate, or watchlist decision. B2 remains blocked.
+
+The earlier Section 10 questions 1-4 are superseded by the decisions in
+Section 11. B3-07 remains formally OPEN; the implementation labels its
+observation-date basis PROVISIONAL and does not claim an official NSE
+calendar.
 
 ## 0. Scope, as fixed by Akshay
 

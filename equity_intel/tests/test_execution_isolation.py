@@ -80,8 +80,8 @@ def test_scan_pipeline_has_no_order_or_position_method():
 
 
 def test_scan_pipeline_run_stops_at_the_first_blocked_stage_without_any_trading_call():
-    # The pipeline stops at load_universe (B3), the first stage, since no
-    # universe source is selected -- it never reaches a trading call.
+    # This legacy scoring shell is intentionally not wired to the E1-E3
+    # acquisition entry point and remains blocked before any trading call.
     pipeline = ScanPipeline()
     try:
         pipeline.run()

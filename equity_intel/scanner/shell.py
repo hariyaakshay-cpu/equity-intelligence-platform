@@ -1,4 +1,8 @@
-"""Scanner orchestration shell -- stages only, no business logic.
+"""Legacy non-functional scoring shell.
+
+E1-E3 historical data acquisition is implemented separately by
+``scripts/equity_data_acquisition.py`` and does not call this shell. The
+scoring path below remains deliberately blocked by B2 governance.
 
     load universe
         -> load market data
@@ -70,24 +74,22 @@ class ScanPipeline:
 
     def _load_universe(self) -> "list[InstrumentMember]":
         raise NotImplementedError(
-            "B3 NIFTY 500 universe source is BLOCKED (not yet selected)"
+            "Legacy scoring shell is BLOCKED and is not wired to E1-E3; run scripts/equity_data_acquisition.py for research data"
         )
 
     def _load_market_data(self) -> None:
         raise NotImplementedError(
-            "B3 market-data vendor is BLOCKED (not yet selected)"
+            "This legacy scoring shell is not wired to E1-E3; run scripts/equity_data_acquisition.py for research data"
         )
 
     def _validate_data(self) -> None:
         raise NotImplementedError(
-            "B3 validation thresholds (minimum history, volume usability, "
-            "trading calendar) are BLOCKED (unresolved; see D18/D19)"
+            "This legacy scoring shell does not perform the E1-E3 data validation pipeline"
         )
 
     def _compute_features(self) -> None:
         raise NotImplementedError(
-            "Raw feature computation requires real market data from a "
-            "BLOCKED B3 source"
+            "Feature calculation is the later E4 scope; this data-only MVP stops after validation and persistence"
         )
 
     def _score(self) -> None:

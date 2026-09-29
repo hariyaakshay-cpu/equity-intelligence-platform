@@ -1,4 +1,4 @@
-"""Neutral DDL for the eventual data/equity_intel.db.
+"""Neutral DDL for future scoring-era Equity Intelligence tables.
 
 Every table below stores the RESULT of a decision (a score, a status, a
 classification, a state), never the RULE that produces it. No column has a
@@ -6,18 +6,13 @@ default value equal to a proposed B2 number (70, 10, or any band point
 value). No column references an OMS table, a broker identifier, or an
 options-order field. No column hardcodes a market-data vendor.
 
-This module is executed only by equity_intel/tests/test_persistence_schema.py
-against an in-memory (":memory:") SQLite connection, to prove the DDL is
-syntactically valid SQL -- it is never pointed at data/equity_intel.db.
-Creating that file is out of scope for this scaffold.
+The E1-E3 acquisition tables are defined and created by
+``equity_intel.persistence.connection``. These existing scoring-era tables
+remain inert; no scores, classifications, states, or watchlists are written.
 """
 from __future__ import annotations
 
-# Guard note (not executable here): per the B1 freeze-policy exception, the
-# eventual database module for data/equity_intel.db must refuse to open
-# oms_state.db, oms_shadow.db, and production_trading.db. That guard is
-# application logic, not schema, and is intentionally not implemented by
-# this scaffold.
+# This legacy neutral schema contains no vendor-specific defaults.
 
 SCHEMA_STATEMENTS: tuple[str, ...] = (
     """

@@ -2,9 +2,12 @@ from datetime import datetime, UTC
 from unittest.mock import MagicMock
 
 import pytest
+import requests
 
 from config import Settings
 from core.providers.upstox_provider import InvalidSymbolError, UpstoxProvider
+from core.providers.upstox_provider import ProviderAPIError, ProviderConnectionError
+import core.providers.upstox_provider as provider_module
 
 
 def test_provider_initializes_with_access_token() -> None:
@@ -168,6 +171,14 @@ def test_get_historical_data_leaves_open_interest_none_when_absent():
     assert result[0].open_interest is None
 
 
+def test_get_historical_data_keeps_malformed_row_for_explicit_validation():
+    provider, _ = _provider_with_mocked_session(candles=[["2025-01-03T00:00:00+05:30", 10, None, 9, 10.5]])
+    result = provider.get_historical_data(
+        "NSE_EQ|INE745G01043", "1day", datetime(2025, 1, 1, tzinfo=UTC), datetime(2025, 1, 3, tzinfo=UTC))
+    assert len(result) == 1
+    assert result[0].high is None
+
+
 def test_get_historical_data_sorts_newest_first_input_to_oldest_first_output():
     candles = [
         ["2025-01-03T00:00:00+05:30", 10.0, 11.0, 9.0, 10.5, 1000],
@@ -186,3 +197,53 @@ def test_get_historical_data_sorts_newest_first_input_to_oldest_first_output():
     assert [c.timestamp for c in result] == sorted(c.timestamp for c in result)
     assert result[0].close == 8.5
     assert result[-1].close == 10.5
+
+
+def test_provider_retries_429_then_succeeds_with_bounded_attempts(monkeypatch):
+    provider, _ = _provider_with_mocked_session()
+    responses = [429, 200]
+    calls = []
+    sleeps = []
+    def fake_request(*args, **kwargs):
+        calls.append(1)
+        response = MagicMock()
+        response.status_code = responses.pop(0)
+        response.json.return_value = {"ok": True}
+        return response
+    provider.session.request = fake_request
+    monkeypatch.setattr(provider_module.time, "sleep", sleeps.append)
+    assert provider._make_api_request("GET", "test") == {"ok": True}
+    assert len(calls) == 2
+    assert sleeps == [1]
+
+
+def test_provider_does_not_retry_permanent_client_error(monkeypatch):
+    provider, _ = _provider_with_mocked_session()
+    calls = []
+    sleeps = []
+    def fake_request(*args, **kwargs):
+        calls.append(1)
+        response = MagicMock()
+        response.status_code = 400
+        return response
+    provider.session.request = fake_request
+    monkeypatch.setattr(provider_module.time, "sleep", sleeps.append)
+    with pytest.raises(ProviderAPIError, match="HTTP 400"):
+        provider._make_api_request("GET", "test")
+    assert len(calls) == 1
+    assert sleeps == []
+
+
+def test_provider_retries_timeout_at_most_three_attempts(monkeypatch):
+    provider, _ = _provider_with_mocked_session()
+    calls = []
+    sleeps = []
+    def fake_request(*args, **kwargs):
+        calls.append(1)
+        raise requests.Timeout("fixture timeout")
+    provider.session.request = fake_request
+    monkeypatch.setattr(provider_module.time, "sleep", sleeps.append)
+    with pytest.raises(ProviderConnectionError, match="3 attempts"):
+        provider._make_api_request("GET", "test")
+    assert len(calls) == 3
+    assert sleeps == [1, 2]
