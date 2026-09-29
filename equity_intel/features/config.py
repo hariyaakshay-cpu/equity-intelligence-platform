@@ -18,6 +18,7 @@ class IndicatorConfig:
     ema_long: int
     rsi_period: int
     roc_lookback: int
+    relative_return_lookback: int
     rvol_window: int
     high_window: int
     atr_period: int

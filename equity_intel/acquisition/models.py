@@ -93,6 +93,9 @@ class AcquisitionReport:
     adjustment_status: str = "Upstox daily series is split-adjusted; demergers are not adjusted"
     constituents_sha256: str = ""
     instrument_master_sha256: str = ""
+    benchmark_key: str = "NSE_INDEX|Nifty 500"
+    benchmark_status: str = "NOT_REQUESTED"
+    benchmark_observation_count: int = 0
     status: str = "RUNNING"
     symbols: list[dict[str, Any]] = field(default_factory=list)
 

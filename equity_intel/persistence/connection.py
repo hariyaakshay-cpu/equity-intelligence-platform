@@ -25,6 +25,11 @@ CREATE TABLE IF NOT EXISTS acquired_observations (
  adjustment_status TEXT NOT NULL, data_version TEXT NOT NULL,
  PRIMARY KEY (run_id, symbol, trading_date, source_vendor)
 );
+CREATE TABLE IF NOT EXISTS acquired_benchmark (
+ run_id TEXT NOT NULL, benchmark_key TEXT NOT NULL, trading_date TEXT NOT NULL, close REAL NOT NULL,
+ source_vendor TEXT NOT NULL, retrieval_timestamp TEXT NOT NULL,
+ PRIMARY KEY (run_id, benchmark_key, trading_date)
+);
 CREATE TABLE IF NOT EXISTS symbol_acquisition_results (
  run_id TEXT NOT NULL, symbol TEXT NOT NULL, status TEXT NOT NULL, reason TEXT,
  instrument_key TEXT, observation_count INTEGER NOT NULL, first_date TEXT, last_date TEXT,
@@ -43,7 +48,7 @@ CREATE TABLE IF NOT EXISTS e4_data_quality_results (
 );
 CREATE TABLE IF NOT EXISTS e4_feature_sets (
  scan_id TEXT NOT NULL, symbol TEXT NOT NULL, last_date TEXT,
- ema_short REAL, ema_medium REAL, ema_long REAL, rsi REAL, roc REAL, relative_volume REAL,
+ ema_short REAL, ema_medium REAL, ema_long REAL, rsi REAL, roc REAL, relative_return REAL, relative_volume REAL,
  distance_from_high REAL, prior_high_long REAL, atr_percent REAL,
  PRIMARY KEY (scan_id, symbol)
 );
@@ -58,6 +63,8 @@ def connect(path: str | Path = CANONICAL_DB_PATH) -> sqlite3.Connection:
     connection.row_factory = sqlite3.Row
     try:
         connection.executescript(ACQUISITION_SCHEMA)
+        if "relative_return" not in {r["name"] for r in connection.execute("PRAGMA table_info(e4_feature_sets)")}:
+            connection.execute("ALTER TABLE e4_feature_sets ADD COLUMN relative_return REAL")
         connection.commit()
     except Exception:
         connection.close()

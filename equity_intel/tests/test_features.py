@@ -12,7 +12,7 @@ from equity_intel.features.compute import compute_instrument
 from equity_intel.features.config import IndicatorConfig
 from equity_intel.features.runner import run_feature_scan
 
-CFG = IndicatorConfig(ema_short=20, ema_medium=50, ema_long=200, rsi_period=14, roc_lookback=10, rvol_window=20,
+CFG = IndicatorConfig(ema_short=20, ema_medium=50, ema_long=200, rsi_period=14, roc_lookback=10, relative_return_lookback=60, rvol_window=20,
                       high_window=252, atr_period=14, minimum_history_bars=252, minimum_universe_count=2, volume_usable_bars=15,
                       volume_usable_window=20, break_low_ratio=0.5, break_high_ratio=2.0)
 
@@ -62,7 +62,7 @@ def test_unusable_volume_yields_none_relative_volume_never_zero():
 def _seed(database, run_status="COMPLETE"):
     with persistence_connection.connect(database) as c:
         c.execute("INSERT INTO acquisition_runs VALUES('r1','2026-01-01T00:00:00','2026-01-01T00:01:00',?,?)",
-                  (run_status, json.dumps({"calendar_status": "PROVISIONAL", "constituents_sha256": "a", "instrument_master_sha256": "b", "universe_count": 2, "mapped_count": 2, "requested_count": 2})))
+                  (run_status, json.dumps({"calendar_status": "PROVISIONAL", "constituents_sha256": "a", "instrument_master_sha256": "b", "universe_count": 2, "mapped_count": 2, "requested_count": 2, "benchmark_status": "OK"})))
         for sym in ("AAA", "SHORT"):
             c.execute("INSERT INTO instrument_mappings(run_id,symbol,exchange,mapping_status,mapping_source) VALUES('r1',?,'NSE','MAPPED','isin')", (sym,))
         c.execute("INSERT INTO symbol_acquisition_results(run_id,symbol,status,reason,observation_count) VALUES('r1','SHORT','INSUFFICIENT_HISTORY','10 observations; 252 required',10)")
@@ -70,6 +70,8 @@ def _seed(database, run_status="COMPLETE"):
         for i in range(252):
             c.execute("INSERT INTO acquired_observations VALUES('r1','AAA',?,10,12,9,?,100,'Upstox','e','t','k','NSE','PROVISIONAL','a','v')",
                       ((start + timedelta(days=i)).isoformat(), 10 + i * 0.01))
+            c.execute("INSERT INTO acquired_benchmark VALUES('r1','NSE_INDEX|Nifty 500',?,?,'Upstox','t')",
+                      ((start + timedelta(days=i)).isoformat(), 1000 + i))
 
 
 def test_runner_completes_only_with_full_coverage_and_reads_stored_data(tmp_path, monkeypatch):
@@ -115,7 +117,7 @@ def test_small_complete_run_is_not_selected_as_latest_full_run(tmp_path, monkeyp
     with persistence_connection.connect(database) as c:  # newer smoke run, universe of 1
         c.execute("INSERT INTO acquisition_runs VALUES('smoke','2026-02-01T00:00:00','2026-02-01T00:01:00','COMPLETE',?)",
                   (json.dumps({"calendar_status": "PROVISIONAL", "constituents_sha256": "a", "instrument_master_sha256": "b",
-                               "universe_count": 1, "mapped_count": 1, "requested_count": 1}),))
+                               "universe_count": 1, "mapped_count": 1, "requested_count": 1, "benchmark_status": "OK"}),))
     assert run_feature_scan(CFG, db_path=database)["acquisition_run_id"] == "r1"
 
 
@@ -151,3 +153,38 @@ def test_new_tables_do_not_collide_with_legacy_schema_names(tmp_path, monkeypatc
     with persistence_connection.connect(database) as c:
         for statement in SCHEMA_STATEMENTS:
             c.execute(statement)  # must not raise 'table already exists'
+
+
+def test_relative_return_is_percentage_point_spread_over_the_lookback():
+    closes = [100.0 + i for i in range(252)]
+    dates = [(date(2025, 1, 1) + timedelta(days=i)).isoformat() for i in range(252)]
+    benchmark = {d: 1000.0 for d in dates}  # flat benchmark
+    _, f, _ = compute_instrument("X", *_bars(closes), CFG, dates=dates, benchmark=benchmark)
+    assert f.relative_return == pytest.approx((closes[-1] / closes[-61] - 1) * 100)
+
+
+def test_relative_return_is_none_without_benchmark_or_when_dates_missing():
+    closes = [100.0 + i for i in range(252)]
+    dates = [(date(2025, 1, 1) + timedelta(days=i)).isoformat() for i in range(252)]
+    assert compute_instrument("X", *_bars(closes), CFG, dates=dates, benchmark=None)[1].relative_return is None
+    missing_end = {d: 1000.0 for d in dates[:-1]}
+    assert compute_instrument("X", *_bars(closes), CFG, dates=dates, benchmark=missing_end)[1].relative_return is None
+
+
+def test_relative_return_uses_only_post_break_bars():
+    closes = [100.0] * 100 + [30.0 + i * 0.1 for i in range(152)]
+    dates = [(date(2025, 1, 1) + timedelta(days=i)).isoformat() for i in range(252)]
+    benchmark = {d: 1000.0 for d in dates}
+    _, f, _ = compute_instrument("X", *_bars(closes), CFG, dates=dates, benchmark=benchmark)
+    assert f.relative_return == pytest.approx((closes[-1] / closes[-61] - 1) * 100)  # not spanning the break
+
+
+def test_run_without_stored_benchmark_is_not_selected(tmp_path, monkeypatch):
+    database = tmp_path / "db.sqlite"
+    monkeypatch.setattr(db_path_guard, "CANONICAL_DB_PATH", database)
+    _seed(database)
+    with persistence_connection.connect(database) as c:
+        c.execute("UPDATE acquisition_runs SET report_json=?", (json.dumps({"calendar_status": "P", "constituents_sha256": "a",
+            "instrument_master_sha256": "b", "universe_count": 2, "mapped_count": 2, "requested_count": 2}),))
+    with pytest.raises(RuntimeError, match="benchmark"):
+        run_feature_scan(CFG, db_path=database)

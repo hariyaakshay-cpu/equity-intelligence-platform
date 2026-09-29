@@ -21,7 +21,8 @@ from equity_intel.scanner.execution_guard import assert_no_forbidden_modules_loa
 
 def _is_full_run(report: dict, cfg: IndicatorConfig) -> bool:
     return (report.get("universe_count", 0) >= cfg.minimum_universe_count
-            and report.get("requested_count") == report.get("mapped_count"))
+            and report.get("requested_count") == report.get("mapped_count")
+            and report.get("benchmark_status") == "OK")
 
 
 def _select_acquisition_run(connection, cfg: IndicatorConfig, requested: str | None) -> tuple[str, dict]:
@@ -29,15 +30,18 @@ def _select_acquisition_run(connection, cfg: IndicatorConfig, requested: str | N
         row = connection.execute("SELECT run_id,status,report_json FROM acquisition_runs WHERE run_id=?", (requested,)).fetchone()
         if row is None or row["status"] != "COMPLETE":
             raise RuntimeError(f"Acquisition run {requested} is not COMPLETE")
-        return row["run_id"], json.loads(row["report_json"])
+        report = json.loads(row["report_json"])
+        if report.get("benchmark_status") != "OK":
+            raise RuntimeError(f"Acquisition run {requested} has no benchmark; re-run scripts/equity_data_acquisition.py")
+        return row["run_id"], report
     for row in connection.execute(
             "SELECT run_id,report_json FROM acquisition_runs WHERE status='COMPLETE' ORDER BY run_started_at DESC"):
         report = json.loads(row["report_json"])
         if _is_full_run(report, cfg):
             return row["run_id"], report
     raise RuntimeError(
-        f"No COMPLETE full-universe acquisition run found (universe_count >= {cfg.minimum_universe_count}, "
-        "every mapped symbol requested); run scripts/equity_data_acquisition.py first")
+        f"No COMPLETE full-universe acquisition run with a benchmark found (universe_count >= {cfg.minimum_universe_count}, "
+        "every mapped symbol requested, benchmark OK); run scripts/equity_data_acquisition.py first")
 
 
 def run_feature_scan(cfg: IndicatorConfig, *, db_path: str | Path | None = None,
@@ -62,6 +66,10 @@ def run_feature_scan(cfg: IndicatorConfig, *, db_path: str | Path | None = None,
             "SELECT symbol FROM instrument_mappings WHERE run_id=? AND mapping_status='MAPPED' ORDER BY symbol", (acquisition_run_id,))]
         acquisition_status = {r["symbol"]: (r["status"], r["reason"]) for r in connection.execute(
             "SELECT symbol,status,reason FROM symbol_acquisition_results WHERE run_id=?", (acquisition_run_id,))}
+        benchmark = {r["trading_date"]: r["close"] for r in connection.execute(
+            "SELECT trading_date,close FROM acquired_benchmark WHERE run_id=?", (acquisition_run_id,))}
+        if not benchmark:
+            raise RuntimeError(f"Acquisition run {acquisition_run_id} has no stored benchmark observations")
         results = []  # (symbol, status, reason, features|None, detail|None, last_date|None, break_date|None)
         for symbol in universe:
             rows = connection.execute(
@@ -76,7 +84,7 @@ def run_feature_scan(cfg: IndicatorConfig, *, db_path: str | Path | None = None,
             dates = [r["trading_date"] for r in rows]
             quality, features, detail = compute_instrument(
                 symbol, [r["high"] for r in rows], [r["low"] for r in rows], [r["close"] for r in rows],
-                [r["volume"] for r in rows], cfg)
+                [r["volume"] for r in rows], cfg, dates=dates, benchmark=benchmark)
             break_date = dates[detail["break_date_index"]] if detail["break_date_index"] is not None else None
             results.append((symbol, quality.status, quality.reason, features, detail, dates[-1], break_date))
 
@@ -99,9 +107,10 @@ def run_feature_scan(cfg: IndicatorConfig, *, db_path: str | Path | None = None,
                      int(detail["volume_usable"]) if detail else None))
                 if f is not None and status is not DataStatus.FAILED:
                     connection.execute(
-                        "INSERT INTO e4_feature_sets VALUES(?,?,?,?,?,?,?,?,?,?,?,?)",
+                        "INSERT INTO e4_feature_sets(scan_id,symbol,last_date,ema_short,ema_medium,ema_long,rsi,roc,relative_return,"
+                        "relative_volume,distance_from_high,prior_high_long,atr_percent) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)",
                         (scan_id, symbol, last_date, f.ema_short, f.ema_medium, f.ema_long, f.rsi, f.roc,
-                         f.relative_volume, f.distance_from_high, f.prior_high_long, f.atr_percent))
+                         f.relative_return, f.relative_volume, f.distance_from_high, f.prior_high_long, f.atr_percent))
             covered = connection.execute("SELECT COUNT(*) FROM e4_data_quality_results WHERE scan_id=?", (scan_id,)).fetchone()[0]
             if covered != len(universe):
                 raise RuntimeError(f"data_quality_results covers {covered} of {len(universe)} universe members")

@@ -10,7 +10,7 @@ from zoneinfo import ZoneInfo
 from core.providers.upstox_provider import AuthenticationError
 from equity_intel.acquisition.mapping import load_instrument_master, map_constituents
 from equity_intel.acquisition.models import AcquisitionReport, Candle, MappingRecord, SymbolResult
-from equity_intel.acquisition.persistence import (finish_run, save_mappings, save_observations,
+from equity_intel.acquisition.persistence import (finish_run, save_benchmark, save_mappings, save_observations,
                                                     save_run_start, save_symbol_result)
 from equity_intel.acquisition.reporting import write_report
 from equity_intel.acquisition.universe import load_universe
@@ -105,6 +105,24 @@ def run_equity_data_acquisition(
 
     last_request_at: float | None = None
     auth_abort_reason: str | None = None
+    try:  # benchmark first: a failed benchmark fetch fails the run (design decision 6)
+        raw_benchmark = provider.get_historical_data(
+            report.benchmark_key, "1day",
+            datetime.combine(requested_start, day_time.min, tzinfo=IST),
+            datetime.combine(requested_end, day_time.min, tzinfo=IST))
+        benchmark = _to_candles(raw_benchmark)
+        benchmark_validation = validate_candles(benchmark, as_of=requested_end) if benchmark else None
+        if not benchmark or benchmark_validation.status == "INVALID":
+            detail = "no observations" if not benchmark else "; ".join(benchmark_validation.errors)
+            report.benchmark_status = "FAILED"
+            auth_abort_reason = f"Run stopped: benchmark {report.benchmark_key} invalid ({detail})"
+        else:
+            save_benchmark(report, benchmark, datetime.now(timezone.utc).isoformat(), db_path)
+            report.benchmark_status, report.benchmark_observation_count = "OK", len(benchmark)
+    except Exception as error:
+        report.benchmark_status = "FAILED"
+        auth_abort_reason = f"Run stopped: benchmark {report.benchmark_key} fetch failed ({type(error).__name__}: {error})"
+    last_request_at = time.monotonic()
     for mapping in mappings:
         if mapping.mapping_status != "MAPPED":
             result = _failure(mapping)

@@ -4,6 +4,7 @@
   "ema_long": 200,
   "rsi_period": 14,
   "roc_lookback": 10,
+  "relative_return_lookback": 60,
   "rvol_window": 20,
   "high_window": 252,
   "atr_period": 14,

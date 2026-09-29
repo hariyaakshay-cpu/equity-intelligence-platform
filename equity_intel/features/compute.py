@@ -8,6 +8,7 @@ from equity_intel.contracts.quality import DataQualityResult, DataStatus
 from equity_intel.features.breaks import find_last_break
 from equity_intel.features.config import IndicatorConfig
 from equity_intel.indicators.context import atr_percent, average_true_range
+from equity_intel.indicators.relative import relative_return
 from equity_intel.indicators.momentum import rate_of_change, relative_strength_index
 from equity_intel.indicators.structure import distance_from_high, rolling_high
 from equity_intel.indicators.trend import exponential_moving_average
@@ -18,13 +19,15 @@ def compute_instrument(
     instrument_id: str,
     highs: Sequence[float], lows: Sequence[float], closes: Sequence[float], volumes: Sequence[float],
     cfg: IndicatorConfig,
+    dates: Sequence[str] | None = None, benchmark: dict[str, float] | None = None,
 ) -> tuple[DataQualityResult, FeatureSet, dict]:
     """Break-detect, truncate at the most recent break, compute features.
 
     Returns (quality, features, detail). Flagged stocks stay in the universe;
     features whose lookback exceeds the post-break bar count come out None.
-    prior_high_short, ema_medium_lag and relative_return are left None: the
-    design fixes no window/lag for the first two and E4 fetches no benchmark.
+    prior_high_short and ema_medium_lag are left None: the design fixes no
+    window/lag for them. relative_return is None unless both the instrument
+    and the benchmark have a bar on the window-start and window-end dates.
     """
     detail: dict = {"break_date_index": None, "break_ratio": None, "volume_usable": False}
     bad = sum(1 for x in (*closes, *highs, *lows) if x is None or x <= 0)
@@ -48,12 +51,18 @@ def compute_instrument(
     detail["volume_usable"] = volume_ok
     rvol = relative_volume(v[-1], list(v[-(cfg.rvol_window + 1):-1])) if n > cfg.rvol_window and volume_ok else None
 
+    rel = None
+    if dates is not None and benchmark and n > cfg.relative_return_lookback:
+        d_start, d_end = dates[start:][-(cfg.relative_return_lookback + 1)], dates[-1]
+        if d_start in benchmark and d_end in benchmark:
+            rel = relative_return(c[-(cfg.relative_return_lookback + 1)], c[-1], benchmark[d_start], benchmark[d_end])
+
     high_window = rolling_high(h, cfg.high_window, exclude_current=False)
     features = FeatureSet(
         instrument_id=instrument_id, n_bars=n, w52_complete=n >= cfg.high_window,
         ema_short=ema_last(cfg.ema_short), ema_medium=ema_last(cfg.ema_medium), ema_long=ema_last(cfg.ema_long),
         rsi=relative_strength_index(c, cfg.rsi_period), roc=rate_of_change(c, cfg.roc_lookback),
-        relative_volume=rvol,
+        relative_return=rel, relative_volume=rvol,
         distance_from_high=distance_from_high(c[-1], high_window) if high_window else None,
         prior_high_long=high_window,
         atr_percent=atr_percent(average_true_range(h, l, c, cfg.atr_period), c[-1]) if n else None,

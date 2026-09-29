@@ -62,6 +62,18 @@ def save_observations(report: AcquisitionReport, result: SymbolResult, candles: 
         connection.close()
 
 
+def save_benchmark(report: AcquisitionReport, candles: list[Candle], retrieval_timestamp: str, db_path=None) -> None:
+    connection = connect() if db_path is None else connect(db_path)
+    try:
+        connection.executemany("""INSERT OR REPLACE INTO acquired_benchmark
+            (run_id,benchmark_key,trading_date,close,source_vendor,retrieval_timestamp) VALUES(?,?,?,?,?,?)""", [
+            (report.run_id, report.benchmark_key, c.trading_date.isoformat(), c.close, report.source_vendor, retrieval_timestamp)
+            for c in candles])
+        connection.commit()
+    finally:
+        connection.close()
+
+
 def finish_run(report: AcquisitionReport, db_path=None) -> None:
     connection = connect() if db_path is None else connect(db_path)
     try:

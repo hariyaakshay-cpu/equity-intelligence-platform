@@ -158,7 +158,41 @@ def test_authentication_failure_aborts_remaining_requests(tmp_path, monkeypatch)
     provider = UnauthorizedProvider()
     report = run_equity_data_acquisition(provider, csv_path, master_path, start_date=date(2025, 1, 1),
         end_date=date(2026, 1, 1), run_id="auth-run", pacing_seconds=0, db_path=database)
-    assert report.status == "FAILED"
+    assert report.status == "FAILED" and report.benchmark_status == "FAILED"
+    assert report.requested_count == 0 and len(provider.calls) == 1  # only the benchmark was tried
+    assert {item["status"] for item in report.symbols} == {"NOT_REQUESTED"}
+
+
+def test_symbol_authentication_failure_after_good_benchmark_aborts_remaining_requests(tmp_path, monkeypatch):
+    csv_path, master_path = _fixtures(tmp_path, ("AAA", "BBB"))
+    database = tmp_path / "auth2.sqlite"
+    monkeypatch.setattr(db_path_guard, "CANONICAL_DB_PATH", database)
+    class Provider(FakeProvider):
+        def get_historical_data(self, key, interval, start, end):
+            if key.startswith("NSE_INDEX"):
+                return super().get_historical_data(key, interval, start, end)
+            self.calls.append((key, interval, start, end))
+            raise AuthenticationError("Invalid Upstox API credentials")
+    provider = Provider()
+    report = run_equity_data_acquisition(provider, csv_path, master_path, start_date=date(2025, 1, 1),
+        end_date=date(2026, 1, 1), run_id="auth2-run", pacing_seconds=0, db_path=database)
+    assert report.status == "FAILED" and report.benchmark_status == "OK"
     assert report.requested_count == report.request_failed_count == 1
-    assert len(provider.calls) == 1
     assert {item["status"] for item in report.symbols} == {"REQUEST_FAILED", "NOT_REQUESTED"}
+
+
+def test_benchmark_is_persisted_and_failed_benchmark_fails_the_run(tmp_path, monkeypatch):
+    csv_path, master_path = _fixtures(tmp_path, ("AAA",))
+    database = tmp_path / "bench.sqlite"
+    monkeypatch.setattr(db_path_guard, "CANONICAL_DB_PATH", database)
+    report = run_equity_data_acquisition(FakeProvider(), csv_path, master_path, start_date=date(2025, 1, 1),
+        end_date=date(2026, 1, 1), run_id="ok-run", pacing_seconds=0, db_path=database)
+    assert report.benchmark_status == "OK" and report.benchmark_observation_count > 0
+    with persistence_connection.connect(database) as connection:
+        assert connection.execute("SELECT COUNT(*) FROM acquired_benchmark WHERE run_id='ok-run'").fetchone()[0] == report.benchmark_observation_count
+    class NoBenchmark(FakeProvider):
+        def get_historical_data(self, key, interval, start, end):
+            return [] if key.startswith("NSE_INDEX") else super().get_historical_data(key, interval, start, end)
+    failed = run_equity_data_acquisition(NoBenchmark(), csv_path, master_path, start_date=date(2025, 1, 1),
+        end_date=date(2026, 1, 1), run_id="bad-run", pacing_seconds=0, db_path=database)
+    assert failed.status == "FAILED" and failed.benchmark_status == "FAILED" and failed.requested_count == 0
