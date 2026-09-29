@@ -6,23 +6,23 @@ so a violation can never have an import-time side effect.
 
 Rules, by module location:
 
-- Any module under equity_intel/, except tests/ and the one reserved,
-  not-yet-created path equity_intel/persistence/connection.py, may NOT
-  import sqlite3 in any form (plain, aliased, from-import, aliased
+- Any module under equity_intel/ or dashboard/, except tests/ and the one
+  reserved connection module (equity_intel/persistence/connection.py), may
+  NOT import sqlite3 in any form (plain, aliased, from-import, aliased
   from-import). This is an import-level ban, not a call-based one: the
   earlier draft flagged any ".connect(...)" attribute call regardless of
   what object it was called on, which would false-flag an unrelated
   ".connect()" method on some other object entirely. An import-level ban
   has no such false positive, and persistence work belongs solely in
-  persistence/connection.py once that module exists (out of scope until
-  B2/B3 resolve; see equity_intel/persistence/repositories.py). This test
-  is written so that path is the only one that will ever be allowed to
-  import sqlite3 outside tests/.
+  persistence/connection.py. dashboard/ (the Phase 4 read-only reporting
+  app) is included here for the same reason it is included in
+  test_import_boundaries.py: it must reach the database only through
+  connection.get_read_only_connection, never by opening sqlite3 itself.
 - sqlalchemy (in any form: plain import, aliased import, any from-import)
-  is banned everywhere under equity_intel/, tests included.
+  is banned everywhere under equity_intel/ and dashboard/, tests included.
 - core.database (this repo's own, unrelated ORM package -- see
   docs/architecture/equity_intel_boundary_decision.md) is likewise banned
-  everywhere under equity_intel/.
+  everywhere under equity_intel/ and dashboard/.
 - Inside tests/, sqlite3 may be imported freely, but any call actually
   bound to sqlite3's connect() (tracked through real import aliases, not
   by attribute-name-only matching) must pass exactly one argument, the
@@ -37,8 +37,10 @@ import pytest
 
 PACKAGE_ROOT = pathlib.Path(__file__).resolve().parents[1]
 
+# The Phase 4 read-only dashboard, a separate top-level package.
+DASHBOARD_ROOT = PACKAGE_ROOT.parent / "dashboard"
+
 # The only module path ever allowed to import sqlite3 outside tests/.
-# It does not exist yet; when it is created, it must be named exactly this.
 ALLOWED_CONNECTION_MODULE = PACKAGE_ROOT / "persistence" / "connection.py"
 
 FORBIDDEN_IMPORT_PREFIXES = ("core.database", "sqlalchemy")
@@ -46,6 +48,8 @@ FORBIDDEN_IMPORT_PREFIXES = ("core.database", "sqlalchemy")
 
 def _iter_all_python_files():
     yield from PACKAGE_ROOT.rglob("*.py")
+    if DASHBOARD_ROOT.is_dir():
+        yield from DASHBOARD_ROOT.rglob("*.py")
 
 
 def _is_test_file(path: pathlib.Path) -> bool:

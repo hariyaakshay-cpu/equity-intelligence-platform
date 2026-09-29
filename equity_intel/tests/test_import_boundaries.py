@@ -3,8 +3,9 @@
 These tests never import the forbidden modules themselves (importing them
 would defeat the point, and some of them have import-time side effects per
 conftest.py's own warnings). Instead they statically parse every .py file
-under equity_intel/ with the `ast` module and inspect the import statements
-textually -- an architectural safety test, not a trading test.
+under equity_intel/ -- and, since Phase 4, dashboard/ -- with the `ast`
+module and inspect the import statements textually -- an architectural
+safety test, not a trading test.
 
 FORBIDDEN_PREFIXES is imported from equity_intel.scanner.execution_guard
 rather than defined here, so the static check in this file and the runtime
@@ -16,6 +17,12 @@ import pathlib
 from equity_intel.scanner.execution_guard import FORBIDDEN_PREFIXES
 
 PACKAGE_ROOT = pathlib.Path(__file__).resolve().parents[1]
+
+# The top-level dashboard/ Flask app is a separate package from
+# equity_intel/, but the same trading-module import ban applies to it: a
+# read-only reporting dashboard must never be able to import execution
+# infrastructure either.
+DASHBOARD_ROOT = PACKAGE_ROOT.parent / "dashboard"
 
 # Frozen expectation for FORBIDDEN_PREFIXES: written out explicitly so that
 # shrinking or otherwise weakening the canonical tuple requires deliberately
@@ -49,6 +56,11 @@ def _iter_python_files():
         if "tests" in path.parts:
             continue
         yield path
+    if DASHBOARD_ROOT.is_dir():
+        for path in DASHBOARD_ROOT.rglob("*.py"):
+            if "tests" in path.parts:
+                continue
+            yield path
 
 
 def _imported_module_names(path: pathlib.Path):
