@@ -37,3 +37,23 @@ IST = timezone(timedelta(hours=5, minutes=30))
 # further margin for holidays). Symbol classification itself (Phase 3)
 # is REQUIRED_SESSIONS, not this constant.
 PRICE_FETCH_LOOKBACK_DAYS = 400
+
+# docs/architecture/equity_intel_scanner_v1_spec.md Section 4: "ties to the
+# pre-existing w52_complete concept" -- the number of valid trading
+# sessions a symbol must have in its trailing window to avoid
+# INSUFFICIENT_HISTORY (equity_intel/scanner/classification.py).
+REQUIRED_SESSIONS = 252
+
+# Section 6, PRICE_BREAK_DETECTED: a session where close[t]/close[t-1] is
+# below this ratio or above PRICE_BREAK_HIGH_RATIO is flagged (flag only --
+# never truncates history, never excludes the symbol from anything).
+PRICE_BREAK_LOW_RATIO = 0.5
+PRICE_BREAK_HIGH_RATIO = 2.0
+
+# Auth circuit breaker (scripts/equity_scan.py): this many consecutive
+# per-symbol auth failures (401) mid-run abort the whole run with
+# abort_reason=AUTH_FAILURE. A token that expires mid-run fails every
+# later request identically, so a small N loses almost nothing while a
+# single stray 401 (reset by the next non-auth outcome) does not kill a
+# 500-symbol run.
+AUTH_FAILURE_ABORT_THRESHOLD = 3

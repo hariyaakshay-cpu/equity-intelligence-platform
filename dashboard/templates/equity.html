@@ -222,10 +222,10 @@ async function loadHistory() {
     box.textContent = data.message;
     return;
   }
-  let html = '<table><tr><th>run</th><th>status</th><th>started</th><th>finished</th><th>abort reason</th><th>counts</th><th>git commit</th><th>universe</th></tr>';
+  let html = '<table><tr><th>run</th><th>type</th><th>status</th><th>started</th><th>finished</th><th>abort reason</th><th>counts</th><th>git commit</th><th>universe</th></tr>';
   data.runs.forEach(r => {
     const warning = r.running_stale_warning ? '<span class="running-stale"> (RUNNING &gt; 1h)</span>' : '';
-    html += '<tr><td>' + r.run_id + warning + '</td><td>' + r.status + '</td><td>' + r.started_at + '</td><td>' + (r.finished_at || '-') +
+    html += '<tr><td>' + r.run_id + warning + '</td><td>' + (r.scan_label || '-') + '</td><td>' + r.status + '</td><td>' + r.started_at + '</td><td>' + (r.finished_at || '-') +
       '</td><td>' + (r.abort_reason || '-') + '</td><td>req=' + (r.requested_symbols ?? '-') + ' ok=' + (r.successful_symbols ?? '-') + ' fail=' + (r.failed_symbols ?? '-') +
       '</td><td>' + (r.git_commit || '-') + '</td><td>' + (r.universe_version || '-') + '</td></tr>';
   });

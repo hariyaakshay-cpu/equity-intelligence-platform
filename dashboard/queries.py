@@ -34,6 +34,7 @@ _JSON_COLUMNS = (
     "excluded_symbols_json",
     "errors_json",
     "calendar_dates_json",
+    "symbols_filter_json",
 )
 
 
@@ -77,9 +78,16 @@ def _fetch_one_dict(conn, sql: str, params=()) -> Optional[dict]:
 
 
 def get_latest_complete_run(conn) -> Optional[dict]:
+    """The latest COMPLETE run -- excluding a --symbols smoke run.
+
+    A smoke run (symbols_filter_json IS NOT NULL) is a deliberately
+    partial run for testing the scanner itself; it must never become
+    "the" run the Overview page shows as current, however recent it is.
+    """
     return _fetch_one_dict(
         conn,
-        "SELECT * FROM scan_runs WHERE status = 'COMPLETE' ORDER BY started_at DESC LIMIT 1",
+        "SELECT * FROM scan_runs WHERE status = 'COMPLETE' AND symbols_filter_json IS NULL "
+        "ORDER BY started_at DESC LIMIT 1",
     )
 
 
@@ -130,12 +138,19 @@ def is_running_stale(run: dict, now: Optional[datetime] = None) -> bool:
 
 
 def summarize_run(run: dict) -> dict:
-    """Parse a scan_runs row's *_json columns into nested JSON values."""
+    """Parse a scan_runs row's *_json columns into nested JSON values, and
+    add a display-only `scan_label` -- "SMOKE (n symbols)" for a
+    --symbols run, "FULL" otherwise -- so Scan History never presents a
+    smoke run as if it were an ordinary full-universe scan.
+    """
     result = dict(run)
     for json_column in _JSON_COLUMNS:
         raw = result.pop(json_column, None)
         key = json_column[: -len("_json")]
         result[key] = json.loads(raw) if raw else None
+
+    symbols_filter = result.get("symbols_filter")
+    result["scan_label"] = f"SMOKE ({len(symbols_filter)} symbols)" if symbols_filter else "FULL"
     return result
 
 

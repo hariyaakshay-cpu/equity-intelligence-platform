@@ -34,6 +34,7 @@ def setup_logging(settings: Settings):
     file_handler.setFormatter(log_formatter)
 
     # Console handler
+    console_handler = logging.StreamHandler()
     console_handler.setFormatter(log_formatter)
 
     # Root logger

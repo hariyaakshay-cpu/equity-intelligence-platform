@@ -137,6 +137,49 @@ def test_summary_is_not_outdated_when_the_latest_closed_session_is_current(db_pa
     assert client.get("/api/equity/summary").get_json()["outdated"] is False
 
 
+def _add_smoke_run(path, *, run_id="r4", started_at="2026-09-28T09:00:00"):
+    """A COMPLETE --symbols smoke run, more recent than r1's full run --
+    must never outrank it as "the latest COMPLETE run"."""
+    conn = connection.get_connection(path)
+    try:
+        conn.execute(
+            "INSERT INTO scan_runs (run_id, started_at, status, scoring_status) "
+            "VALUES (?, ?, 'RUNNING', 'BLOCKED_B2')",
+            (run_id, started_at),
+        )
+        conn.commit()
+        conn.execute(
+            """
+            UPDATE scan_runs SET status = 'COMPLETE', finished_at = ?, latest_closed_session = '2026-09-25',
+                universe_version = 'u', corporate_action_review_version = 'c',
+                symbols_filter_json = ?
+            WHERE run_id = ?
+            """,
+            (started_at, json.dumps(["INFY", "TCS"]), run_id),
+        )
+        conn.commit()
+    finally:
+        conn.close()
+
+
+def test_summary_never_reports_a_smoke_run_as_the_latest_complete_run(db_path):
+    _build_fixture_db(db_path)
+    _add_smoke_run(db_path)  # more recent than r1, but a smoke run
+    client = create_app(demo=False, db_path=db_path).test_client()
+    data = client.get("/api/equity/summary").get_json()
+    assert data["run"]["run_id"] == "r1"
+
+
+def test_scan_history_labels_a_smoke_run_and_a_full_run_differently(db_path):
+    _build_fixture_db(db_path)
+    _add_smoke_run(db_path)
+    client = create_app(demo=False, db_path=db_path).test_client()
+    data = client.get("/api/equity/scan-history").get_json()
+    by_id = {r["run_id"]: r for r in data["runs"]}
+    assert by_id["r4"]["scan_label"] == "SMOKE (2 symbols)"
+    assert by_id["r1"]["scan_label"] == "FULL"
+
+
 def test_candidates_reports_blocked_b2_and_no_ranking(db_path):
     _build_fixture_db(db_path)
     client = create_app(demo=False, db_path=db_path).test_client()

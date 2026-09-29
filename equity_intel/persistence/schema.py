@@ -33,6 +33,12 @@ initialize_schema() against the real data/equity_intel.db.
 """
 from __future__ import annotations
 
+# SCHEMA_VERSION 4 adds scan_runs.symbols_filter_json (Phase 3: NULL for a
+# full-universe run, a JSON list of symbols for a --symbols smoke run --
+# so the dashboard can tell the two apart. A smoke run must never become
+# "the latest COMPLETE run" the Overview page shows: get_latest_complete_run
+# (dashboard/queries.py) filters on symbols_filter_json IS NULL).
+#
 # SCHEMA_VERSION 3 adds scan_runs.instrument_map_provenance_json (Phase 2:
 # instrument-master fetch provenance -- fetched_at, total/NSE-EQ/matched
 # instrument counts, unmatched ISINs -- recorded on every run so a run
@@ -47,7 +53,7 @@ from __future__ import annotations
 # database raises SchemaVersionMismatch rather than migrating silently),
 # so this bump is safe only because the real database has never been
 # created.
-SCHEMA_VERSION = 3
+SCHEMA_VERSION = 4
 
 SCHEMA_STATEMENTS: tuple[str, ...] = (
     """
@@ -72,6 +78,7 @@ SCHEMA_STATEMENTS: tuple[str, ...] = (
         latest_closed_session   TEXT,
         calendar_dates_json     TEXT,
         instrument_map_provenance_json TEXT,
+        symbols_filter_json     TEXT,
         price_source            TEXT,
         requested_symbols       INTEGER,
         successful_symbols      INTEGER,

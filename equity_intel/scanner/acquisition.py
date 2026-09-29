@@ -26,7 +26,7 @@ from __future__ import annotations
 
 import time as time_module
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import List, Optional, Tuple
 
 from core.providers.upstox_provider import (
@@ -38,10 +38,29 @@ from core.providers.upstox_provider import (
 
 DEFAULT_REQUESTS_PER_SECOND = 5.0
 
+# Recorded as scan_runs.abort_reason on a 401 from the price vendor
+# (Section 9). Wiring the actual RUNNING -> ABORTED transition is
+# scan_run.py's job; this module only raises AuthFailedError and exposes
+# the reason string for that caller.
+AUTH_FAILED = "AUTH_FAILED"
+
+
+# Recorded as scan_runs.abort_reason when AUTH_FAILURE_ABORT_THRESHOLD
+# consecutive symbols fail with a 401 mid-run (the auth circuit breaker in
+# scripts/equity_scan.py).
+AUTH_FAILURE = "AUTH_FAILURE"
+
 
 class AuthFailedError(RuntimeError):
-    """A 401 from the price vendor. The caller must abort the whole
-    ScanRun (abort_reason=AUTH_FAILED), not just this one symbol."""
+    """A 401 from the price vendor. The caller decides whether it is a
+    whole-run abort (AUTH_FAILED, e.g. at calendar time) or one strike
+    toward the mid-run auth circuit breaker (AUTH_FAILURE)."""
+
+
+class PreflightError(RuntimeError):
+    """The pre-flight probe failed for a non-auth reason (network, 5xx,
+    other 4xx). The message is safe to print -- it never contains the
+    token."""
 
 
 @dataclass
@@ -89,6 +108,23 @@ def fetch_symbol_candles(
         raise AuthFailedError(str(exc)) from exc
     except (InvalidSymbolError, InvalidIntervalError, ProviderError) as exc:
         return [], str(exc)
+
+
+def preflight_token_check(provider, benchmark_instrument_key: str, now: datetime) -> None:
+    """One cheap authenticated call (a ~1-week daily-candle fetch for the
+    benchmark) made BEFORE any ScanRun row exists, so an invalid or
+    expired token fails fast without leaving an ABORTED row behind.
+
+    Judges only whether the call is accepted -- an empty candle list
+    passes (the calendar step owns judging data content).
+
+    Raises:
+        AuthFailedError: on a 401.
+        PreflightError: on any other failure of the probe.
+    """
+    _, error = fetch_symbol_candles(provider, benchmark_instrument_key, now - timedelta(days=7), now)
+    if error is not None:
+        raise PreflightError(error)
 
 
 def fetch_universe_candles(

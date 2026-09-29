@@ -22,6 +22,12 @@ from equity_intel.config import IST, SESSION_CUTOFF_IST
 BENCHMARK_INSTRUMENT_KEY = "NSE_INDEX|Nifty 500"
 CALENDAR_VERIFICATION_UNVERIFIED_INDEX_ONLY = "UNVERIFIED_INDEX_ONLY"
 
+# Recorded as scan_runs.abort_reason when the benchmark index fetch fails,
+# is empty, or cannot be parsed (Section 3). Wiring the actual RUNNING ->
+# ABORTED transition is scan_run.py's job; this module only raises
+# CalendarInvalidError and exposes the reason string for that caller.
+CALENDAR_INVALID = "CALENDAR_INVALID"
+
 
 class CalendarInvalidError(RuntimeError):
     """Raised when the benchmark index fetch fails, is empty, or cannot be
