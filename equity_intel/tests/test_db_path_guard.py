@@ -10,7 +10,7 @@ from pathlib import Path
 import pytest
 
 from equity_intel.persistence import db_path_guard
-from equity_intel.persistence.db_path_guard import CANONICAL_DB_PATH, assert_allowed_db_path
+from equity_intel.persistence.db_path_guard import CANONICAL_DB_PATH, DEMO_DB_PATH, assert_allowed_db_path
 
 
 @pytest.mark.parametrize(
@@ -78,3 +78,20 @@ def test_accepts_a_monkeypatched_tmp_path_canonical(monkeypatch, tmp_path):
     monkeypatch.setattr(db_path_guard, "CANONICAL_DB_PATH", patched_canonical)
     result = assert_allowed_db_path(patched_canonical)
     assert result == patched_canonical.resolve(strict=False)
+
+
+def test_accepts_the_demo_path():
+    result = assert_allowed_db_path(DEMO_DB_PATH)
+    assert result == DEMO_DB_PATH.resolve(strict=False)
+
+
+def test_refuses_a_sibling_of_the_demo_path_in_the_same_directory(tmp_path):
+    forbidden_path = DEMO_DB_PATH.parent / "equity_intel_demo.db.bak"
+    with pytest.raises(ValueError):
+        assert_allowed_db_path(forbidden_path)
+
+
+def test_refuses_the_demo_db_name_in_a_different_directory(tmp_path):
+    forbidden_path = tmp_path / "equity_intel_demo.db"
+    with pytest.raises(ValueError):
+        assert_allowed_db_path(forbidden_path)

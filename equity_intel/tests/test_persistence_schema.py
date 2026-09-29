@@ -34,17 +34,34 @@ def test_schema_has_no_broker_or_options_order_columns():
 
 
 def test_schema_tables_cover_the_required_persisted_concepts():
+    # Per docs/architecture/equity_intel_scanner_v1_spec.md (Sections 8-9,
+    # 11): V1 is data-only (no scoring/classification/candidate/watchlist
+    # tables of its own) and tracks schema_version explicitly since
+    # data/equity_intel.db does not exist yet and this is a from-scratch
+    # schema, not a migration. paper_watchlist is kept (unused by V1 code)
+    # per Akshay's explicit instruction -- deferred, not deleted.
     joined = "\n".join(SCHEMA_STATEMENTS)
     for table in (
-        "instruments",
+        "schema_version",
         "scan_runs",
-        "market_observations",
-        "data_quality_results",
-        "feature_sets",
-        "component_scores",
-        "composite_scores",
-        "classification_results",
-        "scan_states",
+        "price_fetch_snapshots",
+        "symbol_scan_results",
         "paper_watchlist",
     ):
         assert f"CREATE TABLE {table}" in joined, table
+
+
+def test_scan_runs_records_provenance_hashes_for_both_reference_csvs():
+    # Per docs/architecture/equity_intel_scanner_v1_spec.md, Sections 2 and
+    # 7: universe_version and corporate_action_review_version get the same
+    # SHA-256-of-the-CSV-file treatment.
+    conn = sqlite3.connect(":memory:")
+    try:
+        for statement in SCHEMA_STATEMENTS:
+            conn.execute(statement)
+        conn.execute("PRAGMA table_info(scan_runs)")
+        columns = {row[1] for row in conn.execute("PRAGMA table_info(scan_runs)").fetchall()}
+        assert "universe_version" in columns
+        assert "corporate_action_review_version" in columns
+    finally:
+        conn.close()
