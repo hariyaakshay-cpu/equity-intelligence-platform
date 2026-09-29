@@ -1,0 +1,15 @@
+{
+  "ema_short": 20,
+  "ema_medium": 50,
+  "ema_long": 200,
+  "rsi_period": 14,
+  "roc_lookback": 10,
+  "rvol_window": 20,
+  "high_window": 252,
+  "atr_period": 14,
+  "minimum_history_bars": 252,
+  "volume_usable_bars": 15,
+  "volume_usable_window": 20,
+  "break_low_ratio": 0.5,
+  "break_high_ratio": 2.0
+}
