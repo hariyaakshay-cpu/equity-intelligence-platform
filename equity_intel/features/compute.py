@@ -26,7 +26,11 @@ def compute_instrument(
     prior_high_short, ema_medium_lag and relative_return are left None: the
     design fixes no window/lag for the first two and E4 fetches no benchmark.
     """
-    detail: dict = {"break_date_index": None, "break_ratio": None}
+    detail: dict = {"break_date_index": None, "break_ratio": None, "volume_usable": False}
+    bad = sum(1 for x in (*closes, *highs, *lows) if x is None or x <= 0)
+    if bad or len(closes) == 0:
+        reason = "no observations" if not len(closes) else f"{bad} non-positive or missing price value(s)"
+        return DataQualityResult(DataStatus.FAILED, reason), FeatureSet(instrument_id=instrument_id, n_bars=len(closes)), detail
     brk = find_last_break(closes, cfg.break_low_ratio, cfg.break_high_ratio)
     start = brk.index if brk else 0
     if brk:

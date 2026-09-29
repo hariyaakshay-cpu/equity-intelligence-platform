@@ -31,17 +31,17 @@ CREATE TABLE IF NOT EXISTS symbol_acquisition_results (
  requested_start TEXT, requested_end TEXT, validation_status TEXT,
  PRIMARY KEY (run_id, symbol)
 );
-CREATE TABLE IF NOT EXISTS scan_runs (
+CREATE TABLE IF NOT EXISTS e4_scan_runs (
  scan_id TEXT PRIMARY KEY, acquisition_run_id TEXT NOT NULL, started_at TEXT NOT NULL, completed_at TEXT,
  status TEXT NOT NULL, asof_date TEXT, calendar_status TEXT, constituents_sha256 TEXT, instrument_master_sha256 TEXT,
  indicator_config_json TEXT NOT NULL, failure_reason TEXT
 );
-CREATE TABLE IF NOT EXISTS data_quality_results (
+CREATE TABLE IF NOT EXISTS e4_data_quality_results (
  scan_id TEXT NOT NULL, symbol TEXT NOT NULL, status TEXT NOT NULL, reason TEXT, n_bars INTEGER,
  w52_complete INTEGER, break_date TEXT, break_ratio REAL, volume_usable INTEGER,
  PRIMARY KEY (scan_id, symbol)
 );
-CREATE TABLE IF NOT EXISTS feature_sets (
+CREATE TABLE IF NOT EXISTS e4_feature_sets (
  scan_id TEXT NOT NULL, symbol TEXT NOT NULL, last_date TEXT,
  ema_short REAL, ema_medium REAL, ema_long REAL, rsi REAL, roc REAL, relative_volume REAL,
  distance_from_high REAL, prior_high_long REAL, atr_percent REAL,

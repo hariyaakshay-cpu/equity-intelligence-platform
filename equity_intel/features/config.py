@@ -22,6 +22,7 @@ class IndicatorConfig:
     high_window: int
     atr_period: int
     minimum_history_bars: int
+    minimum_universe_count: int
     volume_usable_bars: int
     volume_usable_window: int
     break_low_ratio: float
