@@ -91,6 +91,57 @@ def get_latest_complete_run(conn) -> Optional[dict]:
     )
 
 
+def get_run(conn, run_id: str) -> Optional[dict]:
+    return _fetch_one_dict(conn, "SELECT * FROM scan_runs WHERE run_id = ?", (run_id,))
+
+
+def _has_table(conn, name: str) -> bool:
+    return conn.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name=?", (name,)).fetchone() is not None
+
+
+E4_FEATURE_COLUMNS = (
+    "ema_short", "ema_medium", "ema_long", "rsi", "roc", "relative_return",
+    "relative_volume", "distance_from_high", "atr_percent",
+)
+
+
+def get_latest_e4_scan(conn) -> Optional[dict]:
+    """The latest COMPLETE E4 feature scan (e4_* tables), or None if there
+    is none or the E4 tables do not exist in this database."""
+    if not (_has_table(conn, "e4_scan_runs") and _has_table(conn, "e4_feature_sets")):
+        return None
+    scan = _fetch_one_dict(
+        conn,
+        "SELECT scan_id, acquisition_run_id, asof_date, calendar_status, indicator_config_json "
+        "FROM e4_scan_runs WHERE status = 'COMPLETE' ORDER BY started_at DESC LIMIT 1",
+    )
+    if scan is None:
+        return None
+    scan["config"] = json.loads(scan.pop("indicator_config_json"))
+    return scan
+
+
+def get_e4_features(conn, e4_scan_id: str, symbols: list[str]) -> dict[str, dict]:
+    """Raw E4 indicator values for `symbols`, keyed by symbol. A symbol with
+    no feature row (e.g. FAILED or no stored history) is simply absent;
+    missing values stay None and are never defaulted to zero."""
+    if not symbols:
+        return {}
+    marks = ",".join("?" for _ in symbols)
+    columns = ", ".join(f"f.{c}" for c in E4_FEATURE_COLUMNS)
+    rows = _fetch_all_dicts(
+        conn,
+        f"""
+        SELECT f.symbol, f.last_date, {columns}, q.break_date, q.break_ratio
+        FROM e4_feature_sets f
+        LEFT JOIN e4_data_quality_results q ON q.scan_id = f.scan_id AND q.symbol = f.symbol
+        WHERE f.scan_id = ? AND f.symbol IN ({marks})
+        """,
+        [e4_scan_id, *symbols],
+    )
+    return {row.pop("symbol"): row for row in rows}
+
+
 def expected_latest_session(now: Optional[datetime] = None) -> date:
     """The most recent Mon-Fri calendar date whose SESSION_CUTOFF_IST:00
     IST cutoff has already passed, as of `now`.

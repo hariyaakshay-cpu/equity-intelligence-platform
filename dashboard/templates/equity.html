@@ -25,6 +25,9 @@
           background: #fde68a; font-size: 11px; }
   .running-stale { color: #b91c1c; font-weight: bold; }
   input, select { padding: 6px; margin-right: 6px; }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  .e4-note { font-size: 12px; color: #444; }
+  .e4-warn { background: #fde68a; padding: 6px 10px; border-radius: 4px; font-size: 12px; }
 </style>
 </head>
 <body>
@@ -130,11 +133,37 @@ async function loadOverview() {
   box.innerHTML = html;
 }
 
-function renderCandidatesTable(rows) {
+// E4 indicator columns: [key, label(config), decimals]. Values come from the latest COMPLETE E4 scan.
+function e4Columns(cfg) {
+  cfg = cfg || {};
+  return [
+    ['ema_short', 'EMA ' + cfg.ema_short, 2], ['ema_medium', 'EMA ' + cfg.ema_medium, 2], ['ema_long', 'EMA ' + cfg.ema_long, 2],
+    ['rsi', 'RSI ' + cfg.rsi_period, 1], ['roc', 'ROC ' + cfg.roc_lookback + ' %', 2],
+    ['relative_return', 'Rel. return ' + cfg.relative_return_lookback + ' (pp)', 2],
+    ['relative_volume', 'RVOL ' + cfg.rvol_window, 2], ['distance_from_high', 'Below ' + cfg.high_window + '-bar high %', 2],
+    ['atr_percent', 'ATR ' + cfg.atr_period + ' %', 2],
+  ];
+}
+function e4Cell(features, key, digits) {
+  const v = features ? features[key] : null;
+  const td = el('td', {class: 'num'}, [v === null || v === undefined ? '–' : Number(v).toFixed(digits)]);
+  return td;
+}
+function e4NoteText(e4) {
+  if (!e4) return null;
+  return 'E4 indicators: scan ' + e4.scan_id + ', as of ' + e4.asof_date + ' (provisional, not B2-authoritative; calendar ' +
+    e4.calendar_status + '). Missing values are shown as –, never zero.';
+}
+
+function renderCandidatesTable(rows, e4) {
   const container = document.getElementById('explorer-table');
   container.innerHTML = '';
   const table = el('table');
-  const head = el('tr', {}, ['symbol', 'company', 'sector', 'status', 'reason', 'flags'].map(h => el('th', {}, [h])));
+  const cols = e4 ? e4Columns(e4.config) : [];
+  const head = el('tr', {}, [
+    ...['symbol', 'company', 'sector', 'status', 'reason', 'flags'].map(h => el('th', {}, [h])),
+    ...cols.map(c => el('th', {class: 'num'}, [c[1]])),
+  ]);
   table.appendChild(head);
   rows.forEach(r => {
     const flags = ['history_gaps_flag', 'corporate_action_review_flag', 'price_break_detected_flag', 'non_eq_series_flag']
@@ -148,6 +177,7 @@ function renderCandidatesTable(rows) {
       el('td', {}, [r.symbol_data_status]),
       el('td', {}, [r.status_reason || '']),
       flagCell,
+      ...cols.map(c => e4Cell(r.e4, c[0], c[2])),
     ]));
   });
   container.appendChild(table);
@@ -169,9 +199,22 @@ async function loadExplorer() {
     document.getElementById('explorer-pager').textContent = '';
     return;
   }
-  document.getElementById('explorer-note').textContent =
-    'SCORING_STATUS=' + data.scoring_status + ' (' + data.note + ') - total ' + data.total;
-  renderCandidatesTable(data.results);
+  const note = document.getElementById('explorer-note');
+  note.textContent = 'SCORING_STATUS=' + data.scoring_status + ' (' + data.note + ') - total ' + data.total;
+  const e4Text = e4NoteText(data.e4_scan);
+  if (e4Text) {
+    note.appendChild(el('br'));
+    note.appendChild(el('span', {class: 'e4-note'}, [e4Text]));
+    if (!data.e4_scan.as_of_matches_run) {
+      note.appendChild(el('br'));
+      note.appendChild(el('span', {class: 'e4-warn'}, ['E4 indicators are as of ' + data.e4_scan.asof_date +
+        ', but the latest closed session of this scan run is ' + (data.e4_scan.run_latest_closed_session || 'unknown') + '.']));
+    }
+  } else {
+    note.appendChild(el('br'));
+    note.appendChild(el('span', {class: 'e4-note'}, ['No COMPLETE E4 indicator scan found; run scripts/equity_e4_scan.py or the E4 feature scan.']));
+  }
+  renderCandidatesTable(data.results, data.e4_scan);
   const pager = document.getElementById('explorer-pager');
   pager.textContent = 'page ' + data.page + ' of ' + (data.total_pages || 1);
 }
@@ -199,6 +242,17 @@ async function loadDetails() {
   let html = '<h3>' + data.symbol + ' (run ' + data.run_id + ')</h3>';
   html += '<p>status=' + data.result.symbol_data_status + ' reason=' + (data.result.status_reason || '-') + '</p>';
   html += '<p>sessions available=' + data.result.available_session_count + ' missing=' + data.result.missing_session_count + '</p>';
+  if (data.e4_scan) {
+    const f = data.e4_features;
+    html += '<h4>E4 indicators</h4><p class="e4-note">' + e4NoteText(data.e4_scan).replace(/[<>&]/g, '') + '</p>';
+    if (f) {
+      html += '<table><tr>' + e4Columns(data.e4_scan.config).map(c => '<th class="num">' + c[1] + '</th>').join('') + '</tr><tr>' +
+        e4Columns(data.e4_scan.config).map(c => '<td class="num">' + (f[c[0]] === null || f[c[0]] === undefined ? '&ndash;' : Number(f[c[0]]).toFixed(c[2])) + '</td>').join('') + '</tr></table>';
+      if (f.break_date) html += '<p>Possible corporate-action break on ' + f.break_date + ' (close ratio ' + Number(f.break_ratio).toFixed(4) + '); indicators use bars after the break only.</p>';
+    } else {
+      html += '<p>No E4 feature row for this symbol.</p>';
+    }
+  }
   html += '<h4>Candles</h4><table><tr><th>date</th><th>open</th><th>high</th><th>low</th><th>close</th><th>volume</th></tr>';
   data.candles.forEach(c => {
     html += '<tr><td>' + c.trading_date + '</td><td>' + c.open + '</td><td>' + c.high + '</td><td>' + c.low + '</td><td>' + c.close + '</td><td>' + c.volume + '</td></tr>';

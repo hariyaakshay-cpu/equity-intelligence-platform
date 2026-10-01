@@ -245,6 +245,19 @@ def create_app(demo: bool = False, db_path: Optional[Union[str, Path]] = None) -
             }
         )
 
+    def _e4_context(conn, run_id):
+        """The latest COMPLETE E4 scan (if any) and whether its as-of date
+        matches this scan run's latest closed session. E4 indicators come
+        from a separate acquisition, so a mismatch is surfaced, never hidden."""
+        e4 = queries.get_latest_e4_scan(conn)
+        if e4 is None:
+            return None
+        run = queries.get_run(conn, run_id) if run_id else None
+        run_session = run.get("latest_closed_session") if run else None
+        e4["run_latest_closed_session"] = run_session
+        e4["as_of_matches_run"] = bool(run_session) and run_session == e4["asof_date"]
+        return e4
+
     @app.get("/api/equity/candidates")
     @_guarded
     def api_candidates(conn):
@@ -271,12 +284,18 @@ def create_app(demo: bool = False, db_path: Optional[Union[str, Path]] = None) -
             total, rows = queries.get_candidates(conn, run_id, page, page_size, q, status, flag)
         except ValueError as exc:
             return jsonify({"error": str(exc)}), 400
+        e4 = _e4_context(conn, run_id)
+        if e4 is not None:
+            features = queries.get_e4_features(conn, e4["scan_id"], [row["symbol"] for row in rows])
+            for row in rows:
+                row["e4"] = features.get(row["symbol"])
         return jsonify(
             {
                 "demo": app.config["DEMO_MODE"],
                 "run_id": run_id,
                 "scoring_status": "BLOCKED_B2",
                 "note": "B2 scoring is blocked: this list is unranked.",
+                "e4_scan": e4,
                 "page": page,
                 "page_size": page_size,
                 "total": total,
@@ -308,12 +327,16 @@ def create_app(demo: bool = False, db_path: Optional[Union[str, Path]] = None) -
         result = queries.get_symbol_result(conn, run_id, symbol)
         if result is None:
             return jsonify({"error": f"{symbol!r} not found in run {run_id!r}"}), 404
+        e4 = _e4_context(conn, run_id)
+        e4_features = queries.get_e4_features(conn, e4["scan_id"], [symbol]).get(symbol) if e4 else None
         return jsonify(
             {
                 "demo": app.config["DEMO_MODE"],
                 "run_id": run_id,
                 "symbol": symbol,
                 "result": result,
+                "e4_scan": e4,
+                "e4_features": e4_features,
                 "candles": queries.get_candles(conn, run_id, symbol),
                 "fetch_history": queries.get_fetch_history(conn, symbol),
             }
