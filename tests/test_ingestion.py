@@ -51,3 +51,25 @@ def test_sync_prices_upserts(session):
     assert sync_prices(session, FakeClient(), company, date(2026, 1, 1), date(2026, 1, 2)) == 2
     prices = session.scalars(select(PriceHistory)).all()
     assert len(prices) == 2 and prices[0].source == "upstox"
+
+
+def test_daily_sync_is_incremental_and_isolates_failures(session):
+    from jobs.daily_sync import run_sync
+
+    calls = []
+
+    class Client(FakeClient):
+        def get_daily_candles(self, key, from_date, to_date):
+            calls.append((key, from_date))
+            if "INE467B01029" in key:
+                raise RuntimeError("boom")
+            return [{"trade_date": date(2026, 1, 5), "open": 1, "high": 1, "low": 1, "close": 1, "volume": 1}]
+
+    today = date(2026, 1, 6)
+    s = run_sync(session, Client(), days=10, today=today)
+    assert s.companies == 2 and s.price_rows == 1 and list(s.failed) == ["TCS"]
+    assert calls[0] == ("NSE_EQ|INE002A01018", date(2025, 12, 27))
+
+    calls.clear()
+    run_sync(session, Client(), skip_companies=True, today=today, symbols=["RELIANCE"])
+    assert calls == [("NSE_EQ|INE002A01018", date(2026, 1, 6))]
