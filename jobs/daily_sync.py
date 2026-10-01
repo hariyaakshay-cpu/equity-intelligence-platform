@@ -27,7 +27,7 @@ from config.logging_config import setup_logging
 from core.database import get_db_session, initialize_database
 from core.models import Company, PriceHistory
 from services.ingestion import sync_companies, sync_prices
-from services.upstox import UpstoxClient
+from services.upstox import UpstoxClient, auth
 
 logger = logging.getLogger(__name__)
 
@@ -100,8 +100,13 @@ def run_sync(
     return summary
 
 
+def _resolve_token(settings: Settings) -> str:
+    """Prefer a valid cached token from `jobs.upstox_auth`, else UPSTOX_ACCESS_TOKEN."""
+    return auth.load_token() or settings.UPSTOX_ACCESS_TOKEN
+
+
 def _run_once(args: argparse.Namespace, settings: Settings) -> int:
-    client = UpstoxClient(settings.UPSTOX_ACCESS_TOKEN, settings.UPSTOX_BASE_URL)
+    client = UpstoxClient(_resolve_token(settings), settings.UPSTOX_BASE_URL)
     symbols = [s.strip() for s in args.symbols.split(",")] if args.symbols else None
     with get_db_session() as session:
         summary = run_sync(
@@ -130,8 +135,8 @@ def main(argv: Optional[list[str]] = None) -> int:
     setup_logging(settings)
     initialize_database(settings)
 
-    if not settings.UPSTOX_ACCESS_TOKEN:
-        logger.error("UPSTOX_ACCESS_TOKEN is not set (see .env.example)")
+    if not _resolve_token(settings):
+        logger.error("No valid Upstox token; run `python -m jobs.upstox_auth`")
         return 2
 
     if not args.schedule:

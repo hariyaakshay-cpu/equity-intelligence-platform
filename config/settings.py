@@ -15,6 +15,7 @@ class Settings(BaseSettings):
         DATABASE_URL (str): The URL for connecting to the database.
         LOG_LEVEL (str): The logging level for the application.
         UPSTOX_ACCESS_TOKEN (str): Upstox OAuth access token (expires daily).
+        UPSTOX_CLIENT_ID / UPSTOX_CLIENT_SECRET / UPSTOX_REDIRECT_URI (str): Upstox app credentials for the OAuth login.
         UPSTOX_BASE_URL (str): Base URL of the Upstox REST API.
     """
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
@@ -27,3 +28,6 @@ class Settings(BaseSettings):
     LOG_LEVEL: str = "INFO"
     UPSTOX_ACCESS_TOKEN: str = ""
     UPSTOX_BASE_URL: str = "https://api.upstox.com"
+    UPSTOX_CLIENT_ID: str = ""
+    UPSTOX_CLIENT_SECRET: str = ""
+    UPSTOX_REDIRECT_URI: str = ""
