@@ -16,6 +16,7 @@ config = context.config
 # Import project settings and Base model
 from config import Settings
 from core.database import Base
+import core.models  # noqa: F401  (register models for autogenerate)
 
 # Get database URL from our Pydantic settings and set it in alembic config
 settings = Settings()
