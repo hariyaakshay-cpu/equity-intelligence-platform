@@ -8,6 +8,7 @@ from typing import Callable
 from zoneinfo import ZoneInfo
 
 from core.providers.upstox_provider import AuthenticationError
+from equity_intel.acquisition.backfill import backfill_latest_bars
 from equity_intel.acquisition.mapping import load_instrument_master, map_constituents
 from equity_intel.acquisition.models import AcquisitionReport, Candle, MappingRecord, SymbolResult
 from equity_intel.acquisition.persistence import (finish_run, save_benchmark, save_mappings, save_observations,
@@ -105,6 +106,7 @@ def run_equity_data_acquisition(
 
     last_request_at: float | None = None
     auth_abort_reason: str | None = None
+    benchmark_last: date | None = None
     try:  # benchmark first: a failed benchmark fetch fails the run (design decision 6)
         raw_benchmark = provider.get_historical_data(
             report.benchmark_key, "1day",
@@ -119,6 +121,7 @@ def run_equity_data_acquisition(
         else:
             save_benchmark(report, benchmark, datetime.now(timezone.utc).isoformat(), db_path)
             report.benchmark_status, report.benchmark_observation_count = "OK", len(benchmark)
+            benchmark_last = max(c.trading_date for c in benchmark)
     except Exception as error:
         report.benchmark_status = "FAILED"
         auth_abort_reason = f"Run stopped: benchmark {report.benchmark_key} fetch failed ({type(error).__name__}: {error})"
@@ -163,6 +166,12 @@ def run_equity_data_acquisition(
             report.symbols.append(result.as_dict())
             save_symbol_result(resolved_run_id, result, db_path)
             continue
+        if raw and benchmark_last is not None:  # repair a silently dropped latest bar (see backfill.py)
+            raw, refetched = backfill_latest_bars(provider, mapping.instrument_key, raw, benchmark_last,
+                                                  datetime.combine(requested_end, day_time.min, tzinfo=IST),
+                                                  before_refetch=lambda: sleeper(pacing_seconds))
+            if refetched:
+                last_request_at = time.monotonic()
         candles = _to_candles(raw)
         retrieval_timestamp = datetime.now(timezone.utc).isoformat()
         result = SymbolResult(mapping.symbol, "NO_DATA" if not candles else "SUCCESS", None, mapping.instrument_key,

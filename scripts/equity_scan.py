@@ -39,7 +39,7 @@ from __future__ import annotations
 
 import argparse
 import sys
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
 from pathlib import Path
 from typing import Optional
 
@@ -49,6 +49,7 @@ if str(REPO_ROOT) not in sys.path:
 
 from config.settings import Settings
 from core.providers.upstox_provider import UpstoxProvider
+from equity_intel.acquisition.backfill import backfill_latest_bars
 from equity_intel.config import AUTH_FAILURE_ABORT_THRESHOLD, IST, PRICE_FETCH_LOOKBACK_DAYS, REQUIRED_SESSIONS
 from equity_intel.persistence import connection as db_connection
 from equity_intel.scanner import classification, execution_guard, scan_run
@@ -300,6 +301,13 @@ def _execute_scan(conn, *, run_id, universe, members, provider, now) -> int:
         if error is not None:
             record_failed(member, error)
             continue
+
+        # Upstox sometimes silently omits the newest bar depending on window
+        # length; refetch a short recent window and add only strictly newer bars.
+        candles, _ = backfill_latest_bars(
+            provider, instrument_key, candles, date.fromisoformat(calendar.latest_closed_session), window_end,
+            before_refetch=rate_limiter.wait,
+        )
 
         # Everything from here on -- structural validation, snapshot
         # writes, classification, and the final symbol_scan_results write

@@ -36,7 +36,7 @@ IST = timezone(timedelta(hours=5, minutes=30))
 # roughly 353 calendar days at a 5/7 trading-day density; this adds
 # further margin for holidays). Symbol classification itself (Phase 3)
 # is REQUIRED_SESSIONS, not this constant.
-PRICE_FETCH_LOOKBACK_DAYS = 400
+PRICE_FETCH_LOOKBACK_DAYS = 500
 
 # docs/architecture/equity_intel_scanner_v1_spec.md Section 4: "ties to the
 # pre-existing w52_complete concept" -- the number of valid trading
