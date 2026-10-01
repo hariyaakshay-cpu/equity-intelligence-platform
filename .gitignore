@@ -13,3 +13,5 @@ data/reference/candles/
 data/equity_intel.db
 data/equity_intel/reports/
 data/equity_intel_demo.db
+
+broker/
