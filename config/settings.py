@@ -14,6 +14,8 @@ class Settings(BaseSettings):
         DEBUG (bool): A flag indicating whether debug mode is enabled.
         DATABASE_URL (str): The URL for connecting to the database.
         LOG_LEVEL (str): The logging level for the application.
+        UPSTOX_ACCESS_TOKEN (str): Upstox OAuth access token (expires daily).
+        UPSTOX_BASE_URL (str): Base URL of the Upstox REST API.
     """
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 
@@ -23,3 +25,5 @@ class Settings(BaseSettings):
     DEBUG: bool = True
     DATABASE_URL: str = "sqlite:///./test.db"
     LOG_LEVEL: str = "INFO"
+    UPSTOX_ACCESS_TOKEN: str = ""
+    UPSTOX_BASE_URL: str = "https://api.upstox.com"
