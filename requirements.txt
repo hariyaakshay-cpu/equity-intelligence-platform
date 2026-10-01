@@ -26,3 +26,6 @@ typing_extensions==4.16.0
 tzdata==2026.3
 tzlocal==5.4.4
 requests==2.34.2
+fastapi==0.142.2
+uvicorn==0.50.2
+httpx==0.28.1

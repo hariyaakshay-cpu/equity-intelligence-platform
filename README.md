@@ -7,3 +7,16 @@
 3. `python -m jobs.daily_sync [--symbols RELIANCE,TCS] [--days 365] [--schedule 18:30]`
 
 Without `--schedule` it runs once (cron-friendly; exit code 1 if any company failed, 2 if there is no valid token).
+
+## API
+
+`uvicorn api.app:app --reload` — interactive docs at `/docs`.
+
+| Endpoint | Description |
+|---|---|
+| `GET /health` | Liveness check |
+| `GET /companies?q=&exchange=&sector=&limit=&offset=` | Search/list active companies |
+| `GET /companies/{symbol}` | Company detail |
+| `GET /companies/{symbol}/prices?start=&end=&limit=` | Daily prices, newest first |
+| `GET /companies/{symbol}/prices/latest` | Latest price |
+| `GET /companies/{symbol}/financials?period_type=annual\|quarterly` | Financial statements |
