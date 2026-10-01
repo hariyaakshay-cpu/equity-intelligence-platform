@@ -20,3 +20,4 @@ Without `--schedule` it runs once (cron-friendly; exit code 1 if any company fai
 | `GET /companies/{symbol}/prices?start=&end=&limit=` | Daily prices, newest first |
 | `GET /companies/{symbol}/prices/latest` | Latest price |
 | `GET /companies/{symbol}/financials?period_type=annual\|quarterly` | Financial statements |
+| `GET /companies/{symbol}/indicators` | Returns (1w–1y), SMA 20/50/200, EMA 20, RSI 14, 30d volatility, 52-week range |

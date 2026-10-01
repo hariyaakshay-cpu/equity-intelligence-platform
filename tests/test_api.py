@@ -69,3 +69,11 @@ def test_financials(client):
     rows = client.get("/companies/RELIANCE/financials", params={"period_type": "annual"}).json()
     assert rows[0]["revenue"] == 10
     assert client.get("/companies/RELIANCE/financials", params={"period_type": "x"}).status_code == 422
+
+
+def test_indicators_endpoint(client):
+    r = client.get("/companies/RELIANCE/indicators").json()
+    assert r["symbol"] == "RELIANCE" and r["observations"] == 3 and r["close"] == 103.0
+    assert r["sma_20"] is None
+    assert client.get("/companies/TCS/indicators").json()["observations"] == 0
+    assert client.get("/companies/NOPE/indicators").status_code == 404

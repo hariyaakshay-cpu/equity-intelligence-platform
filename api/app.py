@@ -7,7 +7,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
-from api.routes import companies
+from api.routes import analytics, companies
 from config import Settings
 from config.logging_config import setup_logging
 from core.database import initialize_database
@@ -30,6 +30,7 @@ def create_app() -> FastAPI:
         return {"status": "ok"}
 
     app.include_router(companies.router)
+    app.include_router(analytics.router)
     return app
 
 
