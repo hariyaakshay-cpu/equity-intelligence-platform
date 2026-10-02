@@ -10,7 +10,9 @@ from sqlalchemy.pool import StaticPool
 
 import core.models  # noqa: F401
 from api.app import create_app
+from api.auth import get_settings
 from api.deps import get_session
+from config import Settings
 from core.database import Base
 from core.models import Company, FinancialStatement, PriceHistory
 
@@ -37,7 +39,8 @@ def client():
             yield session
 
     app.dependency_overrides[get_session] = override
-    return TestClient(app)
+    app.dependency_overrides[get_settings] = lambda: Settings(API_KEYS="good-key, other-key")
+    return TestClient(app, headers={"X-API-Key": "good-key"})
 
 
 def test_health(client):
@@ -77,3 +80,16 @@ def test_indicators_endpoint(client):
     assert r["sma_20"] is None
     assert client.get("/companies/TCS/indicators").json()["observations"] == 0
     assert client.get("/companies/NOPE/indicators").status_code == 404
+
+
+def test_auth_required_and_health_open(client):
+    assert client.get("/health", headers={"X-API-Key": ""}).status_code == 200
+    for path in ("/companies", "/companies/RELIANCE/indicators"):
+        assert client.get(path, headers={"X-API-Key": ""}).status_code == 401
+        assert client.get(path, headers={"X-API-Key": "wrong"}).status_code == 401
+    assert client.get("/companies", headers={"X-API-Key": "other-key"}).status_code == 200
+
+
+def test_fails_closed_without_configured_keys(client):
+    client.app.dependency_overrides[get_settings] = lambda: Settings(API_KEYS="")
+    assert client.get("/companies").status_code == 503

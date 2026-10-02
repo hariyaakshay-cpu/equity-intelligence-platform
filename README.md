@@ -12,6 +12,8 @@ Without `--schedule` it runs once (cron-friendly; exit code 1 if any company fai
 
 `uvicorn api.app:app --reload` — interactive docs at `/docs`.
 
+All endpoints except `/health` require an `X-API-Key` header. Generate a key with `python -m jobs.api_key` and put it in `API_KEYS` in `.env` (comma-separated for several). If `API_KEYS` is empty the API returns 503 rather than running open.
+
 | Endpoint | Description |
 |---|---|
 | `GET /health` | Liveness check |

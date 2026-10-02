@@ -5,8 +5,9 @@ Run with: uvicorn api.app:app --reload
 
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
+from fastapi import Depends, FastAPI
 
+from api.auth import require_api_key
 from api.routes import analytics, companies
 from config import Settings
 from config.logging_config import setup_logging
@@ -29,8 +30,9 @@ def create_app() -> FastAPI:
     def health():
         return {"status": "ok"}
 
-    app.include_router(companies.router)
-    app.include_router(analytics.router)
+    protected = [Depends(require_api_key)]
+    app.include_router(companies.router, dependencies=protected)
+    app.include_router(analytics.router, dependencies=protected)
     return app
 
 
