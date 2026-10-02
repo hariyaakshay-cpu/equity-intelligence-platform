@@ -1,0 +1,17 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+test.db
+*.sqlite3
+logs/
+.env
+.env.*
+!.env.example
+data/reference/*.json.gz
+data/reference/candles/
+data/equity_intel.db
+data/equity_intel/reports/
+data/equity_intel_demo.db
+
+broker/

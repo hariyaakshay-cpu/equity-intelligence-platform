@@ -17,6 +17,9 @@ config = context.config
 from config import Settings
 from core.database import Base
 
+# Import all models BEFORE setting target_metadata to ensure they're registered in Base.metadata
+import core.models
+
 # Get database URL from our Pydantic settings and set it in alembic config
 settings = Settings()
 config.set_main_option("sqlalchemy.url", settings.DATABASE_URL)

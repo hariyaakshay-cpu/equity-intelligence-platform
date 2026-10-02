@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>equity_intel dashboard</title>
+<style>
+  body { font-family: system-ui, sans-serif; margin: 0; padding: 0; background: #f4f5f7; color: #1a1a1a; }
+  header { background: #14213d; color: white; padding: 12px 20px; }
+  header h1 { margin: 0; font-size: 18px; }
+  .demo-banner { background: #b91c1c; color: white; text-align: center; font-weight: bold;
+                 padding: 10px; font-size: 16px; letter-spacing: 0.5px; }
+  .blocked-banner { background: #92400e; color: white; padding: 8px 20px; font-size: 13px; }
+  .outdated-banner { background: #b45309; color: white; padding: 8px 20px; font-size: 13px; }
+  nav { display: flex; gap: 4px; padding: 10px 20px; background: white; border-bottom: 1px solid #ddd; }
+  nav button { padding: 8px 14px; border: 1px solid #ccc; background: #eee; cursor: pointer; border-radius: 4px; }
+  nav button.active { background: #14213d; color: white; border-color: #14213d; }
+  main { padding: 20px; }
+  section { display: none; }
+  section.active { display: block; }
+  table { border-collapse: collapse; width: 100%; background: white; }
+  th, td { border: 1px solid #ddd; padding: 6px 10px; text-align: left; font-size: 13px; }
+  th { background: #f0f0f0; }
+  .card { background: white; border: 1px solid #ddd; border-radius: 6px; padding: 16px; margin-bottom: 16px; }
+  .flag { display: inline-block; padding: 2px 6px; margin-right: 4px; border-radius: 3px;
+          background: #fde68a; font-size: 11px; }
+  .running-stale { color: #b91c1c; font-weight: bold; }
+  input, select { padding: 6px; margin-right: 6px; }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  .e4-note { font-size: 12px; color: #444; }
+  .e4-warn { background: #fde68a; padding: 6px 10px; border-radius: 4px; font-size: 12px; }
+</style>
+</head>
+<body>
+{% if demo %}
+<div class="demo-banner">DEMO DATA - NOT REAL</div>
+{% endif %}
+{% if db_message %}
+<div class="outdated-banner">{{ db_message }}</div>
+{% endif %}
+<header><h1>equity_intel dashboard (read-only)</h1></header>
+<nav>
+  <button data-section="overview" class="active">Overview</button>
+  <button data-section="explorer">Stock Explorer</button>
+  <button data-section="details">Stock Details</button>
+  <button data-section="history">Scan History</button>
+</nav>
+<main>
+  <section id="overview" class="active">
+    <div id="overview-content" class="card">Loading...</div>
+  </section>
+
+  <section id="explorer">
+    <div class="card">
+      <input id="explorer-q" placeholder="search symbol or company">
+      <select id="explorer-status">
+        <option value="">all statuses</option>
+        <option value="VALID">VALID</option>
+        <option value="INSUFFICIENT_HISTORY">INSUFFICIENT_HISTORY</option>
+        <option value="STALE">STALE</option>
+        <option value="FAILED">FAILED</option>
+      </select>
+      <select id="explorer-flag">
+        <option value="">all flags</option>
+        <option value="history_gaps">history_gaps</option>
+        <option value="corporate_action_review">corporate_action_review</option>
+        <option value="price_break_detected">price_break_detected</option>
+        <option value="non_eq_series">non_eq_series</option>
+      </select>
+      <button id="explorer-search">Search</button>
+      <p id="explorer-note"></p>
+      <div id="explorer-table"></div>
+      <div id="explorer-pager"></div>
+    </div>
+  </section>
+
+  <section id="details">
+    <div class="card">
+      <input id="details-symbol" placeholder="symbol, e.g. DEMOAAA">
+      <button id="details-load">Load</button>
+      <div id="details-content"></div>
+    </div>
+  </section>
+
+  <section id="history">
+    <div id="history-content" class="card">Loading...</div>
+  </section>
+</main>
+
+<script>
+const explorerState = { page: 1, page_size: 25 };
+
+function el(tag, attrs, children) {
+  const node = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs || {})) node.setAttribute(k, v);
+  (children || []).forEach(c => node.appendChild(typeof c === 'string' ? document.createTextNode(c) : c));
+  return node;
+}
+
+document.querySelectorAll('nav button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('main section').forEach(s => s.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(btn.dataset.section).classList.add('active');
+  });
+});
+
+async function loadOverview() {
+  const res = await fetch('/api/equity/summary');
+  const data = await res.json();
+  const box = document.getElementById('overview-content');
+  if (data.status === 'no_scans_yet' || data.status === 'version_mismatch' || data.status === 'database_error') {
+    box.textContent = data.message;
+    return;
+  }
+  if (!data.run) {
+    box.textContent = data.message || 'no data';
+    return;
+  }
+  const run = data.run;
+  let html = '';
+  if (data.outdated) html += '<div class="outdated-banner">OUTDATED (approximate: market holidays not known)</div>';
+  html += '<div class="blocked-banner">SCORING_STATUS: ' + run.scoring_status + ' - no ranking is available</div>';
+  html += '<p><b>Run:</b> ' + run.run_id + ' &middot; started ' + run.started_at + ' &middot; finished ' + (run.finished_at || '-') + '</p>';
+  html += '<p><b>Calendar:</b> ' + (run.calendar_source || '-') + ' (' + (run.calendar_verification || '-') + ')</p>';
+  html += '<p><b>Symbols:</b> requested ' + run.requested_symbols + ', successful ' + run.successful_symbols + ', failed ' + run.failed_symbols + '</p>';
+  if (run.status_counts) {
+    html += '<p><b>Status counts:</b> ' + Object.entries(run.status_counts).map(([k, v]) => k + '=' + v).join(', ') + '</p>';
+  }
+  if (run.flag_counts) {
+    html += '<p><b>Flag counts:</b> ' + Object.entries(run.flag_counts).map(([k, v]) => k + '=' + v).join(', ') + '</p>';
+  }
+  box.innerHTML = html;
+}
+
+// E4 indicator columns: [key, label(config), decimals]. Values come from the latest COMPLETE E4 scan.
+function e4Columns(cfg) {
+  cfg = cfg || {};
+  return [
+    ['ema_short', 'EMA ' + cfg.ema_short, 2], ['ema_medium', 'EMA ' + cfg.ema_medium, 2], ['ema_long', 'EMA ' + cfg.ema_long, 2],
+    ['rsi', 'RSI ' + cfg.rsi_period, 1], ['roc', 'ROC ' + cfg.roc_lookback + ' %', 2],
+    ['relative_return', 'Rel. return ' + cfg.relative_return_lookback + ' (pp)', 2],
+    ['relative_volume', 'RVOL ' + cfg.rvol_window, 2], ['distance_from_high', 'Below ' + cfg.high_window + '-bar high %', 2],
+    ['atr_percent', 'ATR ' + cfg.atr_period + ' %', 2],
+  ];
+}
+function e4Cell(features, key, digits) {
+  const v = features ? features[key] : null;
+  const td = el('td', {class: 'num'}, [v === null || v === undefined ? '–' : Number(v).toFixed(digits)]);
+  return td;
+}
+function e4NoteText(e4) {
+  if (!e4) return null;
+  return 'E4 indicators: scan ' + e4.scan_id + ', as of ' + e4.asof_date + ' (provisional, not B2-authoritative; calendar ' +
+    e4.calendar_status + '). Missing values are shown as –, never zero.';
+}
+
+function renderCandidatesTable(rows, e4) {
+  const container = document.getElementById('explorer-table');
+  container.innerHTML = '';
+  const table = el('table');
+  const cols = e4 ? e4Columns(e4.config) : [];
+  const head = el('tr', {}, [
+    ...['symbol', 'company', 'sector', 'status', 'reason', 'flags'].map(h => el('th', {}, [h])),
+    ...cols.map(c => el('th', {class: 'num'}, [c[1]])),
+  ]);
+  table.appendChild(head);
+  rows.forEach(r => {
+    const flags = ['history_gaps_flag', 'corporate_action_review_flag', 'price_break_detected_flag', 'non_eq_series_flag']
+      .filter(f => r[f])
+      .map(f => f.replace('_flag', ''));
+    const flagCell = el('td', {}, flags.map(f => el('span', {class: 'flag'}, [f])));
+    table.appendChild(el('tr', {}, [
+      el('td', {}, [r.symbol]),
+      el('td', {}, [r.company_name || '']),
+      el('td', {}, [r.sector || '']),
+      el('td', {}, [r.symbol_data_status]),
+      el('td', {}, [r.status_reason || '']),
+      flagCell,
+      ...cols.map(c => e4Cell(r.e4, c[0], c[2])),
+    ]));
+  });
+  container.appendChild(table);
+}
+
+async function loadExplorer() {
+  const params = new URLSearchParams({
+    page: explorerState.page,
+    page_size: explorerState.page_size,
+    q: document.getElementById('explorer-q').value,
+    status: document.getElementById('explorer-status').value,
+    flag: document.getElementById('explorer-flag').value,
+  });
+  const res = await fetch('/api/equity/candidates?' + params.toString());
+  const data = await res.json();
+  if (data.status === 'no_scans_yet' || data.status === 'version_mismatch' || data.status === 'database_error') {
+    document.getElementById('explorer-note').textContent = data.message;
+    renderCandidatesTable([]);
+    document.getElementById('explorer-pager').textContent = '';
+    return;
+  }
+  const note = document.getElementById('explorer-note');
+  note.textContent = 'SCORING_STATUS=' + data.scoring_status + ' (' + data.note + ') - total ' + data.total;
+  const e4Text = e4NoteText(data.e4_scan);
+  if (e4Text) {
+    note.appendChild(el('br'));
+    note.appendChild(el('span', {class: 'e4-note'}, [e4Text]));
+    if (!data.e4_scan.as_of_matches_run) {
+      note.appendChild(el('br'));
+      note.appendChild(el('span', {class: 'e4-warn'}, ['E4 indicators are as of ' + data.e4_scan.asof_date +
+        ', but the latest closed session of this scan run is ' + (data.e4_scan.run_latest_closed_session || 'unknown') + '.']));
+    }
+  } else {
+    note.appendChild(el('br'));
+    note.appendChild(el('span', {class: 'e4-note'}, ['No COMPLETE E4 indicator scan found; run scripts/equity_e4_scan.py or the E4 feature scan.']));
+  }
+  renderCandidatesTable(data.results, data.e4_scan);
+  const pager = document.getElementById('explorer-pager');
+  pager.textContent = 'page ' + data.page + ' of ' + (data.total_pages || 1);
+}
+
+document.getElementById('explorer-search').addEventListener('click', () => {
+  explorerState.page = 1;
+  loadExplorer();
+});
+
+async function loadDetails() {
+  const symbol = document.getElementById('details-symbol').value.trim();
+  if (!symbol) return;
+  const res = await fetch('/api/equity/stock/' + encodeURIComponent(symbol));
+  const box = document.getElementById('details-content');
+  if (!res.ok) {
+    const err = await res.json();
+    box.textContent = err.error || 'error';
+    return;
+  }
+  const data = await res.json();
+  if (data.status === 'no_scans_yet' || data.status === 'version_mismatch' || data.status === 'database_error') {
+    box.textContent = data.message;
+    return;
+  }
+  let html = '<h3>' + data.symbol + ' (run ' + data.run_id + ')</h3>';
+  html += '<p>status=' + data.result.symbol_data_status + ' reason=' + (data.result.status_reason || '-') + '</p>';
+  html += '<p>sessions available=' + data.result.available_session_count + ' missing=' + data.result.missing_session_count + '</p>';
+  if (data.e4_scan) {
+    const f = data.e4_features;
+    html += '<h4>E4 indicators</h4><p class="e4-note">' + e4NoteText(data.e4_scan).replace(/[<>&]/g, '') + '</p>';
+    if (f) {
+      html += '<table><tr>' + e4Columns(data.e4_scan.config).map(c => '<th class="num">' + c[1] + '</th>').join('') + '</tr><tr>' +
+        e4Columns(data.e4_scan.config).map(c => '<td class="num">' + (f[c[0]] === null || f[c[0]] === undefined ? '&ndash;' : Number(f[c[0]]).toFixed(c[2])) + '</td>').join('') + '</tr></table>';
+      if (f.break_date) html += '<p>Possible corporate-action break on ' + f.break_date + ' (close ratio ' + Number(f.break_ratio).toFixed(4) + '); indicators use bars after the break only.</p>';
+    } else {
+      html += '<p>No E4 feature row for this symbol.</p>';
+    }
+  }
+  html += '<h4>Candles</h4><table><tr><th>date</th><th>open</th><th>high</th><th>low</th><th>close</th><th>volume</th></tr>';
+  data.candles.forEach(c => {
+    html += '<tr><td>' + c.trading_date + '</td><td>' + c.open + '</td><td>' + c.high + '</td><td>' + c.low + '</td><td>' + c.close + '</td><td>' + c.volume + '</td></tr>';
+  });
+  html += '</table>';
+  html += '<h4>Fetch history (all runs)</h4><table><tr><th>run</th><th>date</th><th>source</th><th>fetched_at</th><th>validation</th></tr>';
+  data.fetch_history.forEach(h => {
+    html += '<tr><td>' + h.scan_run_id + '</td><td>' + h.trading_date + '</td><td>' + h.source + '</td><td>' + h.fetched_at_ist + '</td><td>' + h.candle_validation_status + '</td></tr>';
+  });
+  html += '</table>';
+  box.innerHTML = html;
+}
+
+document.getElementById('details-load').addEventListener('click', loadDetails);
+
+async function loadHistory() {
+  const res = await fetch('/api/equity/scan-history');
+  const data = await res.json();
+  const box = document.getElementById('history-content');
+  if (data.status === 'no_scans_yet' || data.status === 'version_mismatch' || data.status === 'database_error') {
+    box.textContent = data.message;
+    return;
+  }
+  let html = '<table><tr><th>run</th><th>type</th><th>status</th><th>started</th><th>finished</th><th>abort reason</th><th>counts</th><th>git commit</th><th>universe</th></tr>';
+  data.runs.forEach(r => {
+    const warning = r.running_stale_warning ? '<span class="running-stale"> (RUNNING &gt; 1h)</span>' : '';
+    html += '<tr><td>' + r.run_id + warning + '</td><td>' + (r.scan_label || '-') + '</td><td>' + r.status + '</td><td>' + r.started_at + '</td><td>' + (r.finished_at || '-') +
+      '</td><td>' + (r.abort_reason || '-') + '</td><td>req=' + (r.requested_symbols ?? '-') + ' ok=' + (r.successful_symbols ?? '-') + ' fail=' + (r.failed_symbols ?? '-') +
+      '</td><td>' + (r.git_commit || '-') + '</td><td>' + (r.universe_version || '-') + '</td></tr>';
+  });
+  html += '</table>';
+  box.innerHTML = html;
+}
+
+loadOverview();
+loadExplorer();
+loadHistory();
+</script>
+</body>
+</html>
