@@ -9,7 +9,7 @@ never re-declared with a locally-invented value.
 """
 from __future__ import annotations
 
-from datetime import timedelta, timezone
+from datetime import date, datetime, timedelta, timezone
 
 # The hour (IST, 24h clock) after which a weekday's trading session is
 # considered closed, for freshness/staleness purposes (e.g. the Phase 4
@@ -26,6 +26,18 @@ SESSION_CUTOFF_IST = 18
 # with an explicit "+05:30" offset -- see
 # docs/architecture/equity_intel_scanner_v1_spec.md Section 8/9).
 IST = timezone(timedelta(hours=5, minutes=30))
+
+
+def session_date(stamp):
+    """The IST trading date of a provider candle timestamp, or None if it is not a date/datetime.
+
+    A timezone-aware datetime is converted to IST before `.date()`: a daily bar stamped
+    2026-09-28T00:00+05:30 is 2026-09-27T18:30Z, and taking the UTC date would shift it a
+    session early. A naive datetime is taken as IST wall time (as it is for a bare date).
+    """
+    if isinstance(stamp, datetime):
+        return (stamp.astimezone(IST) if stamp.tzinfo is not None else stamp).date()
+    return stamp if isinstance(stamp, date) else None
 
 # How many *calendar* days back the scanner requests from the price
 # vendor for each symbol (and for the benchmark calendar fetch), per scan

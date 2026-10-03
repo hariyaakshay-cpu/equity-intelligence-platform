@@ -17,7 +17,7 @@ from dataclasses import dataclass
 from datetime import date, datetime, time
 from typing import List, Optional, Sequence
 
-from equity_intel.config import IST, SESSION_CUTOFF_IST
+from equity_intel.config import IST, SESSION_CUTOFF_IST, session_date
 
 BENCHMARK_INSTRUMENT_KEY = "NSE_INDEX|Nifty 500"
 CALENDAR_VERIFICATION_UNVERIFIED_INDEX_ONLY = "UNVERIFIED_INDEX_ONLY"
@@ -74,7 +74,7 @@ def build_trading_calendar(
         ts = getattr(candle, "timestamp", None)
         if ts is None:
             raise CalendarInvalidError("a benchmark candle is missing a timestamp")
-        dates.add(ts.date() if isinstance(ts, datetime) else ts)
+        dates.add(session_date(ts) or ts)
 
     if not dates:
         raise CalendarInvalidError("benchmark fetch produced no usable session dates")

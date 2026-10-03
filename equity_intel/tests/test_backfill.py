@@ -1,4 +1,4 @@
-from datetime import date, datetime, timedelta
+from datetime import date, datetime, timedelta, timezone
 from types import SimpleNamespace
 
 from equity_intel.acquisition.backfill import backfill_latest_bars
@@ -128,3 +128,36 @@ def test_scanner_v1_repairs_a_dropped_latest_bar_before_classifying(env, monkeyp
     finally:
         conn.close()
     assert dates == set(t._BENCHMARK_DATES) and available == 5
+
+
+def test_bar_date_converts_aware_timestamps_to_ist_before_taking_the_date():
+    from equity_intel.acquisition.backfill import _bar_date
+
+    def bar(stamp):
+        return SimpleNamespace(timestamp=stamp)
+
+    ist = timezone(timedelta(hours=5, minutes=30))
+    # Upstox's own form: IST midnight. UTC date would be the previous day.
+    assert _bar_date(bar(datetime(2026, 9, 28, 0, 0, tzinfo=ist))) == date(2026, 9, 28)
+    # Same instant expressed in UTC (18:30Z the day before).
+    assert _bar_date(bar(datetime(2026, 9, 27, 18, 30, tzinfo=timezone.utc))) == date(2026, 9, 28)
+    # Boundaries: 1 minute before UTC 18:30 is still the 27th in IST; 18:30Z exactly is the 28th.
+    assert _bar_date(bar(datetime(2026, 9, 27, 18, 29, tzinfo=timezone.utc))) == date(2026, 9, 27)
+    # Naive datetimes and bare dates are taken as-is (already IST wall time).
+    assert _bar_date(bar(datetime(2026, 9, 28, 0, 0))) == date(2026, 9, 28)
+    assert _bar_date(bar(date(2026, 9, 28))) == date(2026, 9, 28)
+    assert _bar_date(bar(None)) is None
+
+
+def test_backfill_does_not_re_add_a_bar_the_series_already_holds_when_stamped_in_utc():
+    ist = timezone(timedelta(hours=5, minutes=30))
+    held = [_bar_ist(date(2026, 9, 28))]
+    # Refetch returns the same session 09-28 stamped as 09-27T18:30Z, plus 09-29: only 09-29 is new.
+    recent = [SimpleNamespace(timestamp=datetime(2026, 9, 27, 18, 30, tzinfo=timezone.utc)),
+              SimpleNamespace(timestamp=datetime(2026, 9, 29, 0, 0, tzinfo=ist))]
+    result, _ = backfill_latest_bars(Recent(recent), "k", held, date(2026, 9, 29), NOW)
+    assert [c.timestamp.astimezone(ist).date() for c in result] == [date(2026, 9, 28), date(2026, 9, 29)]
+
+
+def _bar_ist(d):
+    return SimpleNamespace(timestamp=datetime.combine(d, datetime.min.time(), tzinfo=timezone(timedelta(hours=5, minutes=30))))

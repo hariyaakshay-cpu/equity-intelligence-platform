@@ -20,13 +20,13 @@ series predates it. Flag only; nothing stored is mutated.
 """
 from __future__ import annotations
 
-from datetime import date, datetime, timedelta, timezone
+from datetime import date, datetime, timezone
 from typing import Iterable, Optional
 
+from equity_intel.config import IST
 from equity_intel.scanner.corporate_actions import CorporateActionReview, ReviewEntry
 
 ADJUSTMENT_BASIS_STALE = "ADJUSTMENT_BASIS_STALE"
-IST = timezone(timedelta(hours=5, minutes=30))
 
 
 def ist_date(stamp: str | datetime) -> date:
