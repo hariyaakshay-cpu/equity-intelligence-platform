@@ -1,14 +1,17 @@
 # Equity Intelligence — ML Research Specification
 
-Status: **DRAFT — not approved.** Drafted 2026-10-03; amended 2026-10-03
-(Section 5A prerequisites, numeric gate criteria 3–4 in Section 7.4, Section 12
-order) and again on review (deterministic calibration bins, Gate 4 edge cases,
-price discontinuity vs corporate-action evidence, eligibility hierarchy
-5A.5). Nothing in this document
-is implemented. Approval by Akshay is required before any code, dataset or
-experiment exists. Numbers marked **PROPOSED** are conservative starting values
-with their derivation shown; they are for ratification or change, and must not
-be tuned after results are seen (Section 9).
+Status: **APPROVED** by Akshay on 2026-10-03 (see Section 14). Drafted
+2026-10-03; amended 2026-10-03 (Section 5A prerequisites, numeric gate criteria
+3–4 in Section 7.4, Section 12 order) and again on review (deterministic
+calibration bins, Gate 4 edge cases, price discontinuity vs corporate-action
+evidence, eligibility hierarchy 5A.5, E7 as a dataset-level release gate).
+
+Approval permits the next step in Section 12 only. Nothing in this document is
+implemented yet: no dataset, model or experiment exists. Numbers marked
+**PROPOSED** were ratified as written on approval; the label remains to show
+they are conservative starting values. Any of them may be changed only by an
+amendment to this document made before the experiments it governs, never
+after results are seen (Section 9).
 
 ## 0. Scope and separation
 
@@ -311,13 +314,16 @@ for six instruments. It wrote nothing to any database.
 
 ### 5A.5 Observation eligibility hierarchy
 
-Every candidate observation `(s, t)` passes through these levels **in this
-order**. The first level it fails assigns its single exclusion reason; later
-levels are not evaluated for it. The dataset builder may not reorder, skip or
-add levels, and may not decide a case these rules do not cover: an uncovered
-case stops the build and requires an amendment to this section.
+The hierarchy has two parts: **E1–E6 are observation-level eligibility**;
+**E7 is a dataset-level release gate**.
 
-| Level | Check | Exclusion reason codes |
+Every candidate observation `(s, t)` passes through E1–E6 **in this order**.
+The first level it fails assigns its single exclusion reason; later levels are
+not evaluated for it. The dataset builder may not reorder, skip or add levels,
+and may not decide a case these rules do not cover: an uncovered case stops the
+build and requires an amendment to this section.
+
+| Level | Check (observation level) | Exclusion reason codes |
 |---|---|---|
 | E1 Calendar | `t` is a session in `calendar_version`; `s` has a valid bar (positive OHLC, high ≥ low) at `t` and at `prev(t)`. Vendor bars on non-sessions are dropped and listed as calendar discrepancies. | `NOT_A_SESSION`, `BAR_MISSING`, `BAR_INVALID` |
 | E2 Universe / membership | `s` is in the dataset universe, and its membership at `t` is treated according to the 5A.2 result (below). | `NOT_IN_UNIVERSE`, `MEMBERSHIP_UNEVIDENCED` |
@@ -325,10 +331,15 @@ case stops the build and requires an amendment to this section.
 | E4 History sufficiency | At least `W_max` valid sessions of `s` exist at or before `t`, and no calendar session in `[t − W_max, t]` lacks a bar for `s`. **PROPOSED:** `W_max = 252` (the longest `features-v1` lookback). | `INSUFFICIENT_HISTORY`, `GAP_IN_LOOKBACK` |
 | E5 Feature completeness | Every feature that `features-v1` marks `required` is present. Features not marked required may be missing (Section 4); the `required` list is fixed in the feature version before any build. | `REQUIRED_FEATURE_MISSING` |
 | E6 Target availability | The Section 3 label conditions hold: `Close(s, t+5)` valid, and no session between `t` and `t+5` missing for `s`. | `TARGET_UNAVAILABLE` |
-| E7 Leakage audit | Dataset-level, not per observation: the Section 11 audit (including truncation invariance) passes. A failure makes the **whole dataset version** ineligible. | `DATASET_LEAKAGE_FAIL` |
+**E7 Leakage audit — dataset-level release gate.** Performed on the complete
+dataset after E1–E6 (Section 11 audit, including truncation invariance). A
+failed leakage audit invalidates the dataset version and prevents its release;
+it does **not** generate observation-level exclusion codes, and no subset of
+the dataset is released in its place. The failure and its cause are recorded
+in the dataset manifest, and a corrected build is a new dataset version.
 
-An observation that passes E1–E6 in a dataset that passes E7 is an **eligible
-ML observation**. Nothing else is.
+An observation that passes E1–E6 in a dataset version that passes E7 is an
+**eligible ML observation**. Nothing else is.
 
 Rules attached to the hierarchy:
 
@@ -337,7 +348,11 @@ Rules attached to the hierarchy:
   membership is not evidenced are excluded as `MEMBERSHIP_UNEVIDENCED` (this
   may shorten the usable span); if `NOT_RECONSTRUCTABLE`, they are retained and
   the whole dataset carries the label `current constituents — NOT
-  point-in-time` with the measured affected share.
+  point-in-time`. In every case the dataset manifest records: the membership
+  status (`RECONSTRUCTED`, `PARTIAL (<date range>)` or `NOT_RECONSTRUCTABLE`);
+  the number of observations whose membership is not evidenced; that number
+  as a percentage of candidate observations; and, when `NOT_RECONSTRUCTABLE`,
+  the explicit label above.
 - **Breaks in the lookback window** are not an E3 exclusion: they make the
   affected features missing (5A.3), which E5 then judges. Breaks in the label
   window are excluded at E3.
@@ -347,8 +362,8 @@ Rules attached to the hierarchy:
   excludes the affected windows at E3 (`DATA_ANOMALY`); prices are never
   patched.
 - **Reporting.** Every dataset version records the count of observations
-  excluded at each level and reason code, overall and by year and sector, and
-  the count of eligible observations. These counts are part of the dataset
+  excluded at each of E1–E6 and reason code, overall and by year and sector,
+  the count of eligible observations, and the E7 result. These counts are part of the dataset
   manifest and of every experiment report built on it.
 
 ## 6. Validation protocol (frozen)
@@ -608,8 +623,8 @@ exclusions (counts)      protocol_file_hash
 ## 12. Progression
 
 ```
-1. This specification (with amendments) — reviewed and approved   ← current step
-2. Verified NSE trading calendar (5A.1)
+1. This specification (with amendments) — reviewed and approved   ✓ 2026-10-03
+2. Verified NSE trading calendar (5A.1)                            ← current step
 3. Survivorship audit (5A.2)
 4. Point-in-time feature rules confirmed, including the break rule and the
    corporate-action event list (5A.3)
@@ -644,18 +659,21 @@ Values appear only when produced by a run; none are filled in by hand.
 
 ## 14. Approval checklist
 
-- [ ] Section 1 frozen rules accepted
-- [ ] Target and feature versions accepted
-- [ ] Validation protocol and embargo accepted
-- [ ] Tier ladder and PROPOSED gate numbers ratified or amended, including
+Approved by Akshay, 2026-10-03.
+
+- [x] Section 1 frozen rules accepted
+- [x] Target and feature versions accepted
+- [x] Validation protocol and embargo accepted
+- [x] Tier ladder and PROPOSED gate numbers ratified or amended, including
       MACE ≤ 0.10 and the 50% concentration limit (Section 7.4)
-- [ ] Verified-calendar requirement and its sources accepted (5A.1)
-- [ ] Survivorship audit measurements accepted (5A.2)
-- [ ] Point-in-time break rule and PROPOSED thresholds L = 0.5, H = 2.0
+- [x] Verified-calendar requirement and its sources accepted (5A.1)
+- [x] Survivorship audit measurements accepted (5A.2)
+- [x] Point-in-time break rule and PROPOSED thresholds L = 0.5, H = 2.0
       accepted, with the separate corporate-action event source (5A.3)
-- [ ] Observation eligibility hierarchy accepted, including PROPOSED
-      `W_max = 252` and the membership treatment (5A.5)
-- [ ] Deterministic calibration binning and the Gate 4 edge-case rules,
+- [x] Observation eligibility hierarchy accepted, including PROPOSED
+      `W_max = 252`, the membership treatment and its manifest fields, and E7
+      as a dataset-level release gate (5A.5)
+- [x] Deterministic calibration binning and the Gate 4 edge-case rules,
       including PROPOSED `n_min = max(500, 0.01 · N)`, accepted (Section 7.4)
-- [ ] Research store location accepted
-- [ ] Confirmed: B2 Scoring and Trade Plan remain separate and out of scope
+- [x] Research store location accepted
+- [x] Confirmed: B2 Scoring and Trade Plan remain separate and out of scope
