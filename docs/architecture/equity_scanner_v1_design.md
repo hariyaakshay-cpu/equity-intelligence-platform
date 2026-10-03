@@ -6,9 +6,11 @@ It does not authorize or implement any B2 scoring, ranking, classification,
 candidate, or watchlist decision. B2 remains blocked.
 
 The earlier Section 10 questions 1-4 are superseded by the decisions in
-Section 11. B3-07 remains formally OPEN; the implementation labels its
-observation-date basis PROVISIONAL and does not claim an official NSE
-calendar.
+Section 11. v1's use of the benchmark's returned dates as a PROVISIONAL
+calendar is decided (Section 11 decision 1; `research/b3_07_v1_provisional_calendar_decision_2026-10-03.md`).
+Only the upgrade to an official NSE calendar (B3-07 proper) stays open; the
+implementation labels its observation-date basis PROVISIONAL and does not
+claim an official NSE calendar.
 
 ## 0. Scope, as fixed by Akshay
 
@@ -257,7 +259,7 @@ design does not change `execution_guard.py`'s `FORBIDDEN_PREFIXES`
 
 ## 10. Open questions — not decided here
 
-1. **B3-07 is still open.** May v1 use the benchmark's own returned
+1. **RESOLVED for v1 (Section 11 decision 1); official calendar still open.** May v1 use the benchmark's own returned
    session dates as a provisional trading calendar (in place of an
    official NSE holiday/session list), clearly labelled in output as
    provisional/unofficial? Today's evidence shows this can't simply be
@@ -296,11 +298,12 @@ design does not change `execution_guard.py`'s `FORBIDDEN_PREFIXES`
 ## 11. Decisions (Akshay, 2026-09-26)
 
 1. **Calendar.** v1 uses the benchmark's returned session dates as a
-   PROVISIONAL calendar, labelled provisional in the output, until B3-07
-   closes.
+   PROVISIONAL calendar, labelled provisional in the output, until an
+   official NSE calendar (B3-07 proper) replaces it.
 2. **Break detector.** Flag a session where `close[t]/close[t-1] < 0.5`
    or `> 2.0`. Known gap: small demergers (ratio near 1) are not
-   detected; a corporate-actions feed is deferred to v2.
+   detected; a corporate-actions feed is deferred to v2
+   (see `docs/architecture/equity_demerger_handling.md`).
 3. **Flagged stocks are not excluded from the universe.** A flagged
    stock's history is truncated at the most recent break; indicators are
    computed only on sessions after the break; long-window features (any

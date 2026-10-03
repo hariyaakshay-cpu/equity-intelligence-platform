@@ -37,7 +37,9 @@ adjustment note, and calendar label.
 
 - `calendar_status` is **PROVISIONAL**. Returned Upstox observation dates
   define each acquired series; no official NSE session calendar is claimed.
-  B3-07 remains open.
+  Using the same run's benchmark dates as the v1 calendar is decided
+  (`research/b3_07_v1_provisional_calendar_decision_2026-10-03.md`); an official
+  NSE calendar (B3-07 proper) remains an open upgrade.
 - Upstox daily history is split-adjusted according to the recorded evidence;
   demerger adjustments are not made. This pipeline validates observed values
   and does not repair them.
