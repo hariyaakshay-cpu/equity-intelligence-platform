@@ -67,10 +67,23 @@ def test_accepts_the_canonical_path():
     assert result == CANONICAL_DB_PATH.resolve(strict=False)
 
 
+# The guard compares resolved pathlib Paths, so case-insensitivity is exactly the host
+# platform's: Windows (pathlib's PureWindowsPath) equates case variants, POSIX does not.
+# The allow-list is correct on both; only the expected outcome differs.
+_CASE_INSENSITIVE_PATHS = os.path.normcase("A") == "a"
+
+
+@pytest.mark.skipif(not _CASE_INSENSITIVE_PATHS, reason="case-variant equivalence only holds where pathlib compares paths case-insensitively (Windows)")
 def test_accepts_a_case_variant_of_the_canonical_path():
     variant = Path(str(CANONICAL_DB_PATH).upper())
     result = assert_allowed_db_path(variant)
     assert result == CANONICAL_DB_PATH.resolve(strict=False)
+
+
+@pytest.mark.skipif(_CASE_INSENSITIVE_PATHS, reason="on case-insensitive platforms the case variant is the canonical path")
+def test_refuses_a_case_variant_of_the_canonical_path_on_case_sensitive_platforms():
+    with pytest.raises(ValueError):
+        assert_allowed_db_path(Path(str(CANONICAL_DB_PATH).upper()))
 
 
 def test_accepts_a_monkeypatched_tmp_path_canonical(monkeypatch, tmp_path):

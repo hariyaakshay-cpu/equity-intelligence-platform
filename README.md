@@ -41,6 +41,17 @@ Indicator parameters are in `config/indicators_v1.json` (labelled provisional).
 - **Demergers are not adjusted** and are not detected when the price ratio is near 1; see `docs/architecture/equity_demerger_handling.md`.
 - Breaks (close-to-close ratio below 0.5 or above 2.0) are flagged and history is truncated there. Nothing is adjusted.
 
+## What E4 does not guarantee
+
+- That prices are on a current adjustment basis. The stale check only knows about actions listed in the review CSV, which is
+  maintained by hand and may be empty; an unlisted split, bonus or demerger passes unflagged.
+- That small demergers or in-window listed events are detected (see above).
+- That the trading calendar is official, or that a benchmark-missing session was a non-session.
+- That features are scores or signals. They are raw indicator values; nothing is ranked or recommended.
+
+**Inputs consumed:** E4 reads only the stored acquisition run's `acquired_observations` (high, low, close, volume) and
+`acquired_benchmark` (close). It makes no vendor calls and does not use the open price.
+
 ## Layout
 
 `equity_intel/` (acquisition, features, scanner, persistence, contracts, tests) · `core/providers/` (Upstox client) ·
