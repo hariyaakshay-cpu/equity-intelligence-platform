@@ -2,7 +2,9 @@
 
 Status: **DRAFT — not approved.** Drafted 2026-10-03; amended 2026-10-03
 (Section 5A prerequisites, numeric gate criteria 3–4 in Section 7.4, Section 12
-order). Nothing in this document
+order) and again on review (deterministic calibration bins, Gate 4 edge cases,
+price discontinuity vs corporate-action evidence, eligibility hierarchy
+5A.5). Nothing in this document
 is implemented. Approval by Akshay is required before any code, dataset or
 experiment exists. Numbers marked **PROPOSED** are conservative starting values
 with their derivation shown; they are for ratification or change, and must not
@@ -102,8 +104,9 @@ positive_5d(s, t)       = 1 if forward_5d_return(s, t) > 0 else 0
 - A sample is **dropped** (never filled) if `Close(s, t)` or `Close(s, t+5)` is
   missing, non-positive, or if any session between them is missing for `s`.
 - A zero return is labelled `0`; the zero count is reported.
-- Samples whose window contains a detected corporate-action break (Section 5)
-  are **excluded and counted**, not silently kept.
+- Samples whose label window contains an observed break or a known unadjusted
+  corporate-action event are **excluded and counted** (Section 5A.5, level E3),
+  not silently kept.
 
 ## 4. Features (version `features-v1`, deterministic)
 
@@ -138,9 +141,10 @@ Rules:
 
 ## 5. Data limitations that must be handled, not ignored
 
-1. **Demergers unadjusted / splits adjusted by the vendor.** Detected breaks are
-   handled by exclusion of affected samples (Section 3); the count and symbols
-   are listed in the experiment record. No manual price patching.
+1. **Demergers unadjusted / splits adjusted by the vendor.** Observed breaks and
+   known corporate-action events are handled as set out in 5A.3 and 5A.5
+   (feature missingness or exclusion); the count and symbols are listed in the
+   experiment record. No manual price patching.
 2. **Survivorship and today's constituents.** Cannot be fixed with current data.
    Recorded as a standing limitation; reduced only by a point-in-time
    constituent history (a Section 8 prerequisite for Tiers 3–4).
@@ -157,8 +161,10 @@ Rules:
 ## 5A. Prerequisites before any dataset is built
 
 Each item below produces a recorded, versioned result. No dataset version
-(Section 11), and no target or feature value, is produced until 5A.1–5A.3 are
-complete and approved. 5A.4 records evidence already gathered.
+(Section 11), and no target or feature value, is produced until 5A.1–5A.3
+(including the corporate-action event list in 5A.3) are complete and
+approved. 5A.4 records evidence already gathered. 5A.5 fixes how the builder
+decides which observations are eligible.
 
 ### 5A.1 Verified NSE trading calendar (hard prerequisite)
 
@@ -247,10 +253,29 @@ last_break(s, t) = the latest t' <= t with is_break(s, t'), else none
   `(t, t+5]` contains a break, or a known corporate action, is an audit step
   that may use later knowledge (Section 5 item 3). It removes samples; it never
   creates a feature value.
-- **Known limitation.** Ratio thresholds miss events whose price ratio lies
-  inside `[L, H]`; the 2025 Tata Motors demerger (`TMPV`) is not detected at
-  0.5/2.0 (Section 5A.4). Such events are handled only by sample exclusion from
-  a corporate-action list, and the count of excluded samples is reported.
+- **This is not a corporate-action detector.** Ratio thresholds miss events
+  whose price ratio lies inside `[L, H]`; the 2025 Tata Motors demerger
+  (`TMPV`) is not detected at 0.5/2.0 (Section 5A.4). The absence of a detected
+  break is never evidence that no corporate action occurred.
+
+Two separate concepts are therefore kept apart in every dataset:
+
+1. **Observed price discontinuity** — `is_break(s, t)` above, computed from
+   bars only, point-in-time. It may drive feature missingness and
+   `bars_since_break`.
+2. **Known corporate-action event** — a record from an authoritative
+   point-in-time event source (exchange corporate-action announcements, with
+   symbol, event type, ex-date, ratio or terms, announcement date, and the
+   source). Each event also records whether the vendor's prices are adjusted
+   for it (`ADJUSTED`, `UNADJUSTED` or `UNKNOWN`; `UNKNOWN` is treated as
+   `UNADJUSTED`). The current review CSV is a snapshot, not such a source, and
+   may be used only for events whose ex-date and terms are verified against
+   one.
+
+A known `UNADJUSTED` event invalidates observations even when no
+discontinuity is detected. It is used only to **exclude** observations
+(Section 5A.5, level E3), never to create a feature value. The event list is a
+versioned input (`ca_events_version`) built before any dataset version.
 - **Truncation-invariance test (mandatory, part of the leakage audit).** For a
   sample of symbols and dates, every feature computed for `(s, t)` from the
   full series must equal the same feature computed from the series truncated
@@ -283,6 +308,48 @@ for six instruments. It wrote nothing to any database.
   corporate-action artefact.
 - Six instruments are a sample, not an audit. Full-universe depth is measured
   during historical data expansion (Section 12).
+
+### 5A.5 Observation eligibility hierarchy
+
+Every candidate observation `(s, t)` passes through these levels **in this
+order**. The first level it fails assigns its single exclusion reason; later
+levels are not evaluated for it. The dataset builder may not reorder, skip or
+add levels, and may not decide a case these rules do not cover: an uncovered
+case stops the build and requires an amendment to this section.
+
+| Level | Check | Exclusion reason codes |
+|---|---|---|
+| E1 Calendar | `t` is a session in `calendar_version`; `s` has a valid bar (positive OHLC, high ≥ low) at `t` and at `prev(t)`. Vendor bars on non-sessions are dropped and listed as calendar discrepancies. | `NOT_A_SESSION`, `BAR_MISSING`, `BAR_INVALID` |
+| E2 Universe / membership | `s` is in the dataset universe, and its membership at `t` is treated according to the 5A.2 result (below). | `NOT_IN_UNIVERSE`, `MEMBERSHIP_UNEVIDENCED` |
+| E3 Corporate action / break | No known `UNADJUSTED` (or `UNKNOWN`) corporate-action event has an ex-date in the feature lookback window `[t − W_max, t]` or the label window `(t, t+5]`. No observed discontinuity (5A.3) lies in the label window. No unresolved vendor data anomaly is listed for `s` over those windows. | `CA_EVENT_IN_WINDOW`, `BREAK_IN_LABEL_WINDOW`, `DATA_ANOMALY` |
+| E4 History sufficiency | At least `W_max` valid sessions of `s` exist at or before `t`, and no calendar session in `[t − W_max, t]` lacks a bar for `s`. **PROPOSED:** `W_max = 252` (the longest `features-v1` lookback). | `INSUFFICIENT_HISTORY`, `GAP_IN_LOOKBACK` |
+| E5 Feature completeness | Every feature that `features-v1` marks `required` is present. Features not marked required may be missing (Section 4); the `required` list is fixed in the feature version before any build. | `REQUIRED_FEATURE_MISSING` |
+| E6 Target availability | The Section 3 label conditions hold: `Close(s, t+5)` valid, and no session between `t` and `t+5` missing for `s`. | `TARGET_UNAVAILABLE` |
+| E7 Leakage audit | Dataset-level, not per observation: the Section 11 audit (including truncation invariance) passes. A failure makes the **whole dataset version** ineligible. | `DATASET_LEAKAGE_FAIL` |
+
+An observation that passes E1–E6 in a dataset that passes E7 is an **eligible
+ML observation**. Nothing else is.
+
+Rules attached to the hierarchy:
+
+- **Membership treatment (E2)** is fixed per dataset version from the 5A.2
+  result. **PROPOSED:** if `RECONSTRUCTED` or `PARTIAL`, observations whose
+  membership is not evidenced are excluded as `MEMBERSHIP_UNEVIDENCED` (this
+  may shorten the usable span); if `NOT_RECONSTRUCTABLE`, they are retained and
+  the whole dataset carries the label `current constituents — NOT
+  point-in-time` with the measured affected share.
+- **Breaks in the lookback window** are not an E3 exclusion: they make the
+  affected features missing (5A.3), which E5 then judges. Breaks in the label
+  window are excluded at E3.
+- **Data anomalies** (for example the 2004 vendor hole or the VEDL 2005 jumps)
+  are listed in the data-quality audit with an explicit status. A hole is
+  handled by E4 (`GAP_IN_LOOKBACK`) and E6. An unresolved price anomaly
+  excludes the affected windows at E3 (`DATA_ANOMALY`); prices are never
+  patched.
+- **Reporting.** Every dataset version records the count of observations
+  excluded at each level and reason code, overall and by year and sector, and
+  the count of eligible observations. These counts are part of the dataset
+  manifest and of every experiment report built on it.
 
 ## 6. Validation protocol (frozen)
 
@@ -384,12 +451,23 @@ is an amendment to this document made before the experiments it governs
 **Criterion 3 — maximum absolute calibration error (MACE).**
 
 ```
-Sort the N test samples by p_i and split them into K = 10 bins of equal count
-(the first N mod K bins take one extra sample).
+Order the N test samples deterministically by the key
+    (p_i ascending, symbol ascending, date t ascending)
+where p_i is the stored prediction (float64, as written to the results file).
+Let j = 0…N−1 be a sample's position in that order. With K = 10:
+    bin(j) = floor(j · K / N)                 (bins 0…9; sizes differ by at most 1)
+Ties in p_i never decide a bin: the (symbol, date) key does.
 For each bin b:   p̄_b = mean of p_i in b,   ȳ_b = mean of y_i in b
 MACE = max over b of | p̄_b − ȳ_b |
 Pass if MACE ≤ 0.10.
 ```
+
+- This is a pass/fail criterion, not a tuning target. Any calibration step
+  (for example Platt scaling) is part of the model, fitted on training or
+  validation data only, and declared in the pre-registered protocol. Nothing is
+  fitted or re-binned on test data.
+- The per-bin table (`p̄_b`, `ȳ_b`, count) is reported in full, not only the
+  maximum.
 
 **Criterion 4 — concentration of improvement.** Improvement is measured in
 log loss against the Tier 0 baseline, whose prediction for every test sample is
@@ -402,18 +480,37 @@ D        = Σ_i d_i                               aggregate improvement
 C_g      = Σ_{i ∈ g} d_i                         contribution of group g
 share_g  = C_g / D                               (defined only when D > 0)
 
-Groups g are (a) each sector, using the sector mapping of the dataset version,
-and (b) each walk-forward test fold.
-Pass if D > 0 and share_g ≤ 0.50 for every sector and every fold.
+Groups g are (a) each eligible sector group and (b) each walk-forward test
+fold (definitions below).
+Pass if D > 0 and share_g ≤ 0.50 for every sector group and every fold.
 ```
 
+Equivalent reading: removing any single group must leave at least half of the
+net improvement (`D − C_g ≥ D / 2`).
+
+Edge cases, fixed now so no experiment decides them:
+
+- **`D = 0` or `D < 0`.** Criterion 4 **fails**. Shares are not computed and
+  are reported as `UNDEFINED (D ≤ 0)`. (Criterion 1 fails in this case too.)
+- **Groups that make the result worse (`C_g < 0`).** They stay in the
+  calculation. The denominator is the **net** improvement `D`, so a losing group
+  shrinks `D` and raises the other groups' shares; the rule becomes stricter,
+  never looser. Example: sector A contributes +100 and sector B −60, so
+  D = 40 and share_A = 2.5, which fails, because the net result depends wholly
+  on A. A negative share satisfies `≤ 0.50` on its own. Every group with
+  `C_g < 0` is listed in the report.
+- **Small sectors.** A sector with fewer than `n_min` test samples is not
+  dropped. It is pooled with all other small sectors into one group,
+  `SMALL_SECTORS`, which is tested like any sector. **PROPOSED:**
+  `n_min = max(500, 0.01 · N)`. Symbols with no sector in the dataset's mapping
+  form the group `UNMAPPED`, which follows the same size rule.
+- **Folds.** Every walk-forward test fold is its own group; folds are never
+  pooled. With two folds, one of them always holds at least half the
+  improvement, so the fold condition says nothing. An experiment with fewer
+  than three test folds therefore cannot pass the gate.
 - Shares are sums, not averages, so a group's weight reflects its number of
-  samples as well as its per-sample improvement. Shares may be negative (a group
-  where the model is worse than baseline) or above 1; the rule is applied to
-  the values as computed.
-- With two folds, one of them always holds at least half the improvement, so
-  the fold condition says nothing. An experiment with fewer than three test
-  folds therefore cannot pass the gate.
+  samples as well as its per-sample improvement. The report gives, for every
+  group: sample count, `C_g`, `share_g`, and mean `d_i`.
 
 Passing a gate permits only the **next research step**. It does not permit any
 product use. A failed gate means *stop or revise*; a revision is a new
@@ -514,7 +611,8 @@ exclusions (counts)      protocol_file_hash
 1. This specification (with amendments) — reviewed and approved   ← current step
 2. Verified NSE trading calendar (5A.1)
 3. Survivorship audit (5A.2)
-4. Point-in-time feature rules confirmed, including the break rule (5A.3)
+4. Point-in-time feature rules confirmed, including the break rule and the
+   corporate-action event list (5A.3)
 5. History-depth result (5A.4; sample probe done, full universe pending)
 6. Dataset design (historical data expansion; data-quality audit, Section 5)
 7. Dataset v1 + leakage audit
@@ -554,6 +652,10 @@ Values appear only when produced by a run; none are filled in by hand.
 - [ ] Verified-calendar requirement and its sources accepted (5A.1)
 - [ ] Survivorship audit measurements accepted (5A.2)
 - [ ] Point-in-time break rule and PROPOSED thresholds L = 0.5, H = 2.0
-      accepted (5A.3)
+      accepted, with the separate corporate-action event source (5A.3)
+- [ ] Observation eligibility hierarchy accepted, including PROPOSED
+      `W_max = 252` and the membership treatment (5A.5)
+- [ ] Deterministic calibration binning and the Gate 4 edge-case rules,
+      including PROPOSED `n_min = max(500, 0.01 · N)`, accepted (Section 7.4)
 - [ ] Research store location accepted
 - [ ] Confirmed: B2 Scoring and Trade Plan remain separate and out of scope
