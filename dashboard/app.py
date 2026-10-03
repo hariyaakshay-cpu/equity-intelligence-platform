@@ -38,6 +38,13 @@ from equity_intel.persistence.schema import SCHEMA_VERSION
 # Shown on every page (Stage 1 data-trust pages and the original /equity page).
 BANNER_TEXT = "RESEARCH / PAPER ONLY · SCORING BLOCKED (B2) · NO TRADING SIGNALS"
 
+# Demo mode only: the seeded demo dates are fixed (scripts/dashboard_demo_seed.py BAR_DATES), so an
+# OUTDATED state is expected whenever the demo is viewed after that Friday.
+DEMO_DATES_NOTE = (
+    "Demo dates are fixed: Wed 2026-09-23 to Fri 2026-09-25 (latest session Fri 2026-09-25). "
+    "An OUTDATED state is therefore expected."
+)
+
 DEFAULT_PAGE_SIZE = 25
 MAX_PAGE_SIZE = 200
 
@@ -203,7 +210,7 @@ def create_app(demo: bool = False, db_path: Optional[Union[str, Path]] = None) -
 
     @app.context_processor
     def _inject_banner():
-        return {"banner_text": BANNER_TEXT}
+        return {"banner_text": BANNER_TEXT, "demo_dates_note": DEMO_DATES_NOTE}
 
     def _message_page(heading, message, status=200):
         return render_template(

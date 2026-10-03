@@ -10,7 +10,7 @@ import pytest
 from dashboard import queries, stock_detail
 from dashboard.app import BANNER_TEXT, create_app
 from equity_intel.persistence import connection, db_path_guard
-from scripts.dashboard_demo_seed import seed_demo_database
+from scripts.dashboard_demo_seed import BAR_DATES, SESSION_DATE, seed_demo_database
 
 SYMBOLS = ["DEMOAAA", "DEMOAAC", "DEMOBAA", "DEMOPAB", "DEMOAUB", "DEMOFAB"]  # VALID, CA flag, break, STALE, INSUFF, FAILED
 
@@ -235,3 +235,17 @@ def test_stale_symbol_page_shows_older_data_through_than_run_session(client):
     assert 'id="status-badge">STALE' in html
     assert "2026-09-24" in through and "2026-09-25" in session
     assert "latest valid candle (2026-09-24) is older than latest_closed_session (2026-09-25)" in html
+
+
+def test_demo_banner_states_the_fixed_demo_dates_on_every_demo_page(client):
+    # the note's dates must match the seed's constants (the app cannot import the seed script)
+    assert (BAR_DATES[0], SESSION_DATE) == ("2026-09-23", "2026-09-25")
+    for url in ("/equity", "/equity/stock/DEMOAAA", "/equity/stock/NOPE"):
+        html = client.get(url).get_data(as_text=True)
+        assert "Demo dates are fixed: Wed 2026-09-23 to Fri 2026-09-25" in html, url
+        assert "OUTDATED state is therefore expected" in html, url
+
+
+def test_non_demo_pages_carry_no_demo_note(demo_db):
+    html = create_app(demo=False, db_path=demo_db).test_client().get("/equity/stock/DEMOAAA").get_data(as_text=True)
+    assert "Demo dates are fixed" not in html and "DEMO DATA" not in html
