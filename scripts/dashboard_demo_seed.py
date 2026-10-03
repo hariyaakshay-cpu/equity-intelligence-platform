@@ -114,7 +114,9 @@ DEMO_E4_CONFIG = {
 
 
 def _bar_values(index: int, trading_date: str, *, revised: bool) -> tuple[float, int]:
-    """(close, volume) for symbol number `index` on `trading_date`. The newest
+    """DEMO ONLY: synthetic revisions (fabricated), not a model of vendor behaviour.
+
+    (close, volume) for symbol number `index` on `trading_date`. The newest
     run (revised=True) revises some 09-25 bars: a close for every 6th symbol,
     a volume for every 9th, to give the snapshot-audit view real changes."""
     close, volume = 100.0 + index + BAR_DATES.index(trading_date) * 0.5, 1_000_000
@@ -226,6 +228,26 @@ def _status_and_flag_counts(rows):
     return status_counts, flag_counts
 
 
+def _require_demo_path(path) -> Path:
+    """The one guard for every writer in this script: `path` must resolve to
+    exactly db_path_guard.DEMO_DB_PATH. Stricter than connection.connect()'s
+    allow-list, which also admits the canonical data/equity_intel.db.
+
+    DEMO_DB_PATH is looked up dynamically (module-qualified) so tests that
+    monkeypatch it still take effect. Raises RefusedRealDatabaseError before
+    anything is touched, so callers must invoke this before opening a
+    connection or unlinking a file.
+    """
+    resolved = Path(path).resolve(strict=False)
+    allowed = db_path_guard.DEMO_DB_PATH.resolve(strict=False)
+    if resolved != allowed:
+        raise RefusedRealDatabaseError(
+            f"dashboard_demo_seed.py only ever writes to the demo database ({allowed}); "
+            f"refusing to touch {resolved}"
+        )
+    return resolved
+
+
 def seed_demo_database(path: Optional[Path] = None) -> None:
     """Delete and recreate the demo database with fabricated lifecycle data.
 
@@ -243,13 +265,7 @@ def seed_demo_database(path: Optional[Path] = None) -> None:
     """
     if path is None:
         path = db_path_guard.DEMO_DB_PATH
-    resolved = Path(path).resolve(strict=False)
-    allowed = db_path_guard.DEMO_DB_PATH.resolve(strict=False)
-    if resolved != allowed:
-        raise RefusedRealDatabaseError(
-            f"dashboard_demo_seed.py only ever writes to the demo database ({allowed}); "
-            f"refusing to touch {resolved}"
-        )
+    resolved = _require_demo_path(path)
 
     if resolved.exists():
         resolved.unlink()
@@ -358,9 +374,11 @@ def _weekdays_ending(end_iso: str, n: int) -> list[str]:
 def _seed_e4_tables(resolved: Path, latest_session: str) -> None:
     """Fabricated E4 acquisition + feature tables for the demo database.
 
-    `resolved` has already been checked against DEMO_DB_PATH by the caller,
-    and connection.connect() re-checks it against the allow-list itself.
+    Applies the exact-DEMO_DB_PATH guard itself, before opening anything:
+    connection.connect() would also accept the canonical equity_intel.db, so
+    its own allow-list is not a sufficient protection here.
     """
+    resolved = _require_demo_path(resolved)
     dates = _weekdays_ending(latest_session, E4_DEMO_BARS)
     acq, e4 = "demo-acq-1", "demo-e4-1"
     conn = connection.connect(resolved)

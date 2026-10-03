@@ -8,7 +8,7 @@ data/equity_intel.db or a real data/equity_intel_demo.db.
 import pytest
 
 from equity_intel.persistence import connection, db_path_guard
-from scripts.dashboard_demo_seed import FAKE_SYMBOLS, RefusedRealDatabaseError, seed_demo_database
+from scripts.dashboard_demo_seed import FAKE_SYMBOLS, RefusedRealDatabaseError, _seed_e4_tables, seed_demo_database
 
 
 @pytest.fixture
@@ -215,3 +215,29 @@ def test_seed_snapshots_are_hash_consistent_and_revised_between_the_two_newest_f
                           "AND a.scan_run_id='r-demo-prev-complete' AND b.scan_run_id='r-demo-latest-complete' "
                           "AND a.content_hash<>b.content_hash")[0][0]
     assert changed > 0
+
+
+def test_seed_e4_tables_refuses_the_canonical_path(paths):
+    # connection.connect() would accept the canonical DB (it is on the allow-list), so the
+    # seed's own exact-demo-path guard is the only thing standing in the way.
+    canonical, _demo = paths
+    with pytest.raises(RefusedRealDatabaseError):
+        _seed_e4_tables(canonical, "2026-09-25")
+    assert not canonical.exists()  # not created
+
+
+def test_seed_e4_tables_leaves_an_existing_canonical_file_unmodified(paths):
+    canonical, _demo = paths
+    canonical.write_bytes(b"real data, do not touch")
+    before = (canonical.read_bytes(), canonical.stat().st_mtime_ns)
+    with pytest.raises(RefusedRealDatabaseError):
+        _seed_e4_tables(canonical, "2026-09-25")
+    assert (canonical.read_bytes(), canonical.stat().st_mtime_ns) == before
+
+
+def test_seed_e4_tables_refuses_a_sibling_of_the_demo_path(paths):
+    canonical, demo = paths
+    sibling = demo.parent / "equity_intel_demo.db.bak"
+    with pytest.raises(RefusedRealDatabaseError):
+        _seed_e4_tables(sibling, "2026-09-25")
+    assert not sibling.exists() and not canonical.exists()
