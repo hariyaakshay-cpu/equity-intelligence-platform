@@ -30,10 +30,13 @@ from typing import Optional, Union
 
 from flask import Flask, jsonify, render_template, request
 
-from dashboard import aggregates, queries
+from dashboard import aggregates, queries, stock_detail
 from equity_intel.indicators.trend import exponential_moving_average
 from equity_intel.persistence import connection, db_path_guard
 from equity_intel.persistence.schema import SCHEMA_VERSION
+
+# Shown on every page (Stage 1 data-trust pages and the original /equity page).
+BANNER_TEXT = "RESEARCH / PAPER ONLY · SCORING BLOCKED (B2) · NO TRADING SIGNALS"
 
 DEFAULT_PAGE_SIZE = 25
 MAX_PAGE_SIZE = 200
@@ -198,6 +201,15 @@ def create_app(demo: bool = False, db_path: Optional[Union[str, Path]] = None) -
     else:
         app.config["DB_PATH"] = db_path_guard.DEMO_DB_PATH if demo else db_path_guard.CANONICAL_DB_PATH
 
+    @app.context_processor
+    def _inject_banner():
+        return {"banner_text": BANNER_TEXT}
+
+    def _message_page(heading, message, status=200):
+        return render_template(
+            "message.html", demo=app.config["DEMO_MODE"], heading=heading, message=message
+        ), status
+
     def _resolve_run_id(conn, requested_run_id):
         if requested_run_id:
             return requested_run_id
@@ -241,6 +253,34 @@ def create_app(demo: bool = False, db_path: Optional[Union[str, Path]] = None) -
         except _DatabaseError as exc:
             db_message = _database_error_body(app.config["DEMO_MODE"], exc.detail)["message"]
         return render_template("equity.html", demo=app.config["DEMO_MODE"], db_message=db_message)
+
+    @app.get("/equity/stock/<symbol>")
+    def stock_detail_page(symbol):
+        """Stage 1 Stock Detail page: stored values only, no chart, no score."""
+        try:
+            conn = _open_checked_connection(app.config["DB_PATH"])
+        except _DatabaseUnavailable:
+            return _message_page("No scans yet", _no_scans_body(app.config["DEMO_MODE"])["message"])
+        except _DatabaseVersionMismatch as exc:
+            return _message_page("Database version mismatch",
+                                 _version_mismatch_body(app.config["DEMO_MODE"], exc.found_version)["message"])
+        except _DatabaseError as exc:
+            return _message_page("Database error", _database_error_body(app.config["DEMO_MODE"], exc.detail)["message"])
+        try:
+            run = queries.get_latest_complete_run(conn)
+            if run is None:
+                return _message_page("No COMPLETE scan run", "There is no COMPLETE full scan run to show yet.", 404)
+            result = queries.get_symbol_result(conn, run["run_id"], symbol)
+            if result is None:
+                return _message_page(
+                    "Symbol not found",
+                    f"{symbol!r} is not in the latest COMPLETE run ({run['run_id']}).",
+                    404,
+                )
+            context = stock_detail.build(conn, run, symbol, result, app.config["DEMO_MODE"])
+            return render_template("stock_detail.html", **context)
+        finally:
+            conn.close()
 
     @app.get("/api/equity/summary")
     @_guarded
