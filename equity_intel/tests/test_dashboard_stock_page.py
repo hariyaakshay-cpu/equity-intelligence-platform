@@ -249,3 +249,34 @@ def test_demo_banner_states_the_fixed_demo_dates_on_every_demo_page(client):
 def test_non_demo_pages_carry_no_demo_note(demo_db):
     html = create_app(demo=False, db_path=demo_db).test_client().get("/equity/stock/DEMOAAA").get_data(as_text=True)
     assert "Demo dates are fixed" not in html and "DEMO DATA" not in html
+
+
+def test_every_symbol_in_the_latest_demo_run_renders_cleanly(client, demo_db):
+    ro = connection.get_read_only_connection(demo_db)
+    try:
+        run = queries.get_latest_complete_run(ro)
+        symbols = [r[0] for r in ro.execute(
+            "SELECT symbol FROM symbol_scan_results WHERE scan_run_id = ? ORDER BY symbol", (run["run_id"],))]
+    finally:
+        ro.close()
+    assert len(symbols) >= 30
+    for symbol in symbols:
+        res, html = _page(client, symbol)
+        assert res.status_code == 200, symbol
+        assert "Traceback" not in html, symbol
+        assert "None" not in html, symbol  # a missing value must render "not recorded", never a Python None
+
+
+def test_script_tag_in_the_url_is_never_echoed_raw(client):
+    # Literal form from the review: the "/" in </script> makes this a different (unrouted) URL.
+    res = client.get("/equity/stock/<script>alert(1)</script>")
+    assert res.status_code == 404
+    assert "<script>alert(1)" not in res.get_data(as_text=True)
+    # Slash-free forms reach our own 404 page, which echoes the symbol: it must be HTML-escaped.
+    for payload in ("<script>alert(1)", "<img src=x onerror=alert(1)>", "%3Cscript%3Ealert(1)%3C%2Fscript%3E"):
+        res = client.get(f"/equity/stock/{payload}")
+        html = res.get_data(as_text=True)
+        assert res.status_code == 404, payload
+        assert "<script>alert(1)" not in html and "<img src=x" not in html, payload
+    escaped = client.get("/equity/stock/<script>alert(1)").get_data(as_text=True)
+    assert "&lt;script&gt;alert(1)" in escaped
