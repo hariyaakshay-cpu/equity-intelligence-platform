@@ -55,7 +55,7 @@ CREATE TABLE IF NOT EXISTS symbol_acquisition_results (
 CREATE TABLE IF NOT EXISTS e4_scan_runs (
  scan_id TEXT PRIMARY KEY, acquisition_run_id TEXT NOT NULL, started_at TEXT NOT NULL, completed_at TEXT,
  status TEXT NOT NULL, asof_date TEXT, calendar_status TEXT, constituents_sha256 TEXT, instrument_master_sha256 TEXT,
- indicator_config_json TEXT NOT NULL, failure_reason TEXT
+ indicator_config_json TEXT NOT NULL, failure_reason TEXT, corporate_action_review_sha256 TEXT
 );
 CREATE TABLE IF NOT EXISTS e4_data_quality_results (
  scan_id TEXT NOT NULL, symbol TEXT NOT NULL, status TEXT NOT NULL, reason TEXT, n_bars INTEGER,
@@ -81,6 +81,8 @@ def connect(path: str | Path = CANONICAL_DB_PATH) -> sqlite3.Connection:
         connection.executescript(ACQUISITION_SCHEMA)
         if "relative_return" not in {r["name"] for r in connection.execute("PRAGMA table_info(e4_feature_sets)")}:
             connection.execute("ALTER TABLE e4_feature_sets ADD COLUMN relative_return REAL")
+        if "corporate_action_review_sha256" not in {r["name"] for r in connection.execute("PRAGMA table_info(e4_scan_runs)")}:
+            connection.execute("ALTER TABLE e4_scan_runs ADD COLUMN corporate_action_review_sha256 TEXT")
         connection.commit()
     except Exception:
         connection.close()
