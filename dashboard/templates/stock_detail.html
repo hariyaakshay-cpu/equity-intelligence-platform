@@ -73,7 +73,8 @@
     <tr><th>Calendar</th><td>{{ v(run.calendar_source) }} &middot; verification: {{ v(run.calendar_verification) }}</td><td>{{ layer("ScanRun") }}</td></tr>
     <tr><th>Adjustment basis</th><td>{{ v(p.adjustment) }}</td><td>{{ layer("E4") }} acquisition rows</td></tr>
     <tr><th>Bars retrieved</th><td>{{ p.bars.n }}{% if p.bars.n %} ({{ p.bars.first_date }} to {{ p.bars.last_date }}){% endif %}</td><td>{{ layer("ScanRun") }} snapshots</td></tr>
-    <tr><th>Data-through date</th><td>{{ v(p.bars.last_date) }}</td><td>{{ layer("ScanRun") }}</td></tr>
+    <tr><th>Data-through date</th><td id="data-through">{{ v(p.bars.last_date) }} <span class="note">(this symbol's last stored snapshot bar)</span></td><td>{{ layer("ScanRun") }} snapshots</td></tr>
+    <tr><th>Run latest closed session</th><td id="run-session">{{ v(run.latest_closed_session) }} <span class="note">(scan_runs; the session this run was judged against)</span></td><td>{{ layer("ScanRun") }} run</td></tr>
     <tr><th>Retrieved at</th><td>{{ v(p.bars.retrieved_at) }}{% if p.bars.first_retrieved_at and p.bars.first_retrieved_at != p.bars.retrieved_at %} (first bar {{ p.bars.first_retrieved_at }}){% endif %}</td><td>{{ layer("ScanRun") }}</td></tr>
     <tr><th>Snapshot content hash</th><td>
       {% if p.last_bar_hash %}last bar: <code>{{ p.last_bar_hash }}</code>{% else %}{{ v(none) }}{% endif %}

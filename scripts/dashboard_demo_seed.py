@@ -28,11 +28,20 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
-from dashboard.queries import expected_latest_session
 from equity_intel.persistence import connection, db_path_guard
 from equity_intel.scanner.snapshots import compute_content_hash
 
 FAKE_SECTORS = ("IT", "Banking", "Pharma", "Auto", "FMCG", "Energy")
+
+# Fabricated bar dates shared by the two newest full runs. Weekdays only
+# (Wed, Thu, Fri). The demo is deterministic: the newest full run's
+# latest_closed_session is the last bar date, so as seeded it reads OUTDATED
+# against today's date (it is demo data from September) and, as of that Friday
+# evening, current. A STALE demo symbol has no bar on that last date.
+BAR_DATES = ("2026-09-23", "2026-09-24", "2026-09-25")
+SESSION_DATE = BAR_DATES[-1]
+STALE_LAST_DATE = BAR_DATES[-2]
+STALE_REASON = f"latest valid candle ({STALE_LAST_DATE}) is older than latest_closed_session ({SESSION_DATE})"
 
 # (symbol, company_name, sector, symbol_data_status, status_reason, flags)
 FAKE_SYMBOLS = [
@@ -50,7 +59,7 @@ FAKE_SYMBOLS = [
      dict(history_gaps=True, corporate_action_review=True, price_break_detected=False, non_eq_series=False)),
     ("DEMOPAA", "Demo Pharma Labs", "Pharma", "VALID", None,
      dict(history_gaps=False, corporate_action_review=False, price_break_detected=False, non_eq_series=False)),
-    ("DEMOPAB", "Demo Remedy Sciences", "Pharma", "STALE", "no fresh candle in the last 5 sessions",
+    ("DEMOPAB", "Demo Remedy Sciences", "Pharma", "STALE", STALE_REASON,
      dict(history_gaps=False, corporate_action_review=False, price_break_detected=False, non_eq_series=False)),
     ("DEMOPAC", "Demo Wellness Corp", "Pharma", "VALID", None,
      dict(history_gaps=False, corporate_action_review=False, price_break_detected=False, non_eq_series=True)),
@@ -70,14 +79,14 @@ FAKE_SYMBOLS = [
      dict(history_gaps=False, corporate_action_review=False, price_break_detected=False, non_eq_series=False)),
     ("DEMOENB", "Demo Power Grid Co", "Energy", "VALID", None,
      dict(history_gaps=False, corporate_action_review=False, price_break_detected=False, non_eq_series=False)),
-    ("DEMOENC", "Demo Solar Industries", "Energy", "STALE", "no fresh candle in the last 5 sessions",
+    ("DEMOENC", "Demo Solar Industries", "Energy", "STALE", STALE_REASON,
      dict(history_gaps=False, corporate_action_review=False, price_break_detected=False, non_eq_series=False)),
 ]
 # Pad up to ~30 symbols by cycling through sectors/statuses with distinct symbols.
 _STATUS_CYCLE = ("VALID", "VALID", "VALID", "INSUFFICIENT_HISTORY", "STALE", "FAILED")
 _REASON_FOR = {
     "INSUFFICIENT_HISTORY": "only a partial history window is available",
-    "STALE": "no fresh candle in the last 5 sessions",
+    "STALE": STALE_REASON,
     "FAILED": "provider returned an error for the full window",
     "VALID": None,
 }
@@ -100,9 +109,11 @@ while len(FAKE_SYMBOLS) < 30:
     ))
 
 
-# Three fabricated bar dates shared by the two newest full runs.
-BAR_DATES = ("2026-09-24", "2026-09-25", "2026-09-26")
-E4_DEMO_BARS = 60
+# Date whose bars the newest full run revises relative to the previous one.
+REVISED_DATE = BAR_DATES[1]
+# Equal to the demo E4 config's minimum_history_bars, so a VALID demo symbol
+# really has the history its E4 config demands.
+E4_DEMO_BARS = 252
 DEMO_ADJUSTMENT_STATUS = "DEMO fabricated series (not a real adjustment basis)"
 DEMO_E4_CONFIG = {
     "ema_short": 20, "ema_medium": 50, "ema_long": 200, "rsi_period": 14, "roc_lookback": 10,
@@ -113,14 +124,20 @@ DEMO_E4_CONFIG = {
 }
 
 
+def _bar_dates_for(status: str) -> tuple:
+    """Bar dates a symbol has in a full run: a STALE symbol's newest bar is
+    older than the run's session, so it lacks the last date."""
+    return BAR_DATES[:-1] if status == "STALE" else BAR_DATES
+
+
 def _bar_values(index: int, trading_date: str, *, revised: bool) -> tuple[float, int]:
     """DEMO ONLY: synthetic revisions (fabricated), not a model of vendor behaviour.
 
     (close, volume) for symbol number `index` on `trading_date`. The newest
-    run (revised=True) revises some 09-25 bars: a close for every 6th symbol,
-    a volume for every 9th, to give the snapshot-audit view real changes."""
+    run (revised=True) revises some REVISED_DATE bars: a close for every 6th
+    symbol, a volume for every 9th, to give the snapshot-audit view real changes."""
     close, volume = 100.0 + index + BAR_DATES.index(trading_date) * 0.5, 1_000_000
-    if revised and trading_date == "2026-09-25":
+    if revised and trading_date == REVISED_DATE:
         if index % 6 == 0:
             close += 0.75
         if index % 9 == 0:
@@ -297,11 +314,11 @@ def seed_demo_database(path: Optional[Path] = None) -> None:
         _insert_scan_run(conn, "r-demo-prev-complete", "2026-09-26T09:20:00")
         for i, (symbol, name, sector, status, reason, flags) in enumerate(FAKE_SYMBOLS):
             _insert_symbol_result(conn, "r-demo-prev-complete", symbol, name, sector, status, reason, flags)
-            for d in BAR_DATES:
+            for d in _bar_dates_for(status):
                 _insert_snapshot(conn, "r-demo-prev-complete", symbol, d, "2026-09-26T09:20:00+05:30",
                                  *_bar_values(i, d, revised=False))
         _complete_run(
-            conn, "r-demo-prev-complete", "2026-09-26T09:45:00", BAR_DATES[-1],
+            conn, "r-demo-prev-complete", "2026-09-26T09:45:00", SESSION_DATE,
             status_counts, flag_counts,
             requested=len(FAKE_SYMBOLS),
             successful=status_counts["VALID"],
@@ -310,15 +327,15 @@ def seed_demo_database(path: Optional[Path] = None) -> None:
         conn.commit()
 
         # r2: the latest COMPLETE run -- the one the Overview page should
-        # show. Its latest_closed_session is computed at seed time (not
-        # hardcoded) so a freshly-seeded demo DB is never itself OUTDATED,
-        # no matter what day it is seeded on. Some bars are revised relative
+        # show. Its latest_closed_session is SESSION_DATE (fixed, a Friday),
+        # so seeding is deterministic; see the comment on BAR_DATES for what
+        # that means for the OUTDATED banner. Some bars are revised relative
         # to r1b (see _bar_values), so the audit view has changes to show.
-        latest_session = expected_latest_session().isoformat()
+        latest_session = SESSION_DATE
         _insert_scan_run(conn, "r-demo-latest-complete", "2026-09-27T09:20:00")
         for i, (symbol, name, sector, status, reason, flags) in enumerate(FAKE_SYMBOLS):
             _insert_symbol_result(conn, "r-demo-latest-complete", symbol, name, sector, status, reason, flags)
-            for d in BAR_DATES:
+            for d in _bar_dates_for(status):
                 _insert_snapshot(conn, "r-demo-latest-complete", symbol, d, "2026-09-27T09:20:00+05:30",
                                  *_bar_values(i, d, revised=True))
         _complete_run(
@@ -379,7 +396,7 @@ def _seed_e4_tables(resolved: Path, latest_session: str) -> None:
     its own allow-list is not a sufficient protection here.
     """
     resolved = _require_demo_path(resolved)
-    dates = _weekdays_ending(latest_session, E4_DEMO_BARS)
+    dates = _weekdays_ending(latest_session, E4_DEMO_BARS + 1)  # one spare for STALE symbols
     acq, e4 = "demo-acq-1", "demo-e4-1"
     conn = connection.connect(resolved)
     try:
@@ -404,7 +421,8 @@ def _seed_e4_tables(resolved: Path, latest_session: str) -> None:
             if status == "FAILED":
                 continue  # no bars, no E4 rows: the dashboard must show "not recorded"
             n_bars = 41 if status == "INSUFFICIENT_HISTORY" else E4_DEMO_BARS
-            symbol_dates = dates[-n_bars:]
+            # a STALE symbol's newest observation is one session older than the E4 as-of date
+            symbol_dates = dates[-(n_bars + 1):-1] if status == "STALE" else dates[-n_bars:]
             for j, d in enumerate(symbol_dates):
                 close = 100.0 + i + j * 0.1
                 conn.execute(
@@ -414,12 +432,13 @@ def _seed_e4_tables(resolved: Path, latest_session: str) -> None:
                      "PROVISIONAL", DEMO_ADJUSTMENT_STATUS, acq),
                 )
             full = status == "VALID"
+            complete = n_bars >= DEMO_E4_CONFIG["minimum_history_bars"]  # w52_complete / volume_usable follow bar count
             reason_e4 = None if full else reason
             break_date = symbol_dates[len(symbol_dates) // 2] if flags["price_break_detected"] else None
             conn.execute(
                 "INSERT INTO e4_data_quality_results VALUES(?,?,?,?,?,?,?,?,?)",
-                (e4, symbol, status, reason_e4, n_bars, int(full), break_date,
-                 0.45 if break_date else None, int(full)),
+                (e4, symbol, status, reason_e4, n_bars, int(complete), break_date,
+                 0.45 if break_date else None, int(complete)),
             )
             if full:
                 last = 100.0 + i + (E4_DEMO_BARS - 1) * 0.1

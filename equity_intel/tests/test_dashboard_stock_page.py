@@ -7,7 +7,7 @@ import sqlite3
 
 import pytest
 
-from dashboard import stock_detail
+from dashboard import queries, stock_detail
 from dashboard.app import BANNER_TEXT, create_app
 from equity_intel.persistence import connection, db_path_guard
 from scripts.dashboard_demo_seed import seed_demo_database
@@ -202,3 +202,36 @@ def test_review_entry_for_the_symbol_is_listed_read_only(real_mode_client, monke
 
 def test_demo_mode_does_not_read_the_review_file(client):
     assert "not read in demo mode" in _page(client, "DEMOAAC")[1]
+
+
+def test_data_through_comes_from_the_symbols_last_snapshot_bar_not_the_run_session(demo_db):
+    # Overwrite the run's session in the context passed to the page builder: the symbol's
+    # data-through date must still be its own last stored bar (2026-09-25).
+    ro = connection.get_read_only_connection(demo_db)
+    try:
+        run = dict(queries.get_latest_complete_run(ro))
+        run["latest_closed_session"] = "2031-01-03"
+        result = queries.get_symbol_result(ro, run["run_id"], "DEMOAAA")
+        context = stock_detail.build(ro, run, "DEMOAAA", result, True)
+    finally:
+        ro.close()
+    assert context["provenance"]["bars"]["last_date"] == "2026-09-25"
+    assert context["run"]["latest_closed_session"] == "2031-01-03"
+
+
+def test_page_shows_both_dates_labelled_by_layer(client):
+    html = _page(client, "DEMOAAA")[1]
+    assert 'id="data-through"' in html and 'id="run-session"' in html
+    through = html.split('id="data-through"')[1].split("</tr>")[0]
+    session = html.split('id="run-session"')[1].split("</tr>")[0]
+    assert "2026-09-25" in through and "last stored snapshot bar" in through and "ScanRun</span> snapshots" in through
+    assert "2026-09-25" in session and "ScanRun</span> run" in session
+
+
+def test_stale_symbol_page_shows_older_data_through_than_run_session(client):
+    html = _page(client, "DEMOPAB")[1]
+    through = html.split('id="data-through"')[1].split("</tr>")[0]
+    session = html.split('id="run-session"')[1].split("</tr>")[0]
+    assert 'id="status-badge">STALE' in html
+    assert "2026-09-24" in through and "2026-09-25" in session
+    assert "latest valid candle (2026-09-24) is older than latest_closed_session (2026-09-25)" in html
