@@ -65,7 +65,7 @@ def test_seed_is_rerunnable_and_does_not_accumulate_rows(paths):
         count = conn.execute("SELECT COUNT(*) FROM scan_runs").fetchone()[0]
     finally:
         conn.close()
-    assert count == 4
+    assert count == 6
 
 
 def test_seed_produces_the_expected_run_lifecycle_mix(paths):
@@ -77,7 +77,7 @@ def test_seed_produces_the_expected_run_lifecycle_mix(paths):
         statuses = sorted(row[0] for row in conn.execute("SELECT status FROM scan_runs").fetchall())
     finally:
         conn.close()
-    assert statuses == ["ABORTED", "COMPLETE", "COMPLETE", "RUNNING"]
+    assert statuses == ["ABORTED", "COMPLETE", "COMPLETE", "COMPLETE", "COMPLETE", "RUNNING"]
 
 
 def test_seed_covers_all_four_statuses_and_all_four_flags(paths):
@@ -156,3 +156,62 @@ def test_seed_older_complete_run_is_outdated_and_latest_is_not(paths):
         conn.close()
     assert queries.is_outdated(rows["r-demo-old-complete"]) is True
     assert queries.is_outdated(rows["r-demo-latest-complete"]) is False
+
+
+def _rows(demo, sql):
+    conn = connection.get_read_only_connection(demo)
+    try:
+        return conn.execute(sql).fetchall()
+    finally:
+        conn.close()
+
+
+def test_seed_has_a_newer_smoke_run_after_the_latest_full_run(paths):
+    from dashboard import queries
+
+    _canonical, demo = paths
+    seed_demo_database(demo)
+    conn = connection.get_read_only_connection(demo)
+    try:
+        assert queries.get_latest_complete_run(conn)["run_id"] == "r-demo-latest-complete"
+    finally:
+        conn.close()
+    smoke = _rows(demo, "SELECT run_id FROM scan_runs WHERE symbols_filter_json IS NOT NULL AND started_at > "
+                        "(SELECT started_at FROM scan_runs WHERE run_id='r-demo-latest-complete')")
+    assert smoke == [("r-demo-smoke",)]
+
+
+def test_seed_creates_e4_and_acquired_tables_with_matching_as_of(paths):
+    _canonical, demo = paths
+    seed_demo_database(demo)
+    (asof,) = _rows(demo, "SELECT asof_date FROM e4_scan_runs WHERE status='COMPLETE'")[0]
+    (session,) = _rows(demo, "SELECT latest_closed_session FROM scan_runs WHERE run_id='r-demo-latest-complete'")[0]
+    assert asof == session
+    assert _rows(demo, "SELECT COUNT(*) FROM e4_feature_sets")[0][0] > 0
+    assert _rows(demo, "SELECT COUNT(*) FROM acquired_observations")[0][0] > 0
+    assert _rows(demo, "SELECT COUNT(*) FROM acquired_benchmark")[0][0] > 0
+    # FAILED symbols get no E4 rows.
+    assert _rows(demo, "SELECT COUNT(*) FROM e4_data_quality_results q JOIN symbol_scan_results r "
+                       "ON r.symbol=q.symbol AND r.scan_run_id='r-demo-latest-complete' "
+                       "WHERE r.symbol_data_status='FAILED'")[0][0] == 0
+
+
+def test_seed_snapshots_are_hash_consistent_and_revised_between_the_two_newest_full_runs(paths):
+    from equity_intel.scanner.snapshots import compute_content_hash_from_stored_row
+
+    _canonical, demo = paths
+    seed_demo_database(demo)
+    conn = connection.get_read_only_connection(demo)
+    try:
+        cursor = conn.execute("SELECT * FROM price_fetch_snapshots")
+        names = [c[0] for c in cursor.description]
+        for row in cursor.fetchall():
+            row = dict(zip(names, row))
+            assert compute_content_hash_from_stored_row(row) == row["content_hash"]
+    finally:
+        conn.close()
+    changed = _rows(demo, "SELECT COUNT(*) FROM price_fetch_snapshots a JOIN price_fetch_snapshots b "
+                          "ON a.symbol=b.symbol AND a.trading_date=b.trading_date "
+                          "AND a.scan_run_id='r-demo-prev-complete' AND b.scan_run_id='r-demo-latest-complete' "
+                          "AND a.content_hash<>b.content_hash")[0][0]
+    assert changed > 0
