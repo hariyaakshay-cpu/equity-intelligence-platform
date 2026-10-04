@@ -15,6 +15,11 @@ from core.providers import UpstoxProvider
 from equity_intel.acquisition.runner import run_equity_data_acquisition
 
 
+def exit_code(report) -> int:
+    """0 only for a COMPLETE run that persisted at least one symbol."""
+    return 0 if report.status == "COMPLETE" and report.persisted_symbol_count > 0 else 1
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--universe", type=Path, default=ROOT / "data/reference/nifty500_constituents_2026-09-24.csv")
@@ -32,7 +37,10 @@ def main() -> int:
         db_path=ROOT / "data/equity_intel.db", report_dir=ROOT / "data/equity_intel/reports")
     print(f"Run {report.run_id}: {report.status}; universe {report.universe_count}; mapped {report.mapped_count}; "
           f"persisted {report.persisted_symbol_count} symbols / {report.persisted_observation_count} observations")
-    return 0
+    code = exit_code(report)
+    if code:
+        print(f"Acquisition did not succeed (status {report.status}).", file=sys.stderr)
+    return code
 
 
 if __name__ == "__main__":

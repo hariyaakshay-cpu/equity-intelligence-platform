@@ -147,3 +147,12 @@ def test_pipeline_reports_a_timeout():
 
     ok, step, detail = daily_refresh.run_pipeline(run=boom, python="py")
     assert not ok and step == "scanner run" and "timed out" in detail
+
+
+@pytest.mark.parametrize("status,persisted,expected", [
+    ("COMPLETE", 10, 0), ("COMPLETE", 0, 1), ("FAILED", 10, 1), ("RUNNING", 10, 1)])
+def test_acquisition_exit_code(status, persisted, expected):
+    from types import SimpleNamespace
+    from scripts.equity_data_acquisition import exit_code
+
+    assert exit_code(SimpleNamespace(status=status, persisted_symbol_count=persisted)) == expected

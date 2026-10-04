@@ -61,6 +61,5 @@ morning. Check in the Upstox developer console whether a long-lived
 read-only (analytics) token is available for your app; if so, put it in
 `.env` as `UPSTOX_ACCESS_TOKEN` and no code change is needed.
 
-Known gap: `equity_data_acquisition.py` exits 0 even when its report status
-is not successful, so such a failure shows up only through the digest's
-staleness lines, not the alert.
+`equity_data_acquisition.py` exits non-zero unless the run is `COMPLETE`
+and persisted at least one symbol, so a failed acquisition triggers the alert.
