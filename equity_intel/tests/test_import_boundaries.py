@@ -24,6 +24,10 @@ PACKAGE_ROOT = pathlib.Path(__file__).resolve().parents[1]
 # infrastructure either.
 DASHBOARD_ROOT = PACKAGE_ROOT.parent / "dashboard"
 
+# telegram_bot/ is likewise a read-only reporting consumer of the stored
+# data and is held to the same ban.
+TELEGRAM_BOT_ROOT = PACKAGE_ROOT.parent / "telegram_bot"
+
 # Frozen expectation for FORBIDDEN_PREFIXES: written out explicitly so that
 # shrinking or otherwise weakening the canonical tuple requires deliberately
 # editing this test, not just an incidental change elsewhere.
@@ -56,11 +60,12 @@ def _iter_python_files():
         if "tests" in path.parts:
             continue
         yield path
-    if DASHBOARD_ROOT.is_dir():
-        for path in DASHBOARD_ROOT.rglob("*.py"):
-            if "tests" in path.parts:
-                continue
-            yield path
+    for root in (DASHBOARD_ROOT, TELEGRAM_BOT_ROOT):
+        if root.is_dir():
+            for path in root.rglob("*.py"):
+                if "tests" in path.parts:
+                    continue
+                yield path
 
 
 def _imported_module_names(path: pathlib.Path):
