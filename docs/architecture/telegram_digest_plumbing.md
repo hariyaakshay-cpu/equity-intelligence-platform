@@ -44,7 +44,23 @@ past 2026-10-02 it falls back to Mon-Fri). `scripts/register_telegram_task.ps1`
 registers it in Windows Task Scheduler for weekdays 18:30 (PC clock must be
 IST; the scanner's session cutoff is 18:00 IST).
 
-The job only **reports** stored data; it does not refresh it. If the scan,
-E4 acquisition and E4 scan have not been run for the day, the digest says
-the data may be outdated. Automating that refresh needs the daily Upstox
-token login and is a separate change.
+## Daily data refresh
+
+The scheduled command is now `scripts/daily_refresh.py --send --only-on-session`.
+It runs, in order, `equity_scan.py`, `equity_data_acquisition.py` and
+`equity_e4_scan.py` as subprocesses (60 min limit each), then sends the
+digest. It stops at the first failing step and sends a Telegram alert
+instead of the digest; the digest's own freshness line still flags stale
+data. Dry run without `--send` (the refresh steps still run).
+
+**The one manual step is the Upstox token.** Tokens expire about 03:30 IST
+and `scripts/upstox_auth.py` needs an interactive browser login. The refresh
+does not automate that login or store broker credentials. An expired token
+fails the first step and produces the alert; run `upstox_auth.py` each
+morning. Check in the Upstox developer console whether a long-lived
+read-only (analytics) token is available for your app; if so, put it in
+`.env` as `UPSTOX_ACCESS_TOKEN` and no code change is needed.
+
+Known gap: `equity_data_acquisition.py` exits 0 even when its report status
+is not successful, so such a failure shows up only through the digest's
+staleness lines, not the alert.

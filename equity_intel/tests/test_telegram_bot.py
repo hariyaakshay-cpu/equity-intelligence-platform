@@ -109,3 +109,41 @@ def test_is_session_day_falls_back_to_weekdays_past_the_calendar():
 
     assert schedule.is_session_day(date(2027, 1, 4)) == (True, "weekday-fallback")   # Monday
     assert schedule.is_session_day(date(2027, 1, 3)) == (False, "weekday-fallback")  # Sunday
+
+
+def test_pipeline_runs_steps_in_order_and_succeeds():
+    from types import SimpleNamespace
+    from scripts import daily_refresh
+
+    seen = []
+    ok, step, _ = daily_refresh.run_pipeline(
+        run=lambda argv, **kw: seen.append(argv[1]) or SimpleNamespace(returncode=0), python="py")
+    assert ok and step is None
+    assert seen == ["scripts/equity_scan.py", "scripts/equity_data_acquisition.py", "scripts/equity_e4_scan.py"]
+
+
+def test_pipeline_stops_at_first_failure():
+    from types import SimpleNamespace
+    from scripts import daily_refresh
+
+    seen = []
+
+    def fake(argv, **kw):
+        seen.append(argv[1])
+        return SimpleNamespace(returncode=1 if "acquisition" in argv[1] else 0)
+
+    ok, step, detail = daily_refresh.run_pipeline(run=fake, python="py")
+    assert (ok, step, detail) == (False, "E4 data acquisition", "exit code 1")
+    assert "equity_e4_scan.py" not in " ".join(seen)
+    assert "upstox_auth.py" in daily_refresh.alert_text(step, detail)
+
+
+def test_pipeline_reports_a_timeout():
+    import subprocess
+    from scripts import daily_refresh
+
+    def boom(argv, **kw):
+        raise subprocess.TimeoutExpired(argv, 1)
+
+    ok, step, detail = daily_refresh.run_pipeline(run=boom, python="py")
+    assert not ok and step == "scanner run" and "timed out" in detail

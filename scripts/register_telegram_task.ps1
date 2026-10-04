@@ -1,5 +1,5 @@
 <#
-Registers a Windows Task Scheduler job that sends the Telegram digest on
+Registers a Windows Task Scheduler job that refreshes the data and sends the Telegram digest on
 weekdays at 18:30 (this PC's clock must be IST; the scanner treats a session
 as closed at 18:00 IST). Holidays are skipped by the script itself.
 
@@ -13,6 +13,6 @@ $python = (Get-Command python).Source
 $action = New-ScheduledTaskAction -Execute $python `
     -Argument "scripts\telegram_digest.py --send --only-on-session" -WorkingDirectory $root
 $trigger = New-ScheduledTaskTrigger -Weekly -DaysOfWeek Monday,Tuesday,Wednesday,Thursday,Friday -At 18:30
-$settings = New-ScheduledTaskSettingsSet -StartWhenAvailable -ExecutionTimeLimit (New-TimeSpan -Minutes 10)
+$settings = New-ScheduledTaskSettingsSet -StartWhenAvailable -ExecutionTimeLimit (New-TimeSpan -Hours 3)
 Register-ScheduledTask -TaskName "EquityTelegramDigest" -Action $action -Trigger $trigger -Settings $settings `
-    -Description "Daily equity_intel scanner digest to Telegram (research only)" -Force
+    -Description "Daily equity_intel data refresh and Telegram digest (research only)" -Force
