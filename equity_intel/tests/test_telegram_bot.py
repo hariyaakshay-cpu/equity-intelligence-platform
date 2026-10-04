@@ -92,3 +92,20 @@ def test_send_failure_never_leaks_the_token():
     with pytest.raises(sender.TelegramSendError) as err:
         sender.send_message("hi", "SECRETTOKEN", "42", post=lambda *a, **k: Bad())
     assert "SECRETTOKEN" not in str(err.value) and "401" in str(err.value)
+
+
+def test_is_session_day_uses_the_verified_calendar():
+    from datetime import date
+    from telegram_bot import schedule
+
+    assert schedule.is_session_day(date(2026, 10, 1)) == (True, "calendar")
+    assert schedule.is_session_day(date(2026, 10, 2)) == (False, "calendar")  # Gandhi Jayanti
+    assert schedule.is_session_day(date(2026, 9, 26)) == (False, "calendar")  # Saturday
+
+
+def test_is_session_day_falls_back_to_weekdays_past_the_calendar():
+    from datetime import date
+    from telegram_bot import schedule
+
+    assert schedule.is_session_day(date(2027, 1, 4)) == (True, "weekday-fallback")   # Monday
+    assert schedule.is_session_day(date(2027, 1, 3)) == (False, "weekday-fallback")  # Sunday

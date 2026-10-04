@@ -35,3 +35,16 @@ section 12) and need their own specification.
 1. Create a bot with @BotFather, put the token in `.env`; send the bot a
    message, then put your chat id in `.env`.
 2. `python scripts/telegram_digest.py` (dry run), then `--send`.
+
+## Scheduling
+
+`scripts/telegram_digest.py --send --only-on-session` is the scheduled
+command. It exits quietly on weekends and NSE holidays (verified calendar;
+past 2026-10-02 it falls back to Mon-Fri). `scripts/register_telegram_task.ps1`
+registers it in Windows Task Scheduler for weekdays 18:30 (PC clock must be
+IST; the scanner's session cutoff is 18:00 IST).
+
+The job only **reports** stored data; it does not refresh it. If the scan,
+E4 acquisition and E4 scan have not been run for the day, the digest says
+the data may be outdated. Automating that refresh needs the daily Upstox
+token login and is a separate change.

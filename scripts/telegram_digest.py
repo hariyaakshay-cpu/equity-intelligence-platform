@@ -12,14 +12,24 @@ if str(ROOT) not in sys.path:
 from dotenv import load_dotenv
 
 from equity_intel.persistence import connection, db_path_guard
-from telegram_bot import digest, sender
+from telegram_bot import digest, schedule, sender
 
 
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--send", action="store_true", help="actually send (default: dry run, print only)")
+    parser.add_argument("--only-on-session", action="store_true",
+                        help="exit quietly (0) when today is not an NSE session day")
     parser.add_argument("--db", default=str(db_path_guard.CANONICAL_DB_PATH))
     args = parser.parse_args(argv)
+
+    if args.only_on_session:
+        from dashboard.queries import now_ist_naive
+        today = now_ist_naive().date()
+        is_session, basis = schedule.is_session_day(today)
+        if not is_session:
+            print(f"{today} is not an NSE session day ({basis}); nothing to do.")
+            return 0
 
     load_dotenv(ROOT / ".env")
     try:
