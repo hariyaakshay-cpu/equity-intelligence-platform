@@ -22,11 +22,30 @@ All four runs: single-day gap between the two sessions, ratio near 1.0, far from
 
 No run was INCONCLUSIVE and none returned a 401. No pair of sessions was more than 4 calendar days apart.
 
+## NSE verification
+
+The ex-dates and ratios used above came from news pages. They were later checked against NSE's own
+corporate-actions data (NSE `corporates-corporateActions` endpoint, queried from a browser session on nseindia.com,
+per symbol, filtered to split/bonus-type subjects, on 2026-10-03):
+
+| Symbol | NSE ex-date | NSE subject | Implied divisor | Used | Match |
+|---|---|---|---|---|---|
+| MCX | 02-Jan-2026 | Face Value Split, Rs 10 to Rs 2 | 5 | 5 | yes |
+| KOTAKBANK | 14-Jan-2026 | Face Value Split, Rs 5 to Re 1 | 5 | 5 | yes |
+| BSE | 23-May-2025 | Bonus 2:1 | 3 | 3 | yes |
+| BRIGADE | 17-Jun-2026 | Bonus 1:3 | 4/3 | 1.3333 | yes |
+
+- The bonus divisors rest on reading "Bonus a:b" as a new shares per b held, giving (a+b)/b. NSE's data does not
+  state this convention; it is an interpretation.
+- Older actions returned by the same query (KOTAKBANK 2015 bonus and 2010 split, BSE 2022 bonus, BRIGADE 2019 bonus)
+  fall outside every checked window. Other action types were filtered out, not reviewed.
+- Consequence: the "wrong ex-date on a raw series" explanation for a near-1.0 ratio is ruled out for all four.
+
 ## Evidence strength per case
 
 - **MCX, KOTAKBANK:** full close series for ex-date +/-10 calendar days was printed (13 sessions each).
   Day-over-day ratios range 0.9679-1.0263 (MCX) and 0.9797-1.0208 (KOTAKBANK). No ~0.2 drop anywhere in either window,
-  so a raw series is ruled out for the window. This does not confirm the ex-date itself.
+  so a raw series is ruled out for the window. The ex-date itself is confirmed by NSE (above).
 - **BSE:** reported (by a reviewer, not re-derived in this session) that the article's unadjusted pre-event close of
   6,996.5 / 3 = 2,332.2 matches the fetched 2,332.0 on 2025-05-22. If correct, this independently shows the
   divided-down price is what Upstox returns.
@@ -34,14 +53,11 @@ No run was INCONCLUSIVE and none returned a 401. No pair of sessions was more th
   Day-over-day ratios range 0.9662-1.0528; 2026-06-17 is 1.0475 (neighbours 1.0528 on 06-16, 0.9801 on 06-18).
   No ~0.75 step anywhere, so a raw series is ruled out for the window. Price rose ~17% over the window
   (482.35 to a high of 565.85 on 06-17) in mostly 4-5% daily steps: real movement, not an adjustment artifact.
-  Does not confirm the ex-date itself.
+  The ex-date itself is confirmed by NSE (above).
 
 ## Not verified
 
-- Ex-dates and ratios for all four came from news pages. **Not checked against NSE corporate-actions data.**
-  A near-1.0 ratio is also what a wrong ex-date on a raw series would produce; the MCX/KOTAKBANK windows and the BSE
-  cross-check are what rule that out.
-- Four events is a small sample. Demergers are not covered by this check; the earlier finding that they
+- Nothing about the four events remains unverified (see "NSE verification" above). Four events is a small sample. Demergers are not covered by this check; the earlier finding that they
   are not adjusted stands. Splits/bonuses only.
 
 ## Caveat: "adjusted" means adjusted at fetch time
@@ -69,5 +85,4 @@ No run was INCONCLUSIVE and none returned a 401. No pair of sessions was more th
 
 ## Suggested follow-ups
 
-1. Confirm the three news-sourced ex-dates (MCX, KOTAKBANK, BRIGADE) against NSE corporate-actions data.
-2. Decide how to treat E4 runs stored before a later ex-date.
+1. Decide how to treat E4 runs stored before a later ex-date.

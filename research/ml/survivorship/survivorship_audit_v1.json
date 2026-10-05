@@ -1,0 +1,363 @@
+{
+ "built_at": "2026-10-05T18:25:30+00:00",
+ "inputs": {
+  "snapshot_sha256": "df2afcde5e85bf24e098311b898b3245e81525cca02fb0a8b38dd0ebb40077d4",
+  "events_sha256": "de7bf6b30d53e545985889d52623f1120790e02669aaecb17eae24d4a2622b1c",
+  "aliases_sha256": "d1c16c2e7c0a14f21d1bcd2acfc7d9cbbe6a67a4ccb22effedb2157a90aca988",
+  "calendar_sha256": "7babff066e13c8137d10fbabb03246d95b8779b0363affe6287e4ddd1d183e72",
+  "vendor_first_bars_sha256": "b5d1d3f8652051f26507f08cedc0ead637d0b55ae00b2193ec78a901ac8497a4",
+  "press_release_fetch_log_sha256": "5e092be877f4a100b0d21c081e106fd6804b3605a3255fbe9a91ea29cb6f79d1"
+ },
+ "windows": {
+  "D0_calendar_start": "2011-01-03",
+  "D1": "2026-09-29",
+  "W1": [
+   "2025-09-23",
+   "2026-09-29"
+  ]
+ },
+ "drift_by_year": {
+  "2011": {
+   "mean": 28.45,
+   "max_abs": 30
+  },
+  "2012": {
+   "mean": 25.19,
+   "max_abs": 26
+  },
+  "2013": {
+   "mean": 24.22,
+   "max_abs": 25
+  },
+  "2014": {
+   "mean": 23.91,
+   "max_abs": 24
+  },
+  "2015": {
+   "mean": 22.74,
+   "max_abs": 23
+  },
+  "2016": {
+   "mean": 19.23,
+   "max_abs": 22
+  },
+  "2017": {
+   "mean": 13.73,
+   "max_abs": 17
+  },
+  "2018": {
+   "mean": 10.09,
+   "max_abs": 12
+  },
+  "2019": {
+   "mean": 8.31,
+   "max_abs": 9
+  },
+  "2020": {
+   "mean": 4.8,
+   "max_abs": 7
+  },
+  "2021": {
+   "mean": 1.0,
+   "max_abs": 1
+  },
+  "2022": {
+   "mean": 1.76,
+   "max_abs": 2
+  },
+  "2023": {
+   "mean": 1.25,
+   "max_abs": 2
+  },
+  "2024": {
+   "mean": 1.0,
+   "max_abs": 1
+  },
+  "2025": {
+   "mean": 0.75,
+   "max_abs": 1
+  },
+  "2026": {
+   "mean": 0.0,
+   "max_abs": 0
+  }
+ },
+ "snapshot": {
+  "rows": 501,
+  "as_of": "2026-09-24"
+ },
+ "reconstruction": {
+  "events_parsed_rows": 1470,
+  "cancellations": 3,
+  "anomalies": 53,
+  "anomalies_on_current_constituents": 8,
+  "post_snapshot_events": [
+   "2026-09-30"
+  ],
+  "undated_files": []
+ },
+ "item1_entrants": {
+  "W2_after_D0": 40,
+  "by_year": {
+   "2011": 2,
+   "2015": 3,
+   "2016": 2,
+   "2017": 3,
+   "2018": 3,
+   "2019": 1,
+   "2020": 1,
+   "2021": 6,
+   "2023": 6,
+   "2024": 5,
+   "2025": 8
+  },
+  "W1_after_start": 3,
+  "W1_list": [
+   [
+    "2025-10-17",
+    "CANHLIFE"
+   ],
+   [
+    "2025-11-14",
+    "PINELABS"
+   ],
+   [
+    "2025-12-10",
+    "MEESHO"
+   ]
+  ],
+  "vendor_errors": [],
+  "stored_window": null
+ },
+ "item2_membership": {
+  "symbols_audited": 90,
+  "no_full_period_W1": 12,
+  "no_full_period_W2": 51,
+  "no_full_period_W1_symbols": [
+   "ABDL",
+   "ABLBL",
+   "AEGISVOPAK",
+   "CANHLIFE",
+   "CARTRADE",
+   "CIEINDIA",
+   "ENRIN",
+   "JSWCEMENT",
+   "MEESHO",
+   "PFOCUS",
+   "PINELABS",
+   "URBANCO"
+  ]
+ },
+ "item3_samples": {
+  "candidate_samples": 238793,
+  "by_class": {
+   "NOT_MEMBER_RECONSTRUCTED": 37450,
+   "MEMBER_RECONSTRUCTED": 201160,
+   "UNCERTAIN_CHAIN": 183
+  },
+  "not_member_share_pct": 15.68,
+  "uncertain_share_pct": 0.08,
+  "W1": {
+   "by_class": {
+    "MEMBER_RECONSTRUCTED": 11539,
+    "NOT_MEMBER_RECONSTRUCTED": 788
+   },
+   "not_member_share_pct": 6.39
+  }
+ },
+ "members_not_in_universe_by_year": {
+  "2011": {
+   "sessions_sampled": 13,
+   "mean_members": 529.5,
+   "mean_not_in_universe": 270.3,
+   "share_pct": 51.05
+  },
+  "2012": {
+   "sessions_sampled": 13,
+   "mean_members": 526.2,
+   "mean_not_in_universe": 266.2,
+   "share_pct": 50.59
+  },
+  "2013": {
+   "sessions_sampled": 13,
+   "mean_members": 525.2,
+   "mean_not_in_universe": 265.2,
+   "share_pct": 50.5
+  },
+  "2014": {
+   "sessions_sampled": 13,
+   "mean_members": 524.9,
+   "mean_not_in_universe": 264.9,
+   "share_pct": 50.47
+  },
+  "2015": {
+   "sessions_sampled": 13,
+   "mean_members": 523.8,
+   "mean_not_in_universe": 263.1,
+   "share_pct": 50.23
+  },
+  "2016": {
+   "sessions_sampled": 13,
+   "mean_members": 520.5,
+   "mean_not_in_universe": 249.7,
+   "share_pct": 47.98
+  },
+  "2017": {
+   "sessions_sampled": 13,
+   "mean_members": 515.0,
+   "mean_not_in_universe": 232.2,
+   "share_pct": 45.09
+  },
+  "2018": {
+   "sessions_sampled": 13,
+   "mean_members": 511.2,
+   "mean_not_in_universe": 213.9,
+   "share_pct": 41.85
+  },
+  "2019": {
+   "sessions_sampled": 13,
+   "mean_members": 509.3,
+   "mean_not_in_universe": 190.3,
+   "share_pct": 37.37
+  },
+  "2020": {
+   "sessions_sampled": 12,
+   "mean_members": 505.9,
+   "mean_not_in_universe": 177.7,
+   "share_pct": 35.12
+  },
+  "2021": {
+   "sessions_sampled": 13,
+   "mean_members": 502.0,
+   "mean_not_in_universe": 165.5,
+   "share_pct": 32.98
+  },
+  "2022": {
+   "sessions_sampled": 13,
+   "mean_members": 502.8,
+   "mean_not_in_universe": 147.8,
+   "share_pct": 29.39
+  },
+  "2023": {
+   "sessions_sampled": 13,
+   "mean_members": 502.3,
+   "mean_not_in_universe": 127.8,
+   "share_pct": 25.45
+  },
+  "2024": {
+   "sessions_sampled": 13,
+   "mean_members": 502.0,
+   "mean_not_in_universe": 95.0,
+   "share_pct": 18.92
+  },
+  "2025": {
+   "sessions_sampled": 13,
+   "mean_members": 501.8,
+   "mean_not_in_universe": 52.0,
+   "share_pct": 10.36
+  },
+  "2026": {
+   "sessions_sampled": 13,
+   "mean_members": 501.0,
+   "mean_not_in_universe": 10.7,
+   "share_pct": 2.13
+  }
+ },
+ "crosscheck_inclusion_before_first_bar": [],
+ "item4_reconstructability": {
+  "status": "PARTIAL: drift stored per date, no cutoff applied; reviewer to choose",
+  "removed_names_vendor": {
+   "sampled": 30,
+   "unresolved_in_master": 51,
+   "served_history": 30,
+   "errors": [],
+   "unresolved_symbols": [
+    "AKZOINDIA",
+    "BLISSGVS",
+    "DHANI",
+    "DHFL",
+    "EQUITAS",
+    "FCONSUMER",
+    "FLFL",
+    "FRETAIL",
+    "GEPIL",
+    "GET&D",
+    "GLS",
+    "GMRINFRA",
+    "GSPL",
+    "GUJGASLTD",
+    "HDFC",
+    "HEXAWARE",
+    "IBREALEST",
+    "IBULISL",
+    "IDFC",
+    "INFIBEAM",
+    "INOXLEISUR",
+    "ISEC",
+    "ITDCEM",
+    "JBCHEPHARM",
+    "JSLHISAR",
+    "JUBILANT",
+    "LAKSHVILAS",
+    "LAXMIMACH",
+    "MAGMA",
+    "MAHINDCIE",
+    "MINDTREE",
+    "MOTHERSUMI",
+    "MTARTECH",
+    "NBVENTURES",
+    "PEL",
+    "RAJESHEXPO",
+    "RELCAPITAL",
+    "RELINFRA",
+    "SEQUENT",
+    "SHRIRAMCIT",
+    "SPICEJET",
+    "STLTECH",
+    "SUNCLAYLTD",
+    "SUPPETRO",
+    "SWANENERGY",
+    "TATACOFFEE",
+    "TATASTLBSL",
+    "TATASTLLP",
+    "TCNSBRANDS",
+    "TV18BRDCST",
+    "UJJIVAN"
+   ],
+   "last_bar_before_2026-09-01": [
+    "AGARWALEYE",
+    "ALKYLAMINE",
+    "ALOKINDS",
+    "APLLTD",
+    "BCG",
+    "BHARATRAS",
+    "CSBBANK",
+    "FINPIPE",
+    "FMGOETZE",
+    "GMMPFAUDLR",
+    "ICIL",
+    "IFBIND",
+    "MAHLOG",
+    "MEDPLUS",
+    "NIITLTD",
+    "PCJEWELLER",
+    "PTC",
+    "ROSSARI",
+    "SAFARI",
+    "SHK",
+    "SOLARA",
+    "SWSOLAR",
+    "SYMPHONY",
+    "TASTYBITE",
+    "TCI",
+    "THYROCARE",
+    "UFLEX",
+    "VAIBHAVGBL",
+    "VAKRANGEE",
+    "WABAG"
+   ],
+   "sample_calls": 258,
+   "stopped": "complete"
+  }
+ }
+}

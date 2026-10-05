@@ -1,0 +1,1427 @@
+{
+ "CBM": [
+  {
+   "tradingDate": "26-Jan-2016",
+   "weekDay": "Tuesday",
+   "description": "Republic Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "19-Feb-2016",
+   "weekDay": "Friday",
+   "description": "Chhatrapati Shivaji Maharaj Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "07-Mar-2016",
+   "weekDay": "Monday",
+   "description": "Mahashivratri",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "24-Mar-2016",
+   "weekDay": "Thursday",
+   "description": "Holi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "25-Mar-2016",
+   "weekDay": "Friday",
+   "description": "Good Friday",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-Apr-2016",
+   "weekDay": "Friday",
+   "description": "Annual Bank Closing",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "08-Apr-2016",
+   "weekDay": "Friday",
+   "description": "Gudi Padwa",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "14-Apr-2016",
+   "weekDay": "Thursday",
+   "description": "Dr. Baba Saheb Ambedkar Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "15-Apr-2016",
+   "weekDay": "Friday",
+   "description": "Ram Navami",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "19-Apr-2016",
+   "weekDay": "Tuesday",
+   "description": "Mahavir Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-May-2016",
+   "weekDay": "Sunday",
+   "description": "Maharashtra Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "21-May-2016",
+   "weekDay": "Saturday",
+   "description": "Buddha Pournima",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "06-Jul-2016",
+   "weekDay": "Wednesday",
+   "description": "Id-uI-Fitar (Ramzan ID)",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "15-Aug-2016",
+   "weekDay": "Monday",
+   "description": "Independence Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "17-Aug-2016",
+   "weekDay": "Wednesday",
+   "description": "Parsi New Year",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "05-Sep-2016",
+   "weekDay": "Monday",
+   "description": "Ganesh Chaturthi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "13-Sep-2016",
+   "weekDay": "Tuesday",
+   "description": "Bakri ID",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "02-Oct-2016",
+   "weekDay": "Sunday",
+   "description": "Mahatma Gandhi Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "11-Oct-2016",
+   "weekDay": "Tuesday",
+   "description": "Dasera",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "12-Oct-2016",
+   "weekDay": "Wednesday",
+   "description": "Moharram",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "30-Oct-2016",
+   "weekDay": "Sunday",
+   "description": "Diwali-Laxmi Pujan*",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "31-Oct-2016",
+   "weekDay": "Monday",
+   "description": "Diwali-Balipratipada",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "14-Nov-2016",
+   "weekDay": "Monday",
+   "description": "Gurunanak Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "12-Dec-2016",
+   "weekDay": "Monday",
+   "description": "Id-e-Milad",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "25-Dec-2016",
+   "weekDay": "Sunday",
+   "description": "Christmas",
+   "morning_session": null,
+   "evening_session": null
+  }
+ ],
+ "CD": [
+  {
+   "tradingDate": "26-Jan-2016",
+   "weekDay": "Tuesday",
+   "description": "Republic Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "19-Feb-2016",
+   "weekDay": "Friday",
+   "description": "Chhatrapati Shivaji Maharaj Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "07-Mar-2016",
+   "weekDay": "Monday",
+   "description": "Mahashivratri",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "24-Mar-2016",
+   "weekDay": "Thursday",
+   "description": "Holi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "25-Mar-2016",
+   "weekDay": "Friday",
+   "description": "Good Friday",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-Apr-2016",
+   "weekDay": "Friday",
+   "description": "Annual Bank Closing",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "08-Apr-2016",
+   "weekDay": "Friday",
+   "description": "Gudi Padwa",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "14-Apr-2016",
+   "weekDay": "Thursday",
+   "description": "Dr. Baba Saheb Ambedkar Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "15-Apr-2016",
+   "weekDay": "Friday",
+   "description": "Ram Navami",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "19-Apr-2016",
+   "weekDay": "Tuesday",
+   "description": "Mahavir Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-May-2016",
+   "weekDay": "Sunday",
+   "description": "Maharashtra Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "21-May-2016",
+   "weekDay": "Saturday",
+   "description": "Buddha Pournima",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "06-Jul-2016",
+   "weekDay": "Wednesday",
+   "description": "Id-uI-Fitar (Ramzan ID)",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "15-Aug-2016",
+   "weekDay": "Monday",
+   "description": "Independence Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "17-Aug-2016",
+   "weekDay": "Wednesday",
+   "description": "Parsi New Year",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "05-Sep-2016",
+   "weekDay": "Monday",
+   "description": "Ganesh Chaturthi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "13-Sep-2016",
+   "weekDay": "Tuesday",
+   "description": "Bakri ID",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "02-Oct-2016",
+   "weekDay": "Sunday",
+   "description": "Mahatma Gandhi Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "11-Oct-2016",
+   "weekDay": "Tuesday",
+   "description": "Dasera",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "12-Oct-2016",
+   "weekDay": "Wednesday",
+   "description": "Moharram",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "30-Oct-2016",
+   "weekDay": "Sunday",
+   "description": "Diwali-Laxmi Pujan*",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "31-Oct-2016",
+   "weekDay": "Monday",
+   "description": "Diwali-Balipratipada",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "14-Nov-2016",
+   "weekDay": "Monday",
+   "description": "Gurunanak Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "12-Dec-2016",
+   "weekDay": "Monday",
+   "description": "Id-e-Milad",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "25-Dec-2016",
+   "weekDay": "Sunday",
+   "description": "Christmas",
+   "morning_session": null,
+   "evening_session": null
+  }
+ ],
+ "CM": [
+  {
+   "tradingDate": "26-Jan-2016",
+   "weekDay": "Tuesday",
+   "description": "Republic Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "07-Mar-2016",
+   "weekDay": "Monday",
+   "description": "Mahashivratri",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "24-Mar-2016",
+   "weekDay": "Thursday",
+   "description": "Holi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "25-Mar-2016",
+   "weekDay": "Friday",
+   "description": "Good Friday",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "14-Apr-2016",
+   "weekDay": "Thursday",
+   "description": "Dr. Baba Saheb Ambedkar Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "15-Apr-2016",
+   "weekDay": "Friday",
+   "description": "Ram Navami",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "19-Apr-2016",
+   "weekDay": "Tuesday",
+   "description": "Mahavir Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-May-2016",
+   "weekDay": "Sunday",
+   "description": "Maharashtra Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "06-Jul-2016",
+   "weekDay": "Wednesday",
+   "description": "Id-uI-Fitar (Ramzan ID)",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "15-Aug-2016",
+   "weekDay": "Monday",
+   "description": "Independence Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "05-Sep-2016",
+   "weekDay": "Monday",
+   "description": "Ganesh Chaturthi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "13-Sep-2016",
+   "weekDay": "Tuesday",
+   "description": "Bakri ID",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "02-Oct-2016",
+   "weekDay": "Sunday",
+   "description": "Mahatma Gandhi Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "11-Oct-2016",
+   "weekDay": "Tuesday",
+   "description": "Dasera",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "12-Oct-2016",
+   "weekDay": "Wednesday",
+   "description": "Moharram",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "30-Oct-2016",
+   "weekDay": "Sunday",
+   "description": "Diwali-Laxmi Pujan*",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "31-Oct-2016",
+   "weekDay": "Monday",
+   "description": "Diwali-Balipratipada",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "14-Nov-2016",
+   "weekDay": "Monday",
+   "description": "Gurunanak Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "25-Dec-2016",
+   "weekDay": "Sunday",
+   "description": "Christmas",
+   "morning_session": null,
+   "evening_session": null
+  }
+ ],
+ "FO": [
+  {
+   "tradingDate": "26-Jan-2016",
+   "weekDay": "Tuesday",
+   "description": "Republic Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "07-Mar-2016",
+   "weekDay": "Monday",
+   "description": "Mahashivratri",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "24-Mar-2016",
+   "weekDay": "Thursday",
+   "description": "Holi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "25-Mar-2016",
+   "weekDay": "Friday",
+   "description": "Good Friday",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "14-Apr-2016",
+   "weekDay": "Thursday",
+   "description": "Dr. Baba Saheb Ambedkar Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "15-Apr-2016",
+   "weekDay": "Friday",
+   "description": "Ram Navami",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "19-Apr-2016",
+   "weekDay": "Tuesday",
+   "description": "Mahavir Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-May-2016",
+   "weekDay": "Sunday",
+   "description": "Maharashtra Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "06-Jul-2016",
+   "weekDay": "Wednesday",
+   "description": "Id-uI-Fitar (Ramzan ID)",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "15-Aug-2016",
+   "weekDay": "Monday",
+   "description": "Independence Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "05-Sep-2016",
+   "weekDay": "Monday",
+   "description": "Ganesh Chaturthi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "13-Sep-2016",
+   "weekDay": "Tuesday",
+   "description": "Bakri ID",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "02-Oct-2016",
+   "weekDay": "Sunday",
+   "description": "Mahatma Gandhi Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "11-Oct-2016",
+   "weekDay": "Tuesday",
+   "description": "Dasera",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "12-Oct-2016",
+   "weekDay": "Wednesday",
+   "description": "Moharram",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "30-Oct-2016",
+   "weekDay": "Sunday",
+   "description": "Diwali-Laxmi Pujan*",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "31-Oct-2016",
+   "weekDay": "Monday",
+   "description": "Diwali-Balipratipada",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "14-Nov-2016",
+   "weekDay": "Monday",
+   "description": "Gurunanak Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "25-Dec-2016",
+   "weekDay": "Sunday",
+   "description": "Christmas",
+   "morning_session": null,
+   "evening_session": null
+  }
+ ],
+ "IRD": [
+  {
+   "tradingDate": "26-Jan-2016",
+   "weekDay": "Tuesday",
+   "description": "Republic Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "19-Feb-2016",
+   "weekDay": "Friday",
+   "description": "Chhatrapati Shivaji Maharaj Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "07-Mar-2016",
+   "weekDay": "Monday",
+   "description": "Mahashivratri",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "24-Mar-2016",
+   "weekDay": "Thursday",
+   "description": "Holi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "25-Mar-2016",
+   "weekDay": "Friday",
+   "description": "Good Friday",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-Apr-2016",
+   "weekDay": "Friday",
+   "description": "Annual Bank Closing",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "08-Apr-2016",
+   "weekDay": "Friday",
+   "description": "Gudi Padwa",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "14-Apr-2016",
+   "weekDay": "Thursday",
+   "description": "Dr. Baba Saheb Ambedkar Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "15-Apr-2016",
+   "weekDay": "Friday",
+   "description": "Ram Navami",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "19-Apr-2016",
+   "weekDay": "Tuesday",
+   "description": "Mahavir Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-May-2016",
+   "weekDay": "Sunday",
+   "description": "Maharashtra Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "21-May-2016",
+   "weekDay": "Saturday",
+   "description": "Buddha Pournima",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "06-Jul-2016",
+   "weekDay": "Wednesday",
+   "description": "Id-uI-Fitar (Ramzan ID)",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "15-Aug-2016",
+   "weekDay": "Monday",
+   "description": "Independence Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "17-Aug-2016",
+   "weekDay": "Wednesday",
+   "description": "Parsi New Year",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "05-Sep-2016",
+   "weekDay": "Monday",
+   "description": "Ganesh Chaturthi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "13-Sep-2016",
+   "weekDay": "Tuesday",
+   "description": "Bakri ID",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "02-Oct-2016",
+   "weekDay": "Sunday",
+   "description": "Mahatma Gandhi Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "11-Oct-2016",
+   "weekDay": "Tuesday",
+   "description": "Dasera",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "12-Oct-2016",
+   "weekDay": "Wednesday",
+   "description": "Moharram",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "30-Oct-2016",
+   "weekDay": "Sunday",
+   "description": "Diwali-Laxmi Pujan*",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "31-Oct-2016",
+   "weekDay": "Monday",
+   "description": "Diwali-Balipratipada",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "14-Nov-2016",
+   "weekDay": "Monday",
+   "description": "Gurunanak Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "12-Dec-2016",
+   "weekDay": "Monday",
+   "description": "Id-e-Milad",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "25-Dec-2016",
+   "weekDay": "Sunday",
+   "description": "Christmas",
+   "morning_session": null,
+   "evening_session": null
+  }
+ ],
+ "MF": [
+  {
+   "tradingDate": "26-Jan-2016",
+   "weekDay": "Tuesday",
+   "description": "Republic Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "07-Mar-2016",
+   "weekDay": "Monday",
+   "description": "Mahashivratri",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "24-Mar-2016",
+   "weekDay": "Thursday",
+   "description": "Holi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "25-Mar-2016",
+   "weekDay": "Friday",
+   "description": "Good Friday",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "14-Apr-2016",
+   "weekDay": "Thursday",
+   "description": "Dr. Baba Saheb Ambedkar Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "15-Apr-2016",
+   "weekDay": "Friday",
+   "description": "Ram Navami",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "19-Apr-2016",
+   "weekDay": "Tuesday",
+   "description": "Mahavir Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-May-2016",
+   "weekDay": "Sunday",
+   "description": "Maharashtra Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "06-Jul-2016",
+   "weekDay": "Wednesday",
+   "description": "Id-uI-Fitar (Ramzan ID)",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "15-Aug-2016",
+   "weekDay": "Monday",
+   "description": "Independence Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "05-Sep-2016",
+   "weekDay": "Monday",
+   "description": "Ganesh Chaturthi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "13-Sep-2016",
+   "weekDay": "Tuesday",
+   "description": "Bakri ID",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "02-Oct-2016",
+   "weekDay": "Sunday",
+   "description": "Mahatma Gandhi Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "11-Oct-2016",
+   "weekDay": "Tuesday",
+   "description": "Dasera",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "12-Oct-2016",
+   "weekDay": "Wednesday",
+   "description": "Moharram",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "30-Oct-2016",
+   "weekDay": "Sunday",
+   "description": "Diwali-Laxmi Pujan*",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "31-Oct-2016",
+   "weekDay": "Monday",
+   "description": "Diwali-Balipratipada",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "14-Nov-2016",
+   "weekDay": "Monday",
+   "description": "Gurunanak Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "25-Dec-2016",
+   "weekDay": "Sunday",
+   "description": "Christmas",
+   "morning_session": null,
+   "evening_session": null
+  }
+ ],
+ "NDM": [
+  {
+   "tradingDate": "26-Jan-2016",
+   "weekDay": "Tuesday",
+   "description": "Republic Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "19-Feb-2016",
+   "weekDay": "Friday",
+   "description": "Chhatrapati Shivaji Maharaj Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "07-Mar-2016",
+   "weekDay": "Monday",
+   "description": "Mahashivratri",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "24-Mar-2016",
+   "weekDay": "Thursday",
+   "description": "Holi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "25-Mar-2016",
+   "weekDay": "Friday",
+   "description": "Good Friday",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-Apr-2016",
+   "weekDay": "Friday",
+   "description": "Annual Bank Closing",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "08-Apr-2016",
+   "weekDay": "Friday",
+   "description": "Gudi Padwa",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "14-Apr-2016",
+   "weekDay": "Thursday",
+   "description": "Dr. Baba Saheb Ambedkar Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "15-Apr-2016",
+   "weekDay": "Friday",
+   "description": "Ram Navami",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "19-Apr-2016",
+   "weekDay": "Tuesday",
+   "description": "Mahavir Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-May-2016",
+   "weekDay": "Sunday",
+   "description": "Maharashtra Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "21-May-2016",
+   "weekDay": "Saturday",
+   "description": "Buddha Pournima",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "06-Jul-2016",
+   "weekDay": "Wednesday",
+   "description": "Id-uI-Fitar (Ramzan ID)",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "15-Aug-2016",
+   "weekDay": "Monday",
+   "description": "Independence Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "17-Aug-2016",
+   "weekDay": "Wednesday",
+   "description": "Parsi New Year",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "05-Sep-2016",
+   "weekDay": "Monday",
+   "description": "Ganesh Chaturthi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "13-Sep-2016",
+   "weekDay": "Tuesday",
+   "description": "Bakri ID",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "02-Oct-2016",
+   "weekDay": "Sunday",
+   "description": "Mahatma Gandhi Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "11-Oct-2016",
+   "weekDay": "Tuesday",
+   "description": "Dasera",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "12-Oct-2016",
+   "weekDay": "Wednesday",
+   "description": "Moharram",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "30-Oct-2016",
+   "weekDay": "Sunday",
+   "description": "Diwali-Laxmi Pujan*",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "31-Oct-2016",
+   "weekDay": "Monday",
+   "description": "Diwali-Balipratipada",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "14-Nov-2016",
+   "weekDay": "Monday",
+   "description": "Gurunanak Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "12-Dec-2016",
+   "weekDay": "Monday",
+   "description": "Id-e-Milad",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "25-Dec-2016",
+   "weekDay": "Sunday",
+   "description": "Christmas",
+   "morning_session": null,
+   "evening_session": null
+  }
+ ],
+ "NTRP": [
+  {
+   "tradingDate": "26-Jan-2016",
+   "weekDay": "Tuesday",
+   "description": "Republic Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "19-Feb-2016",
+   "weekDay": "Friday",
+   "description": "Chhatrapati Shivaji Maharaj Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "07-Mar-2016",
+   "weekDay": "Monday",
+   "description": "Mahashivratri",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "24-Mar-2016",
+   "weekDay": "Thursday",
+   "description": "Holi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "25-Mar-2016",
+   "weekDay": "Friday",
+   "description": "Good Friday",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-Apr-2016",
+   "weekDay": "Friday",
+   "description": "Annual Bank Closing",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "08-Apr-2016",
+   "weekDay": "Friday",
+   "description": "Gudi Padwa",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "14-Apr-2016",
+   "weekDay": "Thursday",
+   "description": "Dr. Baba Saheb Ambedkar Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "15-Apr-2016",
+   "weekDay": "Friday",
+   "description": "Ram Navami",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "19-Apr-2016",
+   "weekDay": "Tuesday",
+   "description": "Mahavir Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-May-2016",
+   "weekDay": "Sunday",
+   "description": "Maharashtra Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "21-May-2016",
+   "weekDay": "Saturday",
+   "description": "Buddha Pournima",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "06-Jul-2016",
+   "weekDay": "Wednesday",
+   "description": "Id-uI-Fitar (Ramzan ID)",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "15-Aug-2016",
+   "weekDay": "Monday",
+   "description": "Independence Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "17-Aug-2016",
+   "weekDay": "Wednesday",
+   "description": "Parsi New Year",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "05-Sep-2016",
+   "weekDay": "Monday",
+   "description": "Ganesh Chaturthi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "13-Sep-2016",
+   "weekDay": "Tuesday",
+   "description": "Bakri ID",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "02-Oct-2016",
+   "weekDay": "Sunday",
+   "description": "Mahatma Gandhi Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "11-Oct-2016",
+   "weekDay": "Tuesday",
+   "description": "Dasera",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "12-Oct-2016",
+   "weekDay": "Wednesday",
+   "description": "Moharram",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "30-Oct-2016",
+   "weekDay": "Sunday",
+   "description": "Diwali-Laxmi Pujan*",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "31-Oct-2016",
+   "weekDay": "Monday",
+   "description": "Diwali-Balipratipada",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "14-Nov-2016",
+   "weekDay": "Monday",
+   "description": "Gurunanak Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "12-Dec-2016",
+   "weekDay": "Monday",
+   "description": "Id-e-Milad",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "25-Dec-2016",
+   "weekDay": "Sunday",
+   "description": "Christmas",
+   "morning_session": null,
+   "evening_session": null
+  }
+ ],
+ "SLBS": [
+  {
+   "tradingDate": "26-Jan-2016",
+   "weekDay": "Tuesday",
+   "description": "Republic Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "07-Mar-2016",
+   "weekDay": "Monday",
+   "description": "Mahashivratri",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "24-Mar-2016",
+   "weekDay": "Thursday",
+   "description": "Holi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "25-Mar-2016",
+   "weekDay": "Friday",
+   "description": "Good Friday",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "14-Apr-2016",
+   "weekDay": "Thursday",
+   "description": "Dr. Baba Saheb Ambedkar Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "15-Apr-2016",
+   "weekDay": "Friday",
+   "description": "Ram Navami",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "19-Apr-2016",
+   "weekDay": "Tuesday",
+   "description": "Mahavir Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-May-2016",
+   "weekDay": "Sunday",
+   "description": "Maharashtra Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "06-Jul-2016",
+   "weekDay": "Wednesday",
+   "description": "Id-uI-Fitar (Ramzan ID)",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "15-Aug-2016",
+   "weekDay": "Monday",
+   "description": "Independence Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "05-Sep-2016",
+   "weekDay": "Monday",
+   "description": "Ganesh Chaturthi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "13-Sep-2016",
+   "weekDay": "Tuesday",
+   "description": "Bakri ID",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "02-Oct-2016",
+   "weekDay": "Sunday",
+   "description": "Mahatma Gandhi Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "11-Oct-2016",
+   "weekDay": "Tuesday",
+   "description": "Dasera",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "12-Oct-2016",
+   "weekDay": "Wednesday",
+   "description": "Moharram",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "30-Oct-2016",
+   "weekDay": "Sunday",
+   "description": "Diwali-Laxmi Pujan*",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "31-Oct-2016",
+   "weekDay": "Monday",
+   "description": "Diwali-Balipratipada",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "14-Nov-2016",
+   "weekDay": "Monday",
+   "description": "Gurunanak Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "25-Dec-2016",
+   "weekDay": "Sunday",
+   "description": "Christmas",
+   "morning_session": null,
+   "evening_session": null
+  }
+ ]
+}
