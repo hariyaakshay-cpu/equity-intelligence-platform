@@ -1,0 +1,89 @@
+{
+ "files_with_section": 109,
+ "no_rows": [
+  "ind_prs01122011.pdf",
+  "ind_prs04042012.pdf",
+  "ind_prs06062013.pdf",
+  "ind_prs07112013.pdf",
+  "ind_prs14062013.pdf",
+  "ind_prs16052012.pdf",
+  "ind_prs22082017.pdf",
+  "ind_prs27042011.pdf"
+ ],
+ "unreadable_rows": [
+  {
+   "file": "ind_prs01122011.pdf",
+   "row": "1 Indiabulls Real Estate Limited"
+  },
+  {
+   "file": "ind_prs01122011.pdf",
+   "row": "1 Jai Balaji Industries Limited"
+  },
+  {
+   "file": "ind_prs04022011.pdf",
+   "row": "1 Himachal Futuristic Communications"
+  },
+  {
+   "file": "ind_prs04042012.pdf",
+   "row": "1 Zuari Industries Limited ZUARIAGRO April 9, 2012"
+  },
+  {
+   "file": "ind_prs04042012.pdf",
+   "row": "2 Alfa Laval (India) Limited ALFALAVAL April 12, 2012"
+  },
+  {
+   "file": "ind_prs04042012.pdf",
+   "row": "1 United Breweries (Holdings) Limited UBHOLDINGS April 9, 2012"
+  },
+  {
+   "file": "ind_prs04042012.pdf",
+   "row": "2 J. Kumar Infraprojects Limited JKIL April 12, 2012"
+  },
+  {
+   "file": "ind_prs06062013.pdf",
+   "row": "1 Future Ventures India Limited"
+  },
+  {
+   "file": "ind_prs06062013.pdf",
+   "row": "2 JSW ISPAT Steel Limited"
+  },
+  {
+   "file": "ind_prs06062013.pdf",
+   "row": "1 Bharti Infratel Limited"
+  },
+  {
+   "file": "ind_prs06062013.pdf",
+   "row": "2 D.B.Corp Limited"
+  },
+  {
+   "file": "ind_prs14062013.pdf",
+   "row": "1 K S Oils Limited"
+  },
+  {
+   "file": "ind_prs14062013.pdf",
+   "row": "1 3i Infotech Limited"
+  },
+  {
+   "file": "ind_prs16052012.pdf",
+   "row": "1 Patni Computer System"
+  },
+  {
+   "file": "ind_prs16052012.pdf",
+   "row": "1 S.E. Investments Ltd."
+  },
+  {
+   "file": "ind_prs22022016_2.pdf",
+   "row": "501 securities."
+  },
+  {
+   "file": "ind_prs28082019.pdf",
+   "row": "11 Johnson Controls - Hitachi Air Conditioning India"
+  }
+ ],
+ "no_effective_date": [
+  "ind_prs01122011.pdf",
+  "ind_prs14062013.pdf",
+  "ind_prs22082017.pdf"
+ ],
+ "rows": 1470
+}
