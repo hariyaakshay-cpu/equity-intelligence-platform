@@ -1,0 +1,1478 @@
+{
+ "CBM": [
+  {
+   "tradingDate": "25-Jan-2013",
+   "weekDay": "Friday",
+   "description": "Id-e-Milad",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "26-Jan-2013",
+   "weekDay": "Saturday",
+   "description": "Republic Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "19-Feb-2013",
+   "weekDay": "Tuesday",
+   "description": "Chhatrapati Shivaji Maharaj Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "10-Mar-2013",
+   "weekDay": "Sunday",
+   "description": "Mahashivratri",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "27-Mar-2013",
+   "weekDay": "Wednesday",
+   "description": "Holi (2nd day)",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "29-Mar-2013",
+   "weekDay": "Friday",
+   "description": "Good Friday",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-Apr-2013",
+   "weekDay": "Monday",
+   "description": "Annual Bank Closing",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "11-Apr-2013",
+   "weekDay": "Thursday",
+   "description": "Gudi Padwa",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "14-Apr-2013",
+   "weekDay": "Sunday",
+   "description": "Dr. Ambedkar Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "19-Apr-2013",
+   "weekDay": "Friday",
+   "description": "Ram Navmi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "24-Apr-2013",
+   "weekDay": "Wednesday",
+   "description": "Mahavir Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-May-2013",
+   "weekDay": "Wednesday",
+   "description": "Maharashtra day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "25-May-2013",
+   "weekDay": "Saturday",
+   "description": "Buddha Pournima",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "09-Aug-2013",
+   "weekDay": "Friday",
+   "description": "Ramzan ID (Id-Ul- Fitar)",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "15-Aug-2013",
+   "weekDay": "Thursday",
+   "description": "Independence Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "18-Aug-2013",
+   "weekDay": "Sunday",
+   "description": "Parsi New Year (Shahenshah)",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "09-Sep-2013",
+   "weekDay": "Monday",
+   "description": "Ganesh Chaturthi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "02-Oct-2013",
+   "weekDay": "Wednesday",
+   "description": "Mahatma Gandhi Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "13-Oct-2013",
+   "weekDay": "Sunday",
+   "description": "Dasera",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "16-Oct-2013",
+   "weekDay": "Wednesday",
+   "description": "Bakri Id (Id-Ul-Zua)",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "03-Nov-2013",
+   "weekDay": "Sunday",
+   "description": "Diwali Amavasya (Laxmi Puja)",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "04-Nov-2013",
+   "weekDay": "Monday",
+   "description": "Diwali (Balipratipada)",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "15-Nov-2013",
+   "weekDay": "Friday",
+   "description": "Moharum",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "17-Nov-2013",
+   "weekDay": "Sunday",
+   "description": "Gurunank Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "25-Dec-2013",
+   "weekDay": "Wednesday",
+   "description": "Christmas",
+   "morning_session": null,
+   "evening_session": null
+  }
+ ],
+ "CD": [
+  {
+   "tradingDate": "25-Jan-2013",
+   "weekDay": "Friday",
+   "description": "Id-e-Milad",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "26-Jan-2013",
+   "weekDay": "Saturday",
+   "description": "Republic Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "19-Feb-2013",
+   "weekDay": "Tuesday",
+   "description": "Chhatrapati Shivaji Maharaj Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "10-Mar-2013",
+   "weekDay": "Sunday",
+   "description": "Mahashivratri",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "27-Mar-2013",
+   "weekDay": "Wednesday",
+   "description": "Holi (2nd day)",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "29-Mar-2013",
+   "weekDay": "Friday",
+   "description": "Good Friday",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-Apr-2013",
+   "weekDay": "Monday",
+   "description": "Annual Bank Closing",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "11-Apr-2013",
+   "weekDay": "Thursday",
+   "description": "Gudi Padwa",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "14-Apr-2013",
+   "weekDay": "Sunday",
+   "description": "Dr. Babasaheb Ambedkar Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "19-Apr-2013",
+   "weekDay": "Friday",
+   "description": "Ram Navmi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "24-Apr-2013",
+   "weekDay": "Wednesday",
+   "description": "Mahavir Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-May-2013",
+   "weekDay": "Wednesday",
+   "description": "Maharashtra day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "25-May-2013",
+   "weekDay": "Saturday",
+   "description": "Buddha Pournima",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "09-Aug-2013",
+   "weekDay": "Friday",
+   "description": "Ramzan ID (Id-Ul- Fitar)",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "15-Aug-2013",
+   "weekDay": "Thursday",
+   "description": "Independence Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "18-Aug-2013",
+   "weekDay": "Sunday",
+   "description": "Parsi New Year",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "09-Sep-2013",
+   "weekDay": "Monday",
+   "description": "Ganesh Chaturthi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "02-Oct-2013",
+   "weekDay": "Wednesday",
+   "description": "Mahatma Gandhi Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "13-Oct-2013",
+   "weekDay": "Sunday",
+   "description": "Dasera",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "16-Oct-2013",
+   "weekDay": "Wednesday",
+   "description": "Bakri Id (Id-Ul-Zua)",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "03-Nov-2013",
+   "weekDay": "Sunday",
+   "description": "Diwali (Laxmi Puja)*",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "04-Nov-2013",
+   "weekDay": "Monday",
+   "description": "Diwali (Balipratipada)",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "15-Nov-2013",
+   "weekDay": "Friday",
+   "description": "Moharum",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "17-Nov-2013",
+   "weekDay": "Sunday",
+   "description": "Guru Nanak Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "25-Dec-2013",
+   "weekDay": "Wednesday",
+   "description": "Christmas",
+   "morning_session": null,
+   "evening_session": null
+  }
+ ],
+ "CM": [
+  {
+   "tradingDate": "26-Jan-2013",
+   "weekDay": "Saturday",
+   "description": "Republic Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "10-Mar-2013",
+   "weekDay": "Sunday",
+   "description": "Mahashivratri",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "27-Mar-2013",
+   "weekDay": "Wednesday",
+   "description": "Holi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "29-Mar-2013",
+   "weekDay": "Friday",
+   "description": "Good Friday",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "14-Apr-2013",
+   "weekDay": "Sunday",
+   "description": "Dr. Ambedkar Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "19-Apr-2013",
+   "weekDay": "Friday",
+   "description": "Ram Navmi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "24-Apr-2013",
+   "weekDay": "Wednesday",
+   "description": "Mahavir Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-May-2013",
+   "weekDay": "Wednesday",
+   "description": "May Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "09-Aug-2013",
+   "weekDay": "Friday",
+   "description": "Ramzan ID",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "15-Aug-2013",
+   "weekDay": "Thursday",
+   "description": "Independence Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "09-Sep-2013",
+   "weekDay": "Monday",
+   "description": "Ganesh Chaturthi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "02-Oct-2013",
+   "weekDay": "Wednesday",
+   "description": "Gandhi Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "13-Oct-2013",
+   "weekDay": "Sunday",
+   "description": "Dasera",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "16-Oct-2013",
+   "weekDay": "Wednesday",
+   "description": "Bakri ID",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "03-Nov-2013",
+   "weekDay": "Sunday",
+   "description": "Diwali-Laxmi Puja*",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "04-Nov-2013",
+   "weekDay": "Monday",
+   "description": "Diwali-Balipratipada",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "15-Nov-2013",
+   "weekDay": "Friday",
+   "description": "Moharram",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "17-Nov-2013",
+   "weekDay": "Sunday",
+   "description": "Gurunank Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "25-Dec-2013",
+   "weekDay": "Wednesday",
+   "description": "Christmas",
+   "morning_session": null,
+   "evening_session": null
+  }
+ ],
+ "FO": [
+  {
+   "tradingDate": "26-Jan-2013",
+   "weekDay": "Saturday",
+   "description": "Republic Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "10-Mar-2013",
+   "weekDay": "Sunday",
+   "description": "Mahashivratri",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "27-Mar-2013",
+   "weekDay": "Wednesday",
+   "description": "Holi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "29-Mar-2013",
+   "weekDay": "Friday",
+   "description": "Good Friday",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "14-Apr-2013",
+   "weekDay": "Sunday",
+   "description": "Dr. Ambedkar Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "19-Apr-2013",
+   "weekDay": "Friday",
+   "description": "Ram Navmi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "24-Apr-2013",
+   "weekDay": "Wednesday",
+   "description": "Mahavir Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-May-2013",
+   "weekDay": "Wednesday",
+   "description": "May Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "09-Aug-2013",
+   "weekDay": "Friday",
+   "description": "Ramzan ID",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "15-Aug-2013",
+   "weekDay": "Thursday",
+   "description": "Independence Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "09-Sep-2013",
+   "weekDay": "Monday",
+   "description": "Ganesh Chaturthi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "02-Oct-2013",
+   "weekDay": "Wednesday",
+   "description": "Gandhi Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "13-Oct-2013",
+   "weekDay": "Sunday",
+   "description": "Dasera",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "16-Oct-2013",
+   "weekDay": "Wednesday",
+   "description": "Bakri ID",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "03-Nov-2013",
+   "weekDay": "Sunday",
+   "description": "Diwali-Laxmi Puja*",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "04-Nov-2013",
+   "weekDay": "Monday",
+   "description": "Diwali-Balipratipada",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "15-Nov-2013",
+   "weekDay": "Friday",
+   "description": "Moharram",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "17-Nov-2013",
+   "weekDay": "Sunday",
+   "description": "Gurunank Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "25-Dec-2013",
+   "weekDay": "Wednesday",
+   "description": "Christmas",
+   "morning_session": null,
+   "evening_session": null
+  }
+ ],
+ "IRD": [
+  {
+   "tradingDate": "25-Jan-2013",
+   "weekDay": "Friday",
+   "description": "Id-e-Milad",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "26-Jan-2013",
+   "weekDay": "Saturday",
+   "description": "Republic Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "19-Feb-2013",
+   "weekDay": "Tuesday",
+   "description": "Chhatrapati Shivaji Maharaj Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "10-Mar-2013",
+   "weekDay": "Sunday",
+   "description": "Mahashivratri",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "27-Mar-2013",
+   "weekDay": "Wednesday",
+   "description": "Holi (2nd day)",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "29-Mar-2013",
+   "weekDay": "Friday",
+   "description": "Good Friday",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-Apr-2013",
+   "weekDay": "Monday",
+   "description": "Annual Bank Closing",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "11-Apr-2013",
+   "weekDay": "Thursday",
+   "description": "Gudi Padwa",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "14-Apr-2013",
+   "weekDay": "Sunday",
+   "description": "Dr. Babasaheb Ambedkar Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "19-Apr-2013",
+   "weekDay": "Friday",
+   "description": "Ram Navmi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "24-Apr-2013",
+   "weekDay": "Wednesday",
+   "description": "Mahavir Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-May-2013",
+   "weekDay": "Wednesday",
+   "description": "Maharashtra day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "25-May-2013",
+   "weekDay": "Saturday",
+   "description": "Buddha Pournima",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "09-Aug-2013",
+   "weekDay": "Friday",
+   "description": "Ramzan ID (Id-Ul- Fitar)",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "15-Aug-2013",
+   "weekDay": "Thursday",
+   "description": "Independence Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "18-Aug-2013",
+   "weekDay": "Sunday",
+   "description": "Parsi New Year",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "09-Sep-2013",
+   "weekDay": "Monday",
+   "description": "Ganesh Chaturthi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "02-Oct-2013",
+   "weekDay": "Wednesday",
+   "description": "Mahatma Gandhi Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "13-Oct-2013",
+   "weekDay": "Sunday",
+   "description": "Dasera",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "16-Oct-2013",
+   "weekDay": "Wednesday",
+   "description": "Bakri Id (Id-Ul-Zua)",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "03-Nov-2013",
+   "weekDay": "Sunday",
+   "description": "Diwali (Laxmi Puja)*",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "04-Nov-2013",
+   "weekDay": "Monday",
+   "description": "Diwali (Balipratipada)",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "15-Nov-2013",
+   "weekDay": "Friday",
+   "description": "Moharum",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "17-Nov-2013",
+   "weekDay": "Sunday",
+   "description": "Guru Nanak Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "25-Dec-2013",
+   "weekDay": "Wednesday",
+   "description": "Christmas",
+   "morning_session": null,
+   "evening_session": null
+  }
+ ],
+ "MF": [
+  {
+   "tradingDate": "26-Jan-2013",
+   "weekDay": "Saturday",
+   "description": "Republic Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "10-Mar-2013",
+   "weekDay": "Sunday",
+   "description": "Mahashivratri",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "27-Mar-2013",
+   "weekDay": "Wednesday",
+   "description": "Holi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "29-Mar-2013",
+   "weekDay": "Friday",
+   "description": "Good Friday",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "14-Apr-2013",
+   "weekDay": "Sunday",
+   "description": "Dr. Ambedkar Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "19-Apr-2013",
+   "weekDay": "Friday",
+   "description": "Ram Navmi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "24-Apr-2013",
+   "weekDay": "Wednesday",
+   "description": "Mahavir Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-May-2013",
+   "weekDay": "Wednesday",
+   "description": "May Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "09-Aug-2013",
+   "weekDay": "Friday",
+   "description": "Ramzan ID",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "15-Aug-2013",
+   "weekDay": "Thursday",
+   "description": "Independence Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "09-Sep-2013",
+   "weekDay": "Monday",
+   "description": "Ganesh Chaturthi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "02-Oct-2013",
+   "weekDay": "Wednesday",
+   "description": "Gandhi Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "13-Oct-2013",
+   "weekDay": "Sunday",
+   "description": "Dasera",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "16-Oct-2013",
+   "weekDay": "Wednesday",
+   "description": "Bakri ID",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "03-Nov-2013",
+   "weekDay": "Sunday",
+   "description": "Diwali-Laxmi Puja*",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "04-Nov-2013",
+   "weekDay": "Monday",
+   "description": "Diwali-Balipratipada",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "15-Nov-2013",
+   "weekDay": "Friday",
+   "description": "Moharram",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "17-Nov-2013",
+   "weekDay": "Sunday",
+   "description": "Gurunank Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "25-Dec-2013",
+   "weekDay": "Wednesday",
+   "description": "Christmas",
+   "morning_session": null,
+   "evening_session": null
+  }
+ ],
+ "NDM": [
+  {
+   "tradingDate": "25-May-2013",
+   "weekDay": "Saturday",
+   "description": "Buddha Pournima",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "09-Aug-2013",
+   "weekDay": "Friday",
+   "description": "Ramzan ID (Id-Ul- Fitar)",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "15-Aug-2013",
+   "weekDay": "Thursday",
+   "description": "Independence Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "18-Aug-2013",
+   "weekDay": "Sunday",
+   "description": "Parsi New Year (Shahenshah)",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "09-Sep-2013",
+   "weekDay": "Monday",
+   "description": "Ganesh Chaturthi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "02-Oct-2013",
+   "weekDay": "Wednesday",
+   "description": "Mahatma Gandhi Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "13-Oct-2013",
+   "weekDay": "Sunday",
+   "description": "Dasera",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "16-Oct-2013",
+   "weekDay": "Wednesday",
+   "description": "Bakri Id (Id-Ul-Zua)",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "03-Nov-2013",
+   "weekDay": "Sunday",
+   "description": "Diwali Amavasya (Laxmi Puja)",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "04-Nov-2013",
+   "weekDay": "Monday",
+   "description": "Diwali (Balipratipada)",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "15-Nov-2013",
+   "weekDay": "Friday",
+   "description": "Moharum",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "17-Nov-2013",
+   "weekDay": "Sunday",
+   "description": "Gurunank Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "25-Dec-2013",
+   "weekDay": "Wednesday",
+   "description": "Christmas",
+   "morning_session": null,
+   "evening_session": null
+  }
+ ],
+ "RDM": [
+  {
+   "tradingDate": "26-Jan-2013",
+   "weekDay": "Saturday",
+   "description": "Republic Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "10-Mar-2013",
+   "weekDay": "Sunday",
+   "description": "Mahashivratri",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "27-Mar-2013",
+   "weekDay": "Wednesday",
+   "description": "Holi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "29-Mar-2013",
+   "weekDay": "Friday",
+   "description": "Good Friday",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "14-Apr-2013",
+   "weekDay": "Sunday",
+   "description": "Dr. Ambedkar Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "19-Apr-2013",
+   "weekDay": "Friday",
+   "description": "Ram Navmi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "24-Apr-2013",
+   "weekDay": "Wednesday",
+   "description": "Mahavir Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-May-2013",
+   "weekDay": "Wednesday",
+   "description": "May Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "09-Aug-2013",
+   "weekDay": "Friday",
+   "description": "Ramzan ID",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "15-Aug-2013",
+   "weekDay": "Thursday",
+   "description": "Independence Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "09-Sep-2013",
+   "weekDay": "Monday",
+   "description": "Ganesh Chaturthi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "02-Oct-2013",
+   "weekDay": "Wednesday",
+   "description": "Gandhi Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "13-Oct-2013",
+   "weekDay": "Sunday",
+   "description": "Dasera",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "16-Oct-2013",
+   "weekDay": "Wednesday",
+   "description": "Bakri ID",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "03-Nov-2013",
+   "weekDay": "Sunday",
+   "description": "Diwali-Laxmi Puja*",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "04-Nov-2013",
+   "weekDay": "Monday",
+   "description": "Diwali-Balipratipada",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "15-Nov-2013",
+   "weekDay": "Friday",
+   "description": "Moharram",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "17-Nov-2013",
+   "weekDay": "Sunday",
+   "description": "Gurunank Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "25-Dec-2013",
+   "weekDay": "Wednesday",
+   "description": "Christmas",
+   "morning_session": null,
+   "evening_session": null
+  }
+ ],
+ "SLBS": [
+  {
+   "tradingDate": "26-Jan-2013",
+   "weekDay": "Saturday",
+   "description": "Republic Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "10-Mar-2013",
+   "weekDay": "Sunday",
+   "description": "Mahashivratri",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "27-Mar-2013",
+   "weekDay": "Wednesday",
+   "description": "Holi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "29-Mar-2013",
+   "weekDay": "Friday",
+   "description": "Good Friday",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "14-Apr-2013",
+   "weekDay": "Sunday",
+   "description": "Dr. Babasaheb Ambedkar Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "19-Apr-2013",
+   "weekDay": "Friday",
+   "description": "Ram Navmi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "24-Apr-2013",
+   "weekDay": "Wednesday",
+   "description": "Mahavir Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-May-2013",
+   "weekDay": "Wednesday",
+   "description": "May Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "09-Aug-2013",
+   "weekDay": "Friday",
+   "description": "Ramzan ID",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "15-Aug-2013",
+   "weekDay": "Thursday",
+   "description": "Independence Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "09-Sep-2013",
+   "weekDay": "Monday",
+   "description": "Ganesh Chaturthi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "02-Oct-2013",
+   "weekDay": "Wednesday",
+   "description": "Gandhi Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "13-Oct-2013",
+   "weekDay": "Sunday",
+   "description": "Dasera",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "16-Oct-2013",
+   "weekDay": "Wednesday",
+   "description": "Bakri ID",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "03-Nov-2013",
+   "weekDay": "Sunday",
+   "description": "Diwali (Laxmi Puja)*",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "04-Nov-2013",
+   "weekDay": "Monday",
+   "description": "Diwali-Balipratipada",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "15-Nov-2013",
+   "weekDay": "Friday",
+   "description": "Moharram",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "17-Nov-2013",
+   "weekDay": "Sunday",
+   "description": "Guru Nanak Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "25-Dec-2013",
+   "weekDay": "Wednesday",
+   "description": "Christmas",
+   "morning_session": null,
+   "evening_session": null
+  }
+ ],
+ "WDM": [
+  {
+   "tradingDate": "25-Jan-2013",
+   "weekDay": "Friday",
+   "description": "Id-e-Milad",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "26-Jan-2013",
+   "weekDay": "Saturday",
+   "description": "Republic Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "19-Feb-2013",
+   "weekDay": "Tuesday",
+   "description": "Chhatrapati Shivaji Maharaj Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "10-Mar-2013",
+   "weekDay": "Sunday",
+   "description": "Mahashivratri",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "27-Mar-2013",
+   "weekDay": "Wednesday",
+   "description": "Holi (2nd day)",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "29-Mar-2013",
+   "weekDay": "Friday",
+   "description": "Good Friday",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-Apr-2013",
+   "weekDay": "Monday",
+   "description": "Annual Bank Closing",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "11-Apr-2013",
+   "weekDay": "Thursday",
+   "description": "Gudi Padwa",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "14-Apr-2013",
+   "weekDay": "Sunday",
+   "description": "Dr. Ambedkar Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "19-Apr-2013",
+   "weekDay": "Friday",
+   "description": "Ram Navmi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "24-Apr-2013",
+   "weekDay": "Wednesday",
+   "description": "Mahavir Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-May-2013",
+   "weekDay": "Wednesday",
+   "description": "Maharashtra day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "25-May-2013",
+   "weekDay": "Saturday",
+   "description": "Buddha Pournima",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "09-Aug-2013",
+   "weekDay": "Friday",
+   "description": "Ramzan ID (Id-Ul- Fitar)",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "15-Aug-2013",
+   "weekDay": "Thursday",
+   "description": "Independence Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "18-Aug-2013",
+   "weekDay": "Sunday",
+   "description": "Parsi New Year (Shahenshah)",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "09-Sep-2013",
+   "weekDay": "Monday",
+   "description": "Ganesh Chaturthi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "02-Oct-2013",
+   "weekDay": "Wednesday",
+   "description": "Mahatma Gandhi Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "13-Oct-2013",
+   "weekDay": "Sunday",
+   "description": "Dasera",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "16-Oct-2013",
+   "weekDay": "Wednesday",
+   "description": "Bakri Id (Id-Ul-Zua)",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "03-Nov-2013",
+   "weekDay": "Sunday",
+   "description": "Diwali Amavasya (Laxmi Puja)",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "04-Nov-2013",
+   "weekDay": "Monday",
+   "description": "Diwali (Balipratipada)",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "15-Nov-2013",
+   "weekDay": "Friday",
+   "description": "Moharum",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "17-Nov-2013",
+   "weekDay": "Sunday",
+   "description": "Gurunank Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "25-Dec-2013",
+   "weekDay": "Wednesday",
+   "description": "Christmas",
+   "morning_session": null,
+   "evening_session": null
+  }
+ ]
+}
