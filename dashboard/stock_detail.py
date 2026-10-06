@@ -14,11 +14,10 @@ import json
 from pathlib import Path
 from typing import Optional
 
-from dashboard import aggregates, queries
+from dashboard import aggregates, queries, review_file
 from dashboard.queries import _fetch_all_dicts, _fetch_one_dict
 from equity_intel.config import PRICE_BREAK_HIGH_RATIO, PRICE_BREAK_LOW_RATIO, REQUIRED_SESSIONS
 from equity_intel.persistence import db_path_guard
-from equity_intel.scanner import corporate_actions
 from equity_intel.scanner.snapshots import compute_content_hash_from_stored_row
 
 NOT_RECORDED = "not recorded"
@@ -253,24 +252,15 @@ def _flags(run: dict, result: dict, quality: Optional[dict], e4: Optional[dict],
         review["file_state"] = "not_read_demo"
         review["message"] = "review file is not read in demo mode (demo data is fabricated)"
         return {"price_break": price_break, "review": review}
-    path = review_csv_path()
-    try:
-        loaded = corporate_actions.load_corporate_action_review(path)
-    except corporate_actions.CorporateActionReviewCSVInvalidError as exc:
-        review["file_state"] = "unavailable"
-        review["message"] = f"review file unavailable: {exc}"
-        return {"price_break": price_break, "review": review}
-    if not loaded.entries:
-        review["file_state"] = "empty"
-        review["message"] = "review file empty: no symbols reviewed"
-    else:
-        review["file_state"] = "has_entries"
-        review["entries"] = [e.__dict__ for e in loaded.entries if e.symbol == result["symbol"]]
+    state = review_file.read_review_file(review_csv_path(), run.get("corporate_action_review_version"))
+    review["file_state"] = state["file_state"]
+    review["message"] = state["message"]
+    if state["file_state"] == "has_entries":
+        review["entries"] = [e.__dict__ for e in state["entries"] if e.symbol == result["symbol"]]
         if not review["entries"]:
-            review["message"] = f"{len(loaded.entries)} entries in the review file; none for this symbol"
-    if run.get("corporate_action_review_version") and run["corporate_action_review_version"] != loaded.version:
-        review["version_note"] = ("the review file on disk differs from the version this run used "
-                                  "(it was edited after the run); entries below are the CURRENT file")
+            review["message"] = f"{len(state['entries'])} entries in the review file; none for this symbol"
+    if "version_note" in state:
+        review["version_note"] = state["version_note"]
     return {"price_break": price_break, "review": review}
 
 
