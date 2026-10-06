@@ -8,6 +8,7 @@
 <div class="card" id="header">
   <h1>{{ symbol }}</h1>
   <div>{{ v(r.company_name) }} &middot; sector (CSV Industry): {{ v(r.sector) }}</div>
+  <div class="sub" id="identifiers">instrument key: <code>{{ v(r.instrument_key) }}</code> &middot; ISIN: <code>{{ v(r.isin) }}</code> &middot; series: <code>{{ v(r.series) }}</code></div>
   <p>
     <span class="badge b-{{ r.symbol_data_status }}" id="status-badge">{{ r.symbol_data_status }}</span> {{ layer("ScanRun") }}
     {% if r.status_reason %}<span class="sub">{{ r.status_reason }}</span>{% endif %}
