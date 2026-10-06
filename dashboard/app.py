@@ -544,6 +544,8 @@ def main() -> None:
     app = create_app(demo=args.demo)
     url = f"http://{args.host}:{args.port}/equity"
     print(f"Serving equity_intel dashboard at {url}")
+    if args.demo:
+        print("DEMO MODE - using data/equity_intel_demo.db")
     try:
         app.run(host=args.host, port=args.port)
     except OSError as exc:

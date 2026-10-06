@@ -161,3 +161,25 @@ def test_stock_page_still_has_no_chart_score_or_signal_wording(client):
         html = _page(client, symbol)[1].lower()
         for word in ("<canvas", "<svg", "buy", "sell", "rank", "confidence", "target", "stop-loss", "<form", "<button"):
             assert word not in html, (symbol, word)
+
+
+def _run_main(monkeypatch, capsys, argv):
+    from dashboard import app as dashboard_app
+    served = {}
+    monkeypatch.setattr("sys.argv", ["dashboard.app", *argv])
+    monkeypatch.setattr(dashboard_app, "_port_is_in_use", lambda host, port: False)
+    monkeypatch.setattr(dashboard_app.Flask, "run", lambda self, **kw: served.update(db=self.config["DB_PATH"], **kw))
+    dashboard_app.main()
+    return capsys.readouterr().out, served
+
+
+def test_demo_startup_prints_demo_mode_and_selects_the_demo_db(monkeypatch, capsys):
+    out, served = _run_main(monkeypatch, capsys, ["--demo"])
+    assert "DEMO MODE - using data/equity_intel_demo.db" in out
+    assert str(served["db"]).endswith("equity_intel_demo.db") and served["port"] == 5050
+
+
+def test_non_demo_startup_prints_no_demo_line_and_selects_the_real_db(monkeypatch, capsys):
+    out, served = _run_main(monkeypatch, capsys, [])
+    assert "DEMO MODE" not in out and "Serving equity_intel dashboard at" in out
+    assert str(served["db"]).endswith("equity_intel.db") and "demo" not in str(served["db"])
