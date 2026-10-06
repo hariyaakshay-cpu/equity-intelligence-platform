@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% block title %}Exceptions{% endblock %}
+{% macro v(x) %}{% if x is none %}<span class="nr">{{ not_recorded }}</span>{% elif x is sameas true %}yes{% elif x is sameas false %}no{% else %}{{ x }}{% endif %}{% endmacro %}
+{% macro layer(l) %}<span class="layer layer-{{ l }}">{{ l }}</span>{% endmacro %}
+{% macro stored(x) %}{% if x is none %}<span class="nr">unavailable</span>{% else %}{{ x }}{% endif %}{% endmacro %}
+{% macro agree(a) %}{% if a == "agree" %}<span class="ok">agree</span>{% elif a == "disagree" %}<span class="bad">DISAGREE</span>{% else %}<span class="nr">unavailable</span>{% endif %}{% endmacro %}
+{% block body %}
+{# 1. Header #}
+<div class="card" id="header">
+  <h1>Exceptions</h1>
+  <p class="note">Symbols of the latest COMPLETE full run that carry a status or a flag. Descriptive lists of stored results only; read-only.</p>
+  <p class="note">
+    Run <code>{{ run.run_id }}</code> &middot; finished {{ v(run.finished_at) }} &middot; latest closed session {{ v(run.latest_closed_session) }}
+    &middot; {{ evaluated }} symbols evaluated {{ layer("ScanRun") }}
+    {% if previous_run %}<br>Compared with the previous COMPLETE full run <code>{{ previous_run.run_id }}</code> (started {{ previous_run.started_at }}).
+    {% else %}<br><span id="no-previous-run">There is no previous COMPLETE full run to compare with.</span>{% endif %}
+  </p>
+  {% if newer_run %}
+  <p class="notice" id="newer-run">A newer non-complete run exists: <code>{{ newer_run.run_id }}</code> started {{ newer_run.started_at }}
+    &mdash; {{ newer_run.reason }}; {{ newer_run.symbols }}. This page shows the last COMPLETE full run.</p>
+  {% endif %}
+  {% for note in comparability_notes %}<p class="notice comparability">{{ note }}</p>{% endfor %}
+</div>
+
+{# 2. Counts, both numbers #}
+<div class="card" id="counts">
+  <h2>Counts <span class="note">rule: {{ counts_rule }}</span> {{ layer("ScanRun") }}</h2>
+  <p>Requested <b>{{ v(counts.symbols.requested) }}</b> &middot; successful <b>{{ v(counts.symbols.successful) }}</b> &middot; failed <b>{{ v(counts.symbols.failed) }}</b>
+    &middot; successful + failed = requested:
+    <span id="balanced">{% if counts.symbols.balanced is none %}<span class="nr">unavailable</span>{% elif counts.symbols.balanced %}<span class="ok">yes</span>{% else %}<span class="bad">no</span>{% endif %}</span>
+    <span class="note">(a display check; the database does not enforce it)</span></p>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Count</th><th>Recounted from the run's symbol rows</th><th>Stored on the run</th><th>Result</th></tr></thead>
+    <tbody>
+    {% for key, n in counts.recount.status.items() %}
+      <tr><td>{{ key }}</td><td class="num">{{ n }}</td><td class="num">{{ stored(counts.stored.status[key] if counts.stored.status else none) }}</td><td>{{ agree(counts.agreement.status[key]) }}</td></tr>
+    {% endfor %}
+    {% for key, n in counts.recount.flags.items() %}
+      <tr><td>{{ key }} <span class="note">flag</span></td><td class="num">{{ n }}</td><td class="num">{{ stored(counts.stored.flags[key] if counts.stored.flags else none) }}</td><td>{{ agree(counts.agreement.flags[key]) }}</td></tr>
+    {% endfor %}
+    </tbody>
+  </table></div>
+</div>
+
+{# 3. Category tabs #}
+<div class="card" id="categories">
+  <h2>Category</h2>
+  <p>
+    {% for name, url in links.categories.items() %}
+      {% if name == category %}<b class="current-category">{{ name }} ({{ category_counts[name] }})</b>{% else %}<a href="{{ url }}">{{ name }} ({{ category_counts[name] }})</a>{% endif %}{% if not loop.last %} &middot; {% endif %}
+    {% endfor %}
+  </p>
+  {% if failed_note %}<p class="note" id="failed-note">{{ failed_note }}.</p>{% endif %}
+</div>
+
+{# 4. Filters #}
+<div class="card" id="filters">
+  <h2>Filters</h2>
+  <form method="get" action="/equity/exceptions">
+    <input type="hidden" name="category" value="{{ category }}">
+    {% if params.sort != "symbol" %}<input type="hidden" name="sort" value="{{ params.sort }}">{% endif %}
+    {% if params.dir != "asc" %}<input type="hidden" name="dir" value="{{ params.dir }}">{% endif %}
+    {% if params.page_size != 25 %}<input type="hidden" name="page_size" value="{{ params.page_size }}">{% endif %}
+    <label>Symbol or name contains <input type="text" name="q" value="{{ params.q or '' }}" maxlength="100"></label>
+    <label>Sector <input type="text" name="sector" value="{{ params.sector or '' }}" maxlength="100"></label>
+    <label><input type="checkbox" name="changed" value="1" {% if params.changed %}checked{% endif %}> only symbols changed since the previous COMPLETE run</label>
+    <input type="submit" value="Apply filters">
+    {% if params.q or params.sector or params.changed %}<a href="{{ links.clear_filters }}">clear filters</a>{% endif %}
+  </form>
+  <p class="note">Sector UNKNOWN means no sector is stored. Sorting is limited to symbol, company and sector.</p>
+</div>
+
+{# 5. Table #}
+<div class="card" id="results">
+  <h2>{{ category }} <span class="note">{{ total }} symbol(s) &middot; page {{ page }} of {{ total_pages if total_pages else 1 }}</span> {{ layer("ScanRun") }}</h2>
+  {% if rows %}
+  <div class="tablewrap"><table>
+    <thead><tr>
+      {% for col, label in (("symbol", "Symbol"), ("company_name", "Company"), ("sector", "Sector")) %}
+        <th>{% set s = links.sort[col] %}<a href="{{ s.url }}">{{ label }}</a>{% if s.active %} {{ "&#9650;"|safe if s.dir == "asc" else "&#9660;"|safe }}{% endif %}</th>
+      {% endfor %}
+      <th>Status</th><th>Flags</th><th>Sessions available / missing</th><th>Changed since previous COMPLETE run</th>
+    </tr></thead>
+    <tbody>
+    {% for r in rows %}
+      <tr>
+        <td><a href="{{ r.stock_url }}">{{ r.symbol }}</a></td>
+        <td>{{ v(r.company_name) }}</td>
+        <td>{{ v(r.sector) }}</td>
+        <td><span class="badge b-{{ r.status }}">{{ r.status }}</span>{% if r.status_reason %}<div class="note">{{ r.status_reason }}</div>{% endif %}</td>
+        <td>{% set on = [] %}{% for name, flagged in r.flags.items() %}{% if flagged %}{% set _ = on.append(name) %}{% endif %}{% endfor %}{{ on|join(", ") if on else "none" }}</td>
+        <td class="num">{{ v(r.available_session_count) }} / {{ v(r.missing_session_count) }}</td>
+        <td class="marker marker-{{ r.changed_since_previous.state }}">{% if r.changed_since_previous.state == "changed" %}<span class="prov">{{ r.changed_since_previous.text }}</span>{% else %}<span class="sub">{{ r.changed_since_previous.text }}</span>{% endif %}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table></div>
+  <p>
+    {% if links.prev %}<a href="{{ links.prev }}" rel="prev">&larr; previous page</a>{% endif %}
+    {% if links.prev and links.next %} &middot; {% endif %}
+    {% if links.next %}<a href="{{ links.next }}" rel="next">next page &rarr;</a>{% endif %}
+  </p>
+  {% else %}
+  <p id="empty-state">{{ notice }}.</p>
+  {% endif %}
+  <p class="note">Bookmark this view: <a href="{{ links.this_page }}">{{ links.this_page }}</a></p>
+</div>
+{% endblock %}

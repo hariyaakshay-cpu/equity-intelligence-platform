@@ -289,6 +289,31 @@ def create_app(demo: bool = False, db_path: Optional[Union[str, Path]] = None) -
         finally:
             conn.close()
 
+    @app.get("/equity/exceptions")
+    def exceptions_page():
+        """Exceptions view, server-rendered from the same builder as the JSON route. GET only."""
+        try:
+            conn = _open_checked_connection(app.config["DB_PATH"])
+        except _DatabaseUnavailable:
+            return _message_page("No scans yet", _no_scans_body(app.config["DEMO_MODE"])["message"])
+        except _DatabaseVersionMismatch as exc:
+            return _message_page("Database version mismatch",
+                                 _version_mismatch_body(app.config["DEMO_MODE"], exc.found_version)["message"])
+        except _DatabaseError as exc:
+            return _message_page("Database error", _database_error_body(app.config["DEMO_MODE"], exc.detail)["message"])
+        try:
+            try:
+                params = exceptions.parse_params(request.args)
+            except exceptions.ParamError as exc:
+                return _message_page("Invalid parameter", str(exc), 400)
+            body = exceptions.build(conn, params)
+        finally:
+            conn.close()
+        if body["run"] is None:
+            return _message_page("No COMPLETE scan run", "There is no COMPLETE full scan run to show yet.")
+        return render_template("exceptions.html", demo=app.config["DEMO_MODE"], not_recorded=stock_detail.NOT_RECORDED,
+                               links=exceptions.page_links(body), **body)
+
     @app.get("/api/equity/exceptions")
     @_guarded
     def api_exceptions(conn):

@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import math
 from typing import Optional
-from urllib.parse import quote
+from urllib.parse import quote, urlencode
 
 from dashboard import queries, stock_detail
 
@@ -154,6 +154,54 @@ def _row_view(row: dict, marker: dict) -> dict:
         "flags": {name.upper(): bool(row[column]) for name, column in queries.FLAG_COLUMNS.items()},
         "changed_since_previous": marker,
         "stock_url": f"/equity/stock/{quote(row['symbol'], safe='')}",
+    }
+
+
+PAGE_PATH = "/equity/exceptions"
+
+
+def page_url(params: dict, **changes) -> str:
+    """The Exceptions page URL for `params` with `changes` applied. Every non-default value is kept in
+    the query string (category always), so any view can be bookmarked and reopened identically."""
+    merged = {**params, **changes}
+    pairs = [("category", merged["category"])]
+    if merged["q"]:
+        pairs.append(("q", merged["q"]))
+    if merged["sector"]:
+        pairs.append(("sector", merged["sector"]))
+    if merged["changed"]:
+        pairs.append(("changed", "1"))
+    if merged["page"] != 1:
+        pairs.append(("page", str(merged["page"])))
+    if merged["page_size"] != DEFAULT_PAGE_SIZE:
+        pairs.append(("page_size", str(merged["page_size"])))
+    if merged["sort"] != "symbol":
+        pairs.append(("sort", merged["sort"]))
+    if merged["dir"] != "asc":
+        pairs.append(("dir", merged["dir"]))
+    return f"{PAGE_PATH}?{urlencode(pairs)}"
+
+
+def page_links(body: dict) -> dict:
+    """All links of the HTML page, built from the validated params. Changing the category, a filter or a
+    sort goes back to page 1; the page links keep everything else."""
+    p = body["params"]
+    last = body["total_pages"]
+    sort_links = {}
+    for column in SORT_COLUMNS:
+        active = p["sort"] == column
+        direction = "desc" if active and p["dir"] == "asc" else "asc"
+        sort_links[column] = {"url": page_url(p, sort=column, dir=direction, page=1), "active": active,
+                              "dir": p["dir"] if active else None}
+    return {
+        "categories": {name: page_url(p, category=name, page=1) for name in CATEGORY_COLUMNS},
+        "sort": sort_links,
+        "prev": page_url(p, page=p["page"] - 1) if p["page"] > 1 else None,
+        "next": page_url(p, page=p["page"] + 1) if p["page"] < last else None,
+        "clear_filters": page_url(p, q=None, sector=None, changed=False, page=1),
+        "changed_on": page_url(p, changed=True, page=1),
+        "changed_off": page_url(p, changed=False, page=1),
+        "this_page": page_url(p),
     }
 
 
