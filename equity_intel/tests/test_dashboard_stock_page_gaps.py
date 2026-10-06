@@ -141,3 +141,23 @@ def test_stored_row_integrity_note_says_it_does_not_prove_vendor_data_unchanged(
     note = _page(client, "DEMOAAA")[1].split('id="hash-note"')[1].split("</div>")[0]
     assert ("Checks that stored bars match their stored hash. It does not prove the vendor data is unchanged; "
             "vendor revisions are detected by the Snapshot Audit compare.") in note
+
+
+def test_adjustment_basis_is_always_the_literal_not_defined_with_the_stored_value_as_a_note(client):
+    html = _page(client, "DEMOAAA")[1]
+    assert re.search(r'id="adjustment-status">NOT_DEFINED</span>', html)
+    note = html.split('id="adjustment-stored"')[1].split("</span>")[0]
+    assert "DEMO fabricated series (not a real adjustment basis)" in note
+
+
+def test_adjustment_basis_is_not_defined_even_when_nothing_is_stored(client):
+    html = _page(client, "DEMOFAB")[1]  # FAILED: no E4 acquisition rows
+    assert re.search(r'id="adjustment-status">NOT_DEFINED</span>', html)
+    assert "not recorded" in html.split('id="adjustment-stored"')[1].split("</span>")[0]
+
+
+def test_stock_page_still_has_no_chart_score_or_signal_wording(client):
+    for symbol in ("DEMOAAA", "DEMOFAB"):
+        html = _page(client, symbol)[1].lower()
+        for word in ("<canvas", "<svg", "buy", "sell", "rank", "confidence", "target", "stop-loss", "<form", "<button"):
+            assert word not in html, (symbol, word)

@@ -72,7 +72,7 @@
     <tr><th>Universe source</th><td>Nifty 500 constituent CSV (spec section 2); universe_version (SHA-256): {% if run.universe_version %}<code>{{ run.universe_version }}</code>{% else %}{{ v(none) }}{% endif %}</td><td>{{ layer("ScanRun") }}</td></tr>
     <tr><th>Benchmark</th><td>{{ v(run.benchmark) }}</td><td>{{ layer("ScanRun") }}</td></tr>
     <tr><th>Calendar</th><td>{{ v(run.calendar_source) }} &middot; verification: {{ v(run.calendar_verification) }}</td><td>{{ layer("ScanRun") }}</td></tr>
-    <tr><th>Adjustment basis</th><td>{{ v(p.adjustment) }}</td><td>{{ layer("E4") }} acquisition rows</td></tr>
+    <tr><th>Adjustment basis</th><td><span id="adjustment-status">NOT_DEFINED</span> <span class="note" id="adjustment-stored">(stored value in the E4 acquisition rows: {{ v(p.adjustment) }})</span></td><td>{{ layer("E4") }} acquisition rows</td></tr>
     <tr><th>Bars retrieved</th><td>{% if p.bars.n %}{{ p.bars.n }} ({{ p.bars.first_date }} to {{ p.bars.last_date }}){% else %}{{ v(none) }}{% endif %}</td><td>{{ layer("ScanRun") }} snapshots</td></tr>
     <tr><th>Data-through date</th><td id="data-through">{{ v(p.bars.last_date) }} <span class="note">(this symbol's last stored snapshot bar)</span></td><td>{{ layer("ScanRun") }} snapshots</td></tr>
     <tr><th>Run latest closed session</th><td id="run-session">{{ v(run.latest_closed_session) }} <span class="note">(scan_runs; the session this run was judged against)</span></td><td>{{ layer("ScanRun") }} run</td></tr>
