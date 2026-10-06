@@ -44,7 +44,11 @@ def _ohlcv_dates(html):
 def test_ohlcv_table_shows_the_stored_bars_newest_first(client):
     html = _page(client, "DEMOAAA")[1]
     assert _ohlcv_dates(html) == ["2026-09-25", "2026-09-24", "2026-09-23"]
-    assert "Open</th>" in html and "Volume</th>" in html and "nothing here is adjusted or computed" in html
+    assert "Open</th>" in html and "Volume</th>" in html
+    note = html.split('id="ohlcv"')[1].split("</p>")[0]
+    assert ("Stored values as retrieved from the vendor. The dashboard does not adjust or compute them; "
+            "whether the vendor adjusted them is NOT_DEFINED (see adjustment basis).") in note
+    assert "nothing here is adjusted" not in html
 
 
 def test_ohlcv_table_is_capped_at_ohlcv_rows_newest_first(demo_db):
