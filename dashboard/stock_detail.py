@@ -158,6 +158,9 @@ def _e4_values(features: Optional[dict], quality: Optional[dict], e4: Optional[d
         ("52W high", val("window_high"), "stored prior_high_long: highest high over the E4 high window"),
         ("52W low", None, "E4 does not store a 52-week low"),
         ("Volume ratio", val("relative_volume"), "stored relative_volume"),
+        ("RSI", val("rsi"), "stored rsi"),
+        ("ROC", val("roc"), "stored roc"),
+        ("ATR %", val("atr_percent"), "stored atr_percent (ATR as a percentage); the E4 table has no absolute ATR column"),
         ("w52_complete", None if quality is None else bool(quality["w52_complete"]), None),
         ("Volume usable", None if usable is None else bool(usable), "E4 setting, rule not frozen"),
     ]

@@ -81,3 +81,36 @@ def test_ohlcv_card_has_no_chart_element(client):
     section = _page(client, "DEMOAAA")[1].split('id="ohlcv"')[1].split('id="history"')[0].lower()
     for tag in ("<canvas", "<svg", "<img", "<script"):
         assert tag not in section
+
+
+def _e4_card(html):
+    return html.split('id="e4"')[1].split('id="provenance"')[0]
+
+
+def test_e4_card_says_raw_value_not_a_score_with_run_id_and_as_of(client):
+    card = _e4_card(_page(client, "DEMOAAA")[1])
+    assert "raw value, not a score" in card
+    assert "E4 scan <code>" in card and "as of 2026-" in card
+
+
+def test_rsi_roc_atr_are_the_stored_e4_values_not_computed(client, demo_db):
+    conn = connection.get_read_only_connection(demo_db)
+    try:
+        rsi, roc, atr = conn.execute(
+            "SELECT f.rsi, f.roc, f.atr_percent FROM e4_feature_sets f WHERE f.symbol = 'DEMOAAA' "
+            "AND f.scan_id = (SELECT scan_id FROM e4_scan_runs WHERE status = 'COMPLETE' ORDER BY started_at DESC LIMIT 1)"
+        ).fetchone()
+    finally:
+        conn.close()
+    assert None not in (rsi, roc, atr)
+    card = _e4_card(_page(client, "DEMOAAA")[1])
+    for label, stored in (("RSI", rsi), ("ROC", roc), ("ATR %", atr)):
+        row = re.search(r"<th>" + re.escape(label) + r"</th><td class=\"num\">(.*?)</td>", card).group(1)
+        assert row == f"{stored:.2f}", label
+
+
+def test_failed_symbol_rsi_roc_atr_are_not_recorded_not_zero(client):
+    card = _e4_card(_page(client, "DEMOFAB")[1])
+    for label in ("RSI", "ROC", "ATR %"):
+        row = re.search(r"<th>" + re.escape(label) + r"</th><td class=\"num\">(.*?)</td>", card).group(1)
+        assert "not recorded" in row and "0.00" not in row, label

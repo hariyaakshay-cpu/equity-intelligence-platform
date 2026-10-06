@@ -43,7 +43,7 @@
 
 {# 3. E4 data #}
 <div class="card" id="e4">
-  <h2>E4 data {{ layer("E4") }}</h2>
+  <h2>E4 data {{ layer("E4") }} <span class="note" id="e4-raw-note">raw value, not a score</span></h2>
   {% if e4.scan %}
   <p class="note">E4 scan <code>{{ e4.scan.scan_id }}</code> as of {{ e4.scan.asof_date }} <span class="prov">[provisional, not B2-authoritative]</span>
     {% if not e4.scan.as_of_matches_run %}&middot; <b>E4 as-of date does not match this ScanRun's latest closed session ({{ v(e4.scan.run_latest_closed_session) }})</b>{% endif %}</p>
