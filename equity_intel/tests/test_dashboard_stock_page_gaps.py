@@ -8,6 +8,7 @@ from datetime import date, timedelta
 
 from dashboard import queries, stock_detail
 from equity_intel.persistence import connection
+from equity_intel.scanner import classification
 from equity_intel.tests.test_dashboard_stock_page import _page, client, demo_db  # noqa: F401  (fixtures)
 from scripts import dashboard_demo_seed as seed
 
@@ -187,3 +188,30 @@ def test_non_demo_startup_prints_no_demo_line_and_selects_the_real_db(monkeypatc
     out, served = _run_main(monkeypatch, capsys, [])
     assert "DEMO MODE" not in out and "Serving equity_intel dashboard at" in out
     assert str(served["db"]).endswith("equity_intel.db") and "demo" not in str(served["db"])
+
+
+def test_header_identifiers_flow_from_the_scanner_writer_to_the_page(client, demo_db):
+    # Real data flow, no monkeypatching: the scanner's own writer stores the row in a RUNNING run, the run
+    # completes, and the real route (queries.get_symbol_result -> stock_detail.build -> template) renders it.
+    conn = connection.get_connection(demo_db)
+    try:
+        seed._insert_scan_run(conn, "r-real-flow", "2026-10-02T09:20:00")
+        for symbol, key in (("REALSYM", "NSE_EQ|INE000A00001"), ("NOKEYSYM", None)):  # None: ISIN unmapped
+            classification.write_symbol_scan_result(
+                conn, scan_run_id="r-real-flow", symbol=symbol, instrument_key=key, isin="INE000A00001",
+                series="EQ", company_name="Real Co", sector="IT", symbol_data_status="VALID", status_reason=None,
+                available_session_count=252, missing_session_count=0)
+            seed._insert_snapshot(conn, "r-real-flow", symbol, "2026-10-01", "2026-10-02T09:20:00+05:30", 100.0)
+        seed._complete_run(conn, "r-real-flow", "2026-10-02T09:45:00", "2026-10-01",
+                           {"VALID": 2, "INSUFFICIENT_HISTORY": 0, "STALE": 0, "FAILED": 0},
+                           {"history_gaps": 0, "corporate_action_review": 0, "price_break_detected": 0, "non_eq_series": 0},
+                           requested=2, successful=2, failed=0)
+        conn.commit()
+    finally:
+        conn.close()
+    ident = _identifiers(_page(client, "REALSYM")[1])
+    assert "r-real-flow" in _page(client, "REALSYM")[1]
+    assert "<code>NSE_EQ|INE000A00001</code>" in ident and "<code>INE000A00001</code>" in ident and "<code>EQ</code>" in ident
+    # an unmapped ISIN stores a NULL instrument key: shown as not recorded, ISIN and series still shown
+    unmapped = _identifiers(_page(client, "NOKEYSYM")[1])
+    assert "not recorded" in unmapped.split("ISIN")[0] and "<code>INE000A00001</code>" in unmapped
