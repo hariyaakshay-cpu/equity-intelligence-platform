@@ -202,6 +202,15 @@ def test_sort_headers_are_limited_to_symbol_company_and_sector(db, client):
     assert "dir=desc" in head  # the active column (symbol, ascending) links to the descending order
 
 
+def test_the_active_sort_column_shows_an_up_or_down_arrow_without_the_safe_filter(db, client):
+    _run(db, "r1", "2026-09-01T09:00:00", CATEGORY_ROWS)
+    asc = _results(_page(client, "category=HISTORY_GAPS&sort=company_name&dir=asc")[1]).split("</thead>")[0]
+    desc = _results(_page(client, "category=HISTORY_GAPS&sort=company_name&dir=desc")[1]).split("</thead>")[0]
+    assert asc.count("&#9650;") == 1 and "&#9660;" not in asc     # up arrow, only on the active column
+    assert desc.count("&#9660;") == 1 and "&#9650;" not in desc   # down arrow
+    assert "&amp;#9650;" not in asc and "&amp;#9660;" not in desc  # the entity is not double-escaped
+
+
 def test_pagination_links_exist_only_where_there_is_a_page(db, client):
     _run(db, "r1", "2026-09-01T09:00:00", [(f"S{i}", "STALE", []) for i in range(1, 6)])
     first, middle, last = (_page(client, f"category=STALE&page={n}&page_size=2")[1] for n in (1, 2, 3))

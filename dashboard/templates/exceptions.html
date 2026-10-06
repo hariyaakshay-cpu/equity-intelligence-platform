@@ -77,7 +77,7 @@
   <div class="tablewrap"><table>
     <thead><tr>
       {% for col, label in (("symbol", "Symbol"), ("company_name", "Company"), ("sector", "Sector")) %}
-        <th>{% set s = links.sort[col] %}<a href="{{ s.url }}">{{ label }}</a>{% if s.active %} {{ "&#9650;"|safe if s.dir == "asc" else "&#9660;"|safe }}{% endif %}</th>
+        <th>{% set s = links.sort[col] %}<a href="{{ s.url }}">{{ label }}</a>{% if s.active %} {% if s.dir == "asc" %}&#9650;{% else %}&#9660;{% endif %}{% endif %}</th>
       {% endfor %}
       <th>Status</th><th>Flags</th><th>Sessions available / missing</th><th>Changed since previous COMPLETE run</th>
     </tr></thead>
