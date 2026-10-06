@@ -92,6 +92,24 @@
   </tbody></table></div>
 </div>
 
+{# 4b. Stored daily bars #}
+<div class="card" id="ohlcv">
+  <h2>Daily bars <span class="note">last {{ ohlcv_rows }} stored bars of this run, newest first</span> {{ layer("ScanRun") }}</h2>
+  {% if ohlcv %}
+  <div class="tablewrap"><table>
+    <thead><tr><th>Date</th><th>Open</th><th>High</th><th>Low</th><th>Close</th><th>Volume</th><th>Bar status</th></tr></thead>
+    <tbody>
+    {% for b in ohlcv %}
+      <tr><td>{{ b.trading_date }}</td><td class="num">{{ v(b.open) }}</td><td class="num">{{ v(b.high) }}</td><td class="num">{{ v(b.low) }}</td><td class="num">{{ v(b.close) }}</td><td class="num">{{ v(b.volume) }}</td><td class="sub">{{ v(b.candle_validation_status) }}</td></tr>
+    {% endfor %}
+    </tbody>
+  </table></div>
+  <p class="note">Stored values as retrieved; nothing here is adjusted or computed.</p>
+  {% else %}
+  <p class="note">{{ v(none) }}: no bars are stored for this symbol in this run.</p>
+  {% endif %}
+</div>
+
 {# 5. Status history #}
 <div class="card" id="history">
   <h2>Status history <span class="note">one row per ScanRun, newest first</span> {{ layer("ScanRun") }}</h2>

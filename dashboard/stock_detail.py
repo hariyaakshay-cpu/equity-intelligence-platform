@@ -28,6 +28,7 @@ SCANRUN = "ScanRun"
 E4 = "E4"
 
 STATUS_HISTORY_LIMIT = 50
+OHLCV_ROWS = 30  # newest-first table of this symbol's stored daily bars; table only, no chart
 
 
 def review_csv_path() -> Path:
@@ -288,6 +289,8 @@ def build(conn, run: dict, symbol: str, result: dict, demo: bool) -> dict:
         "checks": _status_checks(result, run, e4, quality, features),
         "e4": _e4_values(features, quality, e4),
         "provenance": _provenance(conn, run, symbol, result, e4),
+        "ohlcv": queries.get_candles(conn, run["run_id"], symbol, limit=OHLCV_ROWS),
+        "ohlcv_rows": OHLCV_ROWS,
         "history": _status_history(conn, symbol),
         "flags": _flags(run, result, quality, e4, demo),
         "required_sessions": REQUIRED_SESSIONS,
