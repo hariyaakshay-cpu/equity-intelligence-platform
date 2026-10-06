@@ -1,0 +1,8 @@
+old_symbol,new_symbol,evidence_type,status,evidence
+ANGELBRKG,ANGELONE,NAME_CONTINUITY,INFERRED,"press release name 'Angel Broking Ltd.'; snapshot 'Angel One Ltd.' INE732I01021"
+BURGERKING,RBA,NAME_CONTINUITY,INFERRED,"press release 2021 name 'Burger King India Ltd.'; excluded 2024-09-30 as 'Restaurant Brands Asia Ltd.' RBA (ind_prs23082024.pdf)"
+GET&D,GVT&D,NAME_CONTINUITY,INFERRED,"press release name 'GE T&D India Ltd.'; snapshot 'GE Vernova T&D India Ltd.' INE200A01026"
+GMRINFRA,GMRAIRPORT,NAME_CONTINUITY,INFERRED,"press release name 'GMR Infrastructure Ltd.'; snapshot 'GMR Airports Ltd.' INE776C01039"
+HBLPOWER,HBLENGINE,NAME_CONTINUITY,INFERRED,"press release name 'HBL Power Systems Ltd.'; snapshot 'HBL Engineering Ltd.' INE292B01021"
+SWANENERGY,SWANCORP,NAME_CONTINUITY,INFERRED,"press release name 'Swan Energy Ltd.'; snapshot 'Swan Corp Ltd.' INE665A01038"
+ZOMATO,ETERNAL,NAME_CONTINUITY,INFERRED,"press release name 'Zomato Ltd.'; snapshot 'Eternal Ltd.' INE758T01015"
