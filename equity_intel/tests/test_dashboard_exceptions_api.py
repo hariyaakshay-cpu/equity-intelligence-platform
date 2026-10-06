@@ -236,6 +236,66 @@ def test_changed_filter_paginates_over_the_changed_set(db, client):
     assert page2["total"] == 3 and page2["total_pages"] == 2 and [r["symbol"] for r in page2["rows"]] == ["STAT"]
 
 
+def _interleaved_runs(db):
+    """STALE symbols S01..S14 in the latest run. The odd ones S01..S13 CHANGED (they were VALID in the previous
+    COMPLETE run), the even ones S02..S12 are UNCHANGED (STALE in both), and S14 is NEW (absent from the previous
+    run). So changed rows alternate with unchanged rows all the way down the list: 7 changed rows in total."""
+    previous = [(f"S{i:02d}", "VALID" if i % 2 else "STALE", []) for i in range(1, 14)]
+    latest = [(f"S{i:02d}", "STALE", []) for i in range(1, 15)]
+    _run(db, "r-prev", "2026-09-01T09:00:00", previous)
+    _run(db, "r-latest", "2026-09-02T09:00:00", latest)
+    return [f"S{i:02d}" for i in range(1, 14, 2)]  # the changed symbols, in symbol order
+
+
+def _changed_page(client, page, page_size, extra=""):
+    body = _get(client, f"category=STALE&changed=1&page={page}&page_size={page_size}{extra}")[1]
+    return [r["symbol"] for r in body["rows"]], body["total"], body["total_pages"], body["page"]
+
+
+def test_changed_filter_pages_are_full_when_changed_rows_are_interleaved_with_unchanged_ones(db, client):
+    changed = _interleaved_runs(db)
+    assert changed == ["S01", "S03", "S05", "S07", "S09", "S11", "S13"]
+    # the unfiltered list really is interleaved: unchanged and new rows sit between and after the changed ones
+    plain = _get(client, "category=STALE&page_size=50")[1]
+    states = [(r["symbol"], r["changed_since_previous"]["state"]) for r in plain["rows"]]
+    assert [s for _, s in states] == ["changed", "unchanged"] * 6 + ["changed", "new"]
+    assert plain["total"] == 14
+
+    # page_size 2: 7 changed rows -> 4 pages. Pages 1-3 hold changed rows AND are full; page 4 holds the last one.
+    expected = [["S01", "S03"], ["S05", "S07"], ["S09", "S11"], ["S13"]]
+    for number, symbols in enumerate(expected, start=1):
+        rows, total, total_pages, page = _changed_page(client, number, 2)
+        assert (rows, total, total_pages, page) == (symbols, 7, 4, number), number
+    assert all(len(_changed_page(client, n, 2)[0]) == 2 for n in (1, 2, 3))  # a later page holds rows, so earlier ones are full
+
+    # past the last page: no rows, but the total and page count still describe the changed set
+    assert _changed_page(client, 5, 2) == ([], 7, 4, 5)
+
+
+def test_changed_filter_pagination_for_other_page_sizes_and_descending_order(db, client):
+    _interleaved_runs(db)
+    assert [_changed_page(client, n, 3)[0] for n in (1, 2, 3)] == [["S01", "S03", "S05"], ["S07", "S09", "S11"], ["S13"]]
+    assert _changed_page(client, 1, 3)[1:3] == (7, 3)
+    assert _changed_page(client, 1, 7) == (["S01", "S03", "S05", "S07", "S09", "S11", "S13"], 7, 1, 1)
+    assert _changed_page(client, 1, 50)[1:3] == (7, 1)
+    descending = [_changed_page(client, n, 2, "&dir=desc")[0] for n in (1, 2, 3, 4)]
+    assert descending == [["S13", "S11"], ["S09", "S07"], ["S05", "S03"], ["S01"]]
+
+
+def test_changed_filter_pages_combine_with_q_and_the_html_page_agrees(db, client):
+    _interleaved_runs(db)
+    # q narrows the SQL set first ("S0" matches S01..S09), then the changed filter applies, then pagination
+    narrowed = [_changed_page(client, n, 2, "&q=S0")[0] for n in (1, 2, 3)]
+    assert narrowed == [["S01", "S03"], ["S05", "S07"], ["S09"]]
+    assert _changed_page(client, 1, 2, "&q=S0")[1:3] == (5, 3)
+    # the HTML page is built from the same data: same rows, same page count
+    import re
+    text = client.get("/equity/exceptions?category=STALE&changed=1&page=2&page_size=2").get_data(as_text=True)
+    results = text.split('id="results"')[1]
+    assert re.findall(r'href="/equity/stock/(S\d+)"', results) == ["S05", "S07"]
+    assert "7 symbol(s)" in results and "page 2 of 4" in results
+
+
 # ---------------------------------------------------------------- filters, sort, pagination
 
 def test_sector_q_sort_and_pagination(db, client):
