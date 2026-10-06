@@ -307,6 +307,8 @@ def create_app(demo: bool = False, db_path: Optional[Union[str, Path]] = None) -
             except exceptions.ParamError as exc:
                 return _message_page("Invalid parameter", str(exc), 400)
             body = exceptions.build(conn, params)
+            if body["run"] is not None:
+                body["review_file"] = exceptions.review_panel(conn, body, app.config["DEMO_MODE"])
         finally:
             conn.close()
         if body["run"] is None:
@@ -323,6 +325,8 @@ def create_app(demo: bool = False, db_path: Optional[Union[str, Path]] = None) -
         except exceptions.ParamError as exc:
             return jsonify({"error": str(exc)}), 400
         body = exceptions.build(conn, params)
+        if body["run"] is not None:
+            body["review_file"] = exceptions.review_panel(conn, body, app.config["DEMO_MODE"])
         return jsonify({"demo": app.config["DEMO_MODE"], **body})
 
     @app.get("/api/equity/summary")

@@ -105,4 +105,31 @@
   {% endif %}
   <p class="note">Bookmark this view: <a href="{{ links.this_page }}">{{ links.this_page }}</a></p>
 </div>
+
+{# 6. Review file (CORPORATE_ACTION_REVIEW only) #}
+{% if review_file %}
+<div class="card" id="review-file">
+  <h2>Corporate-action review file <span class="note">data/reference/corporate_action_review.csv, read-only</span></h2>
+  {% if review_file.message %}<p id="review-file-state">{{ review_file.message }}</p>{% endif %}
+  {% if review_file.version_note %}<p class="notice" id="review-version-note">{{ review_file.version_note }}</p>{% endif %}
+  {% if review_file.consistency_note %}<p class="notice" id="review-consistency-note">{{ review_file.consistency_note }}.</p>{% endif %}
+  <p class="note">Flagged in this run: {{ review_file.flagged_in_run }} &middot; entries in the file now: {{ review_file.total_entries }}. Rule: {{ review_file.flag_rule }}.</p>
+  {% if review_file.entries %}
+  <div class="tablewrap"><table>
+    <thead><tr><th>Symbol</th><th>Event</th><th>Effective date</th><th>Reason</th><th>Reviewer</th><th>State</th><th>In this run</th><th>Flagged in this run</th></tr></thead>
+    <tbody>
+    {% for e in review_file.entries %}
+      <tr>
+        <td>{% if e.stock_url %}<a href="{{ e.stock_url }}">{{ e.symbol }}</a>{% else %}{{ e.symbol }}{% endif %}</td>
+        <td>{{ e.event_type }}</td><td>{{ e.effective_date }}</td><td>{{ e.reason }}</td><td>{{ e.reviewer }}</td><td>{{ e.review_state }}</td>
+        <td>{{ "yes" if e.in_run else "no" }}</td>
+        <td>{% if e.flagged_in_run is none %}<span class="nr">{{ not_recorded }}</span>{% else %}{{ "yes" if e.flagged_in_run else "no" }}{% endif %}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table></div>
+  {% endif %}
+  <p class="note">This page only reads the file; there is no review action.</p>
+</div>
+{% endif %}
 {% endblock %}

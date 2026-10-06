@@ -12,7 +12,7 @@ import math
 from typing import Optional
 from urllib.parse import quote, urlencode
 
-from dashboard import queries, stock_detail
+from dashboard import queries, review_file, stock_detail
 
 DEFAULT_CATEGORY = "FAILED"
 DEFAULT_PAGE_SIZE = 25
@@ -222,6 +222,60 @@ def _comparability_notes(latest: dict, previous: Optional[dict]) -> list:
 
 def _short(value) -> str:
     return "not recorded" if not value else str(value)[:12]
+
+
+REVIEW_CATEGORY = "CORPORATE_ACTION_REVIEW"
+FLAG_RULE = ("an entry flags a symbol only when it is not RESOLVED and its effective_date falls inside "
+             "the symbol's fetched window")
+
+
+def review_panel(conn, body: dict, demo: bool) -> Optional[dict]:
+    """The review-file panel for the CORPORATE_ACTION_REVIEW category, else None.
+
+    Reads data/reference/corporate_action_review.csv (read-only, via the shared reader) and says what the
+    file contains NOW. A header-only file is "review file empty: no symbols reviewed", never "0 issues".
+    The demo database is fabricated, so its page does not read the real file. `body` comes from build().
+    """
+    if body.get("category") != REVIEW_CATEGORY or body.get("run") is None:
+        return None
+    run = body["run"]
+    flagged = body["counts"]["recount"]["flags"]["CORPORATE_ACTION_REVIEW"]
+    panel = {"file_state": None, "message": None, "version_note": None, "entries": [], "total_entries": 0,
+             "flagged_in_run": flagged, "flag_rule": FLAG_RULE, "consistency_note": None}
+    if demo:
+        panel["file_state"] = "not_read_demo"
+        panel["message"] = "review file is not read in demo mode (demo data is fabricated)"
+        return panel
+    state = review_file.read_review_file(stock_detail.review_csv_path(), run["corporate_action_review_version"])
+    panel["file_state"], panel["message"] = state["file_state"], state["message"]
+    panel["version_note"] = state.get("version_note")
+    entries = state["entries"]
+    panel["total_entries"] = len(entries)
+    symbols = sorted({e.symbol for e in entries})
+    in_run: dict = {}
+    for start in range(0, len(symbols), 400):
+        chunk = symbols[start : start + 400]
+        for row in queries._fetch_all_dicts(
+            conn,
+            "SELECT symbol, corporate_action_review_flag FROM symbol_scan_results "
+            f"WHERE scan_run_id = ? AND symbol IN ({','.join(['?'] * len(chunk))})",
+            [run["run_id"], *chunk],
+        ):
+            in_run[row["symbol"]] = bool(row["corporate_action_review_flag"])
+    panel["entries"] = [
+        {**e.__dict__, "in_run": e.symbol in in_run, "flagged_in_run": in_run.get(e.symbol),
+         "stock_url": f"/equity/stock/{quote(e.symbol, safe='')}" if e.symbol in in_run else None}
+        for e in entries
+    ]
+    if state["file_state"] != "has_entries" and flagged:
+        panel["consistency_note"] = (
+            f"{flagged} symbol(s) are flagged in run {run['run_id']}, but the current review file has no "
+            "entries to show: it may have been edited after the run")
+    elif state["file_state"] == "has_entries" and not flagged:
+        panel["consistency_note"] = (
+            f"the file has {len(entries)} entr{'y' if len(entries) == 1 else 'ies'}, but no symbol is flagged in "
+            f"run {run['run_id']}: {FLAG_RULE}")
+    return panel
 
 
 def build(conn, params: dict) -> dict:
