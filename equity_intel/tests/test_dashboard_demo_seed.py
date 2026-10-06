@@ -230,14 +230,16 @@ def test_revisions_between_the_two_newest_full_runs_are_exactly_the_documented_r
           ON a.symbol = b.symbol AND a.trading_date = b.trading_date
         WHERE a.scan_run_id = 'r-demo-prev-complete' AND b.scan_run_id = 'r-demo-latest-complete'
     """)
-    # every bar exists in both runs; a STALE symbol lacks the last date in both
+    # every bar exists in both runs; a STALE symbol lacks the last date in both, a FAILED symbol has none
     n_stale = sum(1 for sym in FAKE_SYMBOLS if sym[3] == "STALE")
-    assert len(pairs) == len(FAKE_SYMBOLS) * len(BAR_DATES) - n_stale
+    n_failed = sum(1 for sym in FAKE_SYMBOLS if sym[3] == "FAILED")
+    assert n_stale and n_failed
+    assert len(pairs) == (len(FAKE_SYMBOLS) - n_failed) * len(BAR_DATES) - n_stale
 
     # the rule, restated here independently of the seed's implementation
     stale = {sym[0] for sym in FAKE_SYMBOLS if sym[3] == "STALE"}
-    expected_close = {(sym[0], "2026-09-24") for i, sym in enumerate(FAKE_SYMBOLS) if i % 6 == 0}
-    expected_volume = {(sym[0], "2026-09-24") for i, sym in enumerate(FAKE_SYMBOLS) if i % 9 == 0}
+    expected_close = {(sym[0], "2026-09-24") for i, sym in enumerate(FAKE_SYMBOLS) if i % 6 == 0 and sym[3] != "FAILED"}
+    expected_volume = {(sym[0], "2026-09-24") for i, sym in enumerate(FAKE_SYMBOLS) if i % 9 == 0 and sym[3] != "FAILED"}
     differing = {(s, d) for s, d, _c0, _c1, _v0, _v1, h0, h1 in pairs if h0 != h1}
     assert differing == expected_close | expected_volume
     assert {(s, d) for s, d, c0, c1, *_ in pairs if c0 != c1} == expected_close

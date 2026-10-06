@@ -100,10 +100,12 @@ while len(FAKE_SYMBOLS) < 30:
         sector,
         status,
         _REASON_FOR[status],
+        # A FAILED symbol was never classified or reviewed, so (as in the real scanner,
+        # scripts/equity_scan.py record_failed) only NON_EQ_SERIES can be set on it.
         dict(
-            history_gaps=(i % 3 == 0),
-            corporate_action_review=(i % 5 == 0),
-            price_break_detected=(i % 7 == 0),
+            history_gaps=(i % 3 == 0) and status != "FAILED",
+            corporate_action_review=(i % 5 == 0) and status != "FAILED",
+            price_break_detected=(i % 7 == 0) and status != "FAILED",
             non_eq_series=(i % 11 == 0),
         ),
     ))
@@ -126,7 +128,11 @@ DEMO_E4_CONFIG = {
 
 def _bar_dates_for(status: str) -> tuple:
     """Bar dates a symbol has in a full run: a STALE symbol's newest bar is
-    older than the run's session, so it lacks the last date."""
+    older than the run's session, so it lacks the last date; a FAILED symbol
+    has none (the real scanner rolls back a failed symbol's snapshots, or never
+    fetches it at all when its ISIN is unmapped)."""
+    if status == "FAILED":
+        return ()
     return BAR_DATES[:-1] if status == "STALE" else BAR_DATES
 
 
@@ -171,8 +177,9 @@ def _insert_symbol_result(conn, run_id, symbol, company_name, sector, status, re
         """,
         (
             run_id, symbol, company_name, sector, status, reason,
-            252 if status != "INSUFFICIENT_HISTORY" else 41,
-            0 if status != "INSUFFICIENT_HISTORY" else 211,
+            # FAILED rows store NULL counts, exactly like the real scanner (record_failed)
+            None if status == "FAILED" else (252 if status != "INSUFFICIENT_HISTORY" else 41),
+            None if status == "FAILED" else (0 if status != "INSUFFICIENT_HISTORY" else 211),
             int(flags["history_gaps"]),
             int(flags["corporate_action_review"]),
             int(flags["price_break_detected"]),
@@ -298,7 +305,8 @@ def seed_demo_database(path: Optional[Path] = None) -> None:
         _insert_scan_run(conn, "r-demo-old-complete", "2026-09-01T09:20:00")
         for symbol, name, sector, status, reason, flags in FAKE_SYMBOLS:
             _insert_symbol_result(conn, "r-demo-old-complete", symbol, name, sector, status, reason, flags)
-            _insert_snapshot(conn, "r-demo-old-complete", symbol, "2026-09-01", "2026-09-01T09:20:00+05:30", 100.0)
+            if status != "FAILED":
+                _insert_snapshot(conn, "r-demo-old-complete", symbol, "2026-09-01", "2026-09-01T09:20:00+05:30", 100.0)
         _complete_run(
             conn, "r-demo-old-complete", "2026-09-01T09:45:00", "2026-09-01",
             status_counts, flag_counts,
