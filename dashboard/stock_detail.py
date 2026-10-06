@@ -14,7 +14,7 @@ import json
 from pathlib import Path
 from typing import Optional
 
-from dashboard import aggregates, queries, review_file
+from dashboard import aggregates, queries, review_file, stored_row_integrity
 from dashboard.queries import _fetch_all_dicts, _fetch_one_dict
 from equity_intel.config import PRICE_BREAK_HIGH_RATIO, PRICE_BREAK_LOW_RATIO, REQUIRED_SESSIONS
 from equity_intel.persistence import db_path_guard
@@ -27,7 +27,7 @@ SCANRUN = "ScanRun"
 E4 = "E4"
 
 STATUS_HISTORY_LIMIT = 50
-HASH_CHECK_LABEL = "stored-row integrity"
+HASH_CHECK_LABEL = stored_row_integrity.LABEL
 OHLCV_ROWS = 30  # newest-first table of this symbol's stored daily bars; table only, no chart
 
 
@@ -200,13 +200,11 @@ def _provenance(conn, run: dict, symbol: str, result: dict, e4: Optional[dict]) 
         "WHERE scan_run_id = ? AND symbol = ? ORDER BY trading_date",
         (run["run_id"], symbol),
     )
-    mismatched = [r["trading_date"] for r in rows if compute_content_hash_from_stored_row(r) != r["content_hash"]]
-    state = "UNAVAILABLE" if not rows else ("MISMATCH" if mismatched else "MATCH")
     return {
         "bars": bars,
         "adjustment": adjustment,
         "last_bar_hash": rows[-1]["content_hash"] if rows else None,
-        "hash_check": {"label": HASH_CHECK_LABEL, "state": state, "bars": len(rows), "mismatched": mismatched},
+        "hash_check": stored_row_integrity.check_rows(rows, compute_content_hash_from_stored_row),
     }
 
 
