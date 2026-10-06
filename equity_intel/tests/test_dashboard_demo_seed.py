@@ -338,3 +338,93 @@ def test_stale_demo_symbols_have_newest_bar_older_than_the_run_session(paths):
                        "AND symbol='DEMOAAA'")[0][0] == SESSION_DATE
     assert _rows(demo, "SELECT MAX(trading_date) FROM acquired_observations WHERE symbol='DEMOPAB'")[0][0] < SESSION_DATE
     assert _rows(demo, "SELECT MAX(trading_date) FROM acquired_observations WHERE symbol='DEMOAAA'")[0][0] == SESSION_DATE
+
+
+# ---- run-level counts: derived from the generated rows, never from the seed's own helpers ----
+
+FLAG_COLUMNS = {"history_gaps": "history_gaps_flag", "corporate_action_review": "corporate_action_review_flag",
+                "price_break_detected": "price_break_detected_flag", "non_eq_series": "non_eq_series_flag"}
+
+
+def _run_facts(demo):
+    """Per run: stored columns plus counts recounted straight from symbol_scan_results (plain SQL)."""
+    import json
+    conn = connection.get_read_only_connection(demo)
+    try:
+        runs = conn.execute(
+            "SELECT run_id, status, symbols_filter_json, requested_symbols, successful_symbols, failed_symbols, "
+            "status_counts_json, flag_counts_json FROM scan_runs ORDER BY started_at").fetchall()
+        facts = {}
+        for run_id, status, filt, requested, successful, failed, status_json, flag_json in runs:
+            rows = conn.execute(
+                "SELECT COUNT(*), COALESCE(SUM(symbol_data_status != 'FAILED'), 0), "
+                "COALESCE(SUM(symbol_data_status = 'FAILED'), 0) FROM symbol_scan_results WHERE scan_run_id = ?",
+                (run_id,)).fetchone()
+            by_status = dict(conn.execute(
+                "SELECT symbol_data_status, COUNT(*) FROM symbol_scan_results WHERE scan_run_id = ? GROUP BY 1",
+                (run_id,)).fetchall())
+            by_flag = {name: conn.execute(
+                f"SELECT COALESCE(SUM({column}), 0) FROM symbol_scan_results WHERE scan_run_id = ?", (run_id,)).fetchone()[0]
+                for name, column in FLAG_COLUMNS.items()}
+            facts[run_id] = {
+                "status": status, "smoke": filt is not None, "requested": requested, "successful": successful,
+                "failed": failed, "rows": rows[0], "non_failed": rows[1], "failed_rows": rows[2],
+                "by_status": by_status, "by_flag": by_flag,
+                "stored_status": json.loads(status_json) if status_json else None,
+                "stored_flags": json.loads(flag_json) if flag_json else None}
+        return facts
+    finally:
+        conn.close()
+
+
+def test_every_complete_run_records_successful_as_the_non_failed_row_count(paths):
+    _canonical, demo = paths
+    seed_demo_database(demo)
+    facts = _run_facts(demo)
+    complete = {run_id: f for run_id, f in facts.items() if f["status"] == "COMPLETE"}
+    assert {"r-demo-old-complete", "r-demo-prev-complete", "r-demo-latest-complete", "r-demo-smoke"} <= set(complete)
+    for run_id, f in complete.items():
+        assert f["rows"] > 0, run_id
+        assert f["successful"] == f["non_failed"], (run_id, "successful must count every non-FAILED row")
+        assert f["failed"] == f["failed_rows"], run_id
+        assert f["requested"] == f["rows"], run_id
+        assert f["successful"] + f["failed"] == f["requested"], run_id
+    full = [f for f in complete.values() if not f["smoke"]]
+    assert all(f["failed_rows"] > 0 and f["successful"] < f["requested"] for f in full)  # the realistic case
+
+
+def test_stored_status_and_flag_counts_still_equal_the_recount_for_every_complete_run(paths):
+    _canonical, demo = paths
+    seed_demo_database(demo)
+    for run_id, f in _run_facts(demo).items():
+        if f["status"] != "COMPLETE":
+            continue
+        recount = {s: f["by_status"].get(s, 0) for s in ("VALID", "INSUFFICIENT_HISTORY", "STALE", "FAILED")}
+        assert f["stored_status"] == recount, run_id
+        assert {k.lower(): v for k, v in f["stored_flags"].items()} == f["by_flag"], run_id
+
+
+def test_running_and_aborted_demo_runs_have_no_counts_and_no_rows(paths):
+    _canonical, demo = paths
+    seed_demo_database(demo)
+    facts = _run_facts(demo)
+    for run_id, expected in (("r-demo-running", "RUNNING"), ("r-demo-aborted", "ABORTED")):
+        f = facts[run_id]
+        assert f["status"] == expected and f["rows"] == 0, run_id
+        assert (f["requested"], f["successful"], f["failed"]) == (None, None, None), run_id  # nothing recorded, not 0
+
+
+def test_seeding_writes_nothing_under_the_real_data_directory(paths):
+    from pathlib import Path
+    real_data = Path(__file__).resolve().parents[2] / "data"
+
+    def snapshot():
+        return sorted((str(p.relative_to(real_data)), p.stat().st_size, p.stat().st_mtime_ns)
+                      for p in real_data.rglob("*") if p.is_file()) if real_data.exists() else []
+
+    before = snapshot()
+    _canonical, demo = paths
+    seed_demo_database(demo)
+    seed_demo_database(demo)
+    assert demo.parent != real_data and real_data not in demo.parents  # the guard paths point at tmp_path
+    assert snapshot() == before

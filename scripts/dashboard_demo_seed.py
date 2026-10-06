@@ -238,6 +238,12 @@ def _abort_run(conn, run_id, finished_at, abort_reason, errors):
     )
 
 
+def _successful_symbols(status_counts: dict) -> int:
+    """scan_runs.successful_symbols as the real scanner records it: every symbol that is not FAILED
+    (scripts/equity_scan.py increments it for any symbol that gets a result, VALID or not)."""
+    return sum(n for status, n in status_counts.items() if status != "FAILED")
+
+
 def _status_and_flag_counts(rows):
     status_counts = {"VALID": 0, "INSUFFICIENT_HISTORY": 0, "STALE": 0, "FAILED": 0}
     flag_counts = {
@@ -311,7 +317,7 @@ def seed_demo_database(path: Optional[Path] = None) -> None:
             conn, "r-demo-old-complete", "2026-09-01T09:45:00", "2026-09-01",
             status_counts, flag_counts,
             requested=len(FAKE_SYMBOLS),
-            successful=status_counts["VALID"],
+            successful=_successful_symbols(status_counts),
             failed=status_counts["FAILED"],
         )
         conn.commit()
@@ -329,7 +335,7 @@ def seed_demo_database(path: Optional[Path] = None) -> None:
             conn, "r-demo-prev-complete", "2026-09-26T09:45:00", SESSION_DATE,
             status_counts, flag_counts,
             requested=len(FAKE_SYMBOLS),
-            successful=status_counts["VALID"],
+            successful=_successful_symbols(status_counts),
             failed=status_counts["FAILED"],
         )
         conn.commit()
@@ -350,7 +356,7 @@ def seed_demo_database(path: Optional[Path] = None) -> None:
             conn, "r-demo-latest-complete", "2026-09-27T09:45:00", latest_session,
             status_counts, flag_counts,
             requested=len(FAKE_SYMBOLS),
-            successful=status_counts["VALID"],
+            successful=_successful_symbols(status_counts),
             failed=status_counts["FAILED"],
         )
         conn.commit()
@@ -364,7 +370,7 @@ def seed_demo_database(path: Optional[Path] = None) -> None:
             _insert_symbol_result(conn, "r-demo-smoke", symbol, name, sector, status, reason, flags)
         s_counts, s_flags = _status_and_flag_counts(smoke)
         _complete_run(conn, "r-demo-smoke", "2026-09-28T09:25:00", latest_session, s_counts, s_flags,
-                      requested=len(smoke), successful=s_counts["VALID"], failed=s_counts["FAILED"])
+                      requested=len(smoke), successful=_successful_symbols(s_counts), failed=s_counts["FAILED"])
         conn.commit()
 
         # r3: an ABORTED run with an abort_reason and recorded errors.
