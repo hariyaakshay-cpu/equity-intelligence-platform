@@ -96,6 +96,26 @@ def get_run(conn, run_id: str) -> Optional[dict]:
     return _fetch_one_dict(conn, "SELECT * FROM scan_runs WHERE run_id = ?", (run_id,))
 
 
+def get_previous_complete_run(conn, latest_run: dict) -> Optional[dict]:
+    """The COMPLETE full run immediately before `latest_run`, or None.
+
+    Same eligibility as get_latest_complete_run (status COMPLETE, symbols_filter_json
+    IS NULL), so ABORTED, RUNNING and --symbols smoke runs are never a baseline. The
+    comparison is strictly `started_at < latest.started_at`: a run with an EQUAL
+    started_at is not "previous". Among several eligible runs sharing the same
+    started_at, run_id DESC picks one deterministically.
+    """
+    started_at = latest_run.get("started_at")
+    if not started_at:
+        return None
+    return _fetch_one_dict(
+        conn,
+        "SELECT * FROM scan_runs WHERE status = 'COMPLETE' AND symbols_filter_json IS NULL "
+        "AND started_at < ? ORDER BY started_at DESC, run_id DESC LIMIT 1",
+        (started_at,),
+    )
+
+
 def _has_table(conn, name: str) -> bool:
     return conn.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name=?", (name,)).fetchone() is not None
 
@@ -346,6 +366,82 @@ def get_sectors(conn, run_id: str) -> list[dict]:
         sector["status_counts"][row["symbol_data_status"]] = row["n"]
         sector["total"] += row["n"]
     return list(sectors.values())
+
+
+def _parse_count_map(raw) -> Optional[dict]:
+    """A stored *_counts_json value as {UPPERCASE key: int}, or None when it is NULL,
+    not valid JSON, or not an object. A value that is not an integer maps to None, so a
+    garbled count is "unavailable", never 0. Keys are upper-cased because the scanner
+    stores FAILED/HISTORY_GAPS-style keys while other writers use lower case."""
+    if not raw:
+        return None
+    try:
+        parsed = json.loads(raw)
+    except (TypeError, ValueError):
+        return None
+    if not isinstance(parsed, dict):
+        return None
+    return {
+        str(key).upper(): (value if isinstance(value, int) and not isinstance(value, bool) else None)
+        for key, value in parsed.items()
+    }
+
+
+def _agreement(recount: dict, stored: Optional[dict]) -> dict:
+    return {
+        key: ("unavailable" if stored is None or stored.get(key) is None
+              else ("agree" if stored[key] == value else "disagree"))
+        for key, value in recount.items()
+    }
+
+
+def get_exception_counts(conn, run_id: str) -> Optional[dict]:
+    """Per-status and per-flag counts of one run, recounted from symbol_scan_results in ONE
+    aggregate query, next to the counts the run stored in scan_runs (status_counts_json,
+    flag_counts_json) with a per-key agree / disagree / unavailable result. None if the run
+    does not exist.
+
+    Flag column names come only from FLAG_COLUMNS and status values are bound parameters.
+    Descriptive counts only. `symbols.balanced` (successful + failed == requested) is a display
+    check, not enforced by the schema; it is None when any of the three numbers is NULL.
+    """
+    run = get_run(conn, run_id)
+    if run is None:
+        return None
+    flag_keys = {name.upper(): column for name, column in FLAG_COLUMNS.items()}
+    select = ["COUNT(*)"]
+    select += ["COALESCE(SUM(CASE WHEN symbol_data_status = ? THEN 1 ELSE 0 END), 0)" for _ in STATUS_VALUES]
+    select += [f"COALESCE(SUM({column}), 0)" for column in flag_keys.values()]
+    row = conn.execute(
+        f"SELECT {', '.join(select)} FROM symbol_scan_results WHERE scan_run_id = ?",
+        [*STATUS_VALUES, run_id],
+    ).fetchone()
+    total = row[0]
+    status_recount = dict(zip(STATUS_VALUES, row[1 : 1 + len(STATUS_VALUES)]))
+    flag_recount = dict(zip(flag_keys, row[1 + len(STATUS_VALUES) :]))
+
+    status_stored = _parse_count_map(run["status_counts_json"])
+    flag_stored = _parse_count_map(run["flag_counts_json"])
+    requested, successful, failed = run["requested_symbols"], run["successful_symbols"], run["failed_symbols"]
+    return {
+        "run_id": run_id,
+        "evaluated": total,
+        "recount": {"status": status_recount, "flags": flag_recount},
+        "stored": {
+            "status": None if status_stored is None else {k: status_stored.get(k) for k in status_recount},
+            "flags": None if flag_stored is None else {k: flag_stored.get(k) for k in flag_recount},
+        },
+        "agreement": {
+            "status": _agreement(status_recount, status_stored),
+            "flags": _agreement(flag_recount, flag_stored),
+        },
+        "symbols": {
+            "requested": requested,
+            "successful": successful,
+            "failed": failed,
+            "balanced": None if None in (requested, successful, failed) else successful + failed == requested,
+        },
+    }
 
 
 def get_symbol_result(conn, run_id: str, symbol: str) -> Optional[dict]:
