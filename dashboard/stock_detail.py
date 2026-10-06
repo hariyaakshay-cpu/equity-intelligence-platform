@@ -81,15 +81,21 @@ def _yes_no(value) -> str:
 def _status_checks(result: dict, run: dict, e4: Optional[dict], quality: Optional[dict], features: Optional[dict]) -> list:
     available = result["available_session_count"]
     missing = result["missing_session_count"]
-    if available is None:
-        sessions = _check(f"{REQUIRED_SESSIONS} sessions", SCANRUN, NOT_RECORDED,
-                          f"available valid candles >= {REQUIRED_SESSIONS} (spec section 4)", "frozen")
+    failed = result["symbol_data_status"] == "FAILED"
+    sessions_rule = f"available valid candles >= {REQUIRED_SESSIONS} (spec section 4)"
+    if failed:
+        # Acquisition failed, so the window was never evaluated: never a tick or cross.
+        stored = NOT_RECORDED if available is None else f"{available} of {REQUIRED_SESSIONS}"
+        sessions = _check(f"{REQUIRED_SESSIONS} sessions", SCANRUN,
+                          f"not applicable: acquisition failed (stored count: {stored})", sessions_rule, "frozen")
+    elif available is None:
+        sessions = _check(f"{REQUIRED_SESSIONS} sessions", SCANRUN, NOT_RECORDED, sessions_rule, "frozen")
     else:
         sessions = _check(
             f"{REQUIRED_SESSIONS} sessions", SCANRUN,
             f"{available} of {REQUIRED_SESSIONS} available"
             + (f"; {missing} calendar session(s) with no valid candle" if missing is not None else ""),
-            f"available valid candles >= {REQUIRED_SESSIONS} (spec section 4)", "frozen", available >= REQUIRED_SESSIONS)
+            sessions_rule, "frozen", available >= REQUIRED_SESSIONS)
 
     cfg = e4["config"] if e4 else {}
     ema_period = cfg.get("ema_long")
@@ -123,7 +129,14 @@ def _status_checks(result: dict, run: dict, e4: Optional[dict], quality: Optiona
     pb_check = _check("Price-break flag", SCANRUN, "FLAGGED" if pb else "not flagged",
                       f"close ratio < {PRICE_BREAK_LOW_RATIO} or > {PRICE_BREAK_HIGH_RATIO} (spec section 6; flag only)",
                       "frozen", not pb)
-    return [sessions, ema, w52, vol, ca_check, pb_check]
+    checks = [sessions, ema, w52, vol, ca_check, pb_check]
+    if failed:
+        # flags were never evaluated for a FAILED symbol, so no row may carry a tick or cross
+        for check in checks:
+            check["ok"] = None
+        for check in (ca_check, pb_check):
+            check["result"] += " (acquisition failed: not evaluated)"
+    return checks
 
 
 def _e4_values(features: Optional[dict], quality: Optional[dict], e4: Optional[dict]) -> dict:
