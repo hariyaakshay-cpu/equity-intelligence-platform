@@ -30,7 +30,7 @@ from typing import Optional, Union
 
 from flask import Flask, jsonify, render_template, request
 
-from dashboard import aggregates, queries, stock_detail
+from dashboard import aggregates, exceptions, queries, stock_detail
 from equity_intel.indicators.trend import exponential_moving_average
 from equity_intel.persistence import connection, db_path_guard
 from equity_intel.persistence.schema import SCHEMA_VERSION
@@ -288,6 +288,17 @@ def create_app(demo: bool = False, db_path: Optional[Union[str, Path]] = None) -
             return render_template("stock_detail.html", **context)
         finally:
             conn.close()
+
+    @app.get("/api/equity/exceptions")
+    @_guarded
+    def api_exceptions(conn):
+        """Symbols of the latest COMPLETE full run carrying a status or flag. GET only, no run_id."""
+        try:
+            params = exceptions.parse_params(request.args)
+        except exceptions.ParamError as exc:
+            return jsonify({"error": str(exc)}), 400
+        body = exceptions.build(conn, params)
+        return jsonify({"demo": app.config["DEMO_MODE"], **body})
 
     @app.get("/api/equity/summary")
     @_guarded

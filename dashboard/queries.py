@@ -266,11 +266,13 @@ def get_candidates(
     sort: Optional[str] = None,
     sort_dir: str = "asc",
     e4_scan_id: Optional[str] = None,
+    escape_like: bool = False,
 ):
     """One page of symbol results. `ranges` maps a key of E4_RANGE_FILTERS
     to (lo, hi) (either may be None). Filtering or sorting on an E4 column
     needs `e4_scan_id`; a symbol with no value for a filtered column is
-    excluded by that filter (the API reports the filters it applied)."""
+    excluded by that filter (the API reports the filters it applied).
+    `escape_like` makes `q` a literal substring: % and _ no longer act as wildcards."""
     ranges = {k: v for k, v in (ranges or {}).items() if v and (v[0] is not None or v[1] is not None)}
     if sort is not None and sort not in SORT_COLUMNS:
         raise ValueError(f"unknown sort column: {sort!r}")
@@ -284,8 +286,13 @@ def get_candidates(
     params: list = [run_id]
 
     if q:
-        conditions.append("(s.symbol LIKE ? OR s.company_name LIKE ?)")
-        like = f"%{q}%"
+        if escape_like:
+            escaped = q.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
+            conditions.append("(s.symbol LIKE ? ESCAPE '\\' OR s.company_name LIKE ? ESCAPE '\\')")
+            like = f"%{escaped}%"
+        else:
+            conditions.append("(s.symbol LIKE ? OR s.company_name LIKE ?)")
+            like = f"%{q}%"
         params.extend([like, like])
     if status:
         if status not in STATUS_VALUES:
