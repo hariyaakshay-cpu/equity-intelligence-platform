@@ -103,7 +103,8 @@ def test_entries_without_any_flagged_symbol_are_explained_by_the_flag_rule(db, c
     _run(db, "r1", "2026-09-01T09:00:00", [("AAA", "VALID", []), ("BBB", "VALID", [])])
     note = html.unescape(_page(client)[1].split('id="review-consistency-note">')[1].split("</p>")[0])
     assert "the file has 1 entry, but no symbol is flagged in run r1" in note
-    assert "not RESOLVED" in note and "inside the symbol's fetched window" in note
+    assert "not RESOLVED" in note and "inside the scan's fetched window" in note
+    assert "symbol's fetched window" not in note
 
 
 def test_consistent_state_has_no_consistency_note(db, client, monkeypatch, tmp_path):

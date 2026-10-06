@@ -226,7 +226,7 @@ def _short(value) -> str:
 
 REVIEW_CATEGORY = "CORPORATE_ACTION_REVIEW"
 FLAG_RULE = ("an entry flags a symbol only when it is not RESOLVED and its effective_date falls inside "
-             "the symbol's fetched window")
+             "the scan's fetched window")
 
 
 def review_panel(conn, body: dict, demo: bool) -> Optional[dict]:
