@@ -88,7 +88,7 @@ def test_valid_symbol_shows_checks_e4_provenance_and_history(client):
     assert "VALID" in html and "252 sessions" in html
     assert "EMA50" in html and "EMA200" in html and "52W high" in html
     assert "r-demo-latest-complete" in html and "r-demo-prev-complete" in html  # one history row per run
-    assert "per-symbol check" in html and "reproduce their stored hash" in html
+    assert "stored-row integrity" in html and "reproduce their stored hash" in html
     assert "DEMO fabricated series" in html  # adjustment basis comes from the stored rows
 
 

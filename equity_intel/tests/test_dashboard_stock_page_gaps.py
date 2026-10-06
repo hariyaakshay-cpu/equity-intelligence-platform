@@ -114,3 +114,30 @@ def test_failed_symbol_rsi_roc_atr_are_not_recorded_not_zero(client):
     for label in ("RSI", "ROC", "ATR %"):
         row = re.search(r"<th>" + re.escape(label) + r"</th><td class=\"num\">(.*?)</td>", card).group(1)
         assert "not recorded" in row and "0.00" not in row, label
+
+
+def _hash_state(html):
+    return re.search(r'id="hash-state"[^>]*>(.*?)</span>', html, re.S).group(1)
+
+
+def test_stored_row_integrity_match(client):
+    html = _page(client, "DEMOAAA")[1]
+    assert "stored-row integrity:" in html and _hash_state(html) == "MATCH"
+
+
+def test_stored_row_integrity_mismatch(client, monkeypatch):
+    monkeypatch.setattr(stock_detail, "compute_content_hash_from_stored_row", lambda row: "0" * 64)
+    html = _page(client, "DEMOAAA")[1]
+    assert _hash_state(html) == "MISMATCH" and "3 of 3 stored bars do not reproduce their stored hash" in html
+
+
+def test_stored_row_integrity_unavailable_when_there_are_no_bars(client):
+    # a FAILED symbol has no stored bars: UNAVAILABLE, never MATCH
+    html = _page(client, "DEMOFAB")[1]
+    assert _hash_state(html) == "UNAVAILABLE" and "MATCH" not in html.replace("MISMATCH", "")
+
+
+def test_stored_row_integrity_note_says_it_does_not_prove_vendor_data_unchanged(client):
+    note = _page(client, "DEMOAAA")[1].split('id="hash-note"')[1].split("</div>")[0]
+    assert ("Checks that stored bars match their stored hash. It does not prove the vendor data is unchanged; "
+            "vendor revisions are detected by the Snapshot Audit compare.") in note

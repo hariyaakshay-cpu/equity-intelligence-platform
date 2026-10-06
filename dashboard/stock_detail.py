@@ -28,6 +28,7 @@ SCANRUN = "ScanRun"
 E4 = "E4"
 
 STATUS_HISTORY_LIMIT = 50
+HASH_CHECK_LABEL = "stored-row integrity"
 OHLCV_ROWS = 30  # newest-first table of this symbol's stored daily bars; table only, no chart
 
 
@@ -201,11 +202,12 @@ def _provenance(conn, run: dict, symbol: str, result: dict, e4: Optional[dict]) 
         (run["run_id"], symbol),
     )
     mismatched = [r["trading_date"] for r in rows if compute_content_hash_from_stored_row(r) != r["content_hash"]]
+    state = "UNAVAILABLE" if not rows else ("MISMATCH" if mismatched else "MATCH")
     return {
         "bars": bars,
         "adjustment": adjustment,
         "last_bar_hash": rows[-1]["content_hash"] if rows else None,
-        "hash_check": {"label": "per-symbol check", "bars": len(rows), "mismatched": mismatched},
+        "hash_check": {"label": HASH_CHECK_LABEL, "state": state, "bars": len(rows), "mismatched": mismatched},
     }
 
 

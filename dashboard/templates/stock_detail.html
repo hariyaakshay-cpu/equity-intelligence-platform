@@ -81,11 +81,13 @@
       {% if p.last_bar_hash %}last bar: <code>{{ p.last_bar_hash }}</code>{% else %}{{ v(none) }}{% endif %}
       <div class="note">hashes are stored per bar; no symbol-level hash is stored.</div>
       <div id="hash-check"><b>{{ p.hash_check.label }}:</b>
-        {% if not p.hash_check.bars %}no bars to check
-        {% elif p.hash_check.mismatched %}<span class="bad">{{ p.hash_check.mismatched|length }} of {{ p.hash_check.bars }} stored bars do not reproduce their stored hash</span>
-          ({{ p.hash_check.mismatched[:5]|join(", ") }}{% if p.hash_check.mismatched|length > 5 %}, &hellip;{% endif %})
-        {% else %}<span class="ok">all {{ p.hash_check.bars }} stored bars reproduce their stored hash</span>{% endif %}
-        <span class="note">(this symbol only; not a run-level result)</span></div>
+        <span id="hash-state" class="{{ 'ok' if p.hash_check.state == 'MATCH' else ('bad' if p.hash_check.state == 'MISMATCH' else 'nr') }}">{{ p.hash_check.state }}</span>
+        {% if p.hash_check.state == "UNAVAILABLE" %}<span class="note">(no stored bars to check)</span>
+        {% elif p.hash_check.state == "MISMATCH" %}<span class="note">{{ p.hash_check.mismatched|length }} of {{ p.hash_check.bars }} stored bars do not reproduce their stored hash
+          ({{ p.hash_check.mismatched[:5]|join(", ") }}{% if p.hash_check.mismatched|length > 5 %}, &hellip;{% endif %})</span>
+        {% else %}<span class="note">all {{ p.hash_check.bars }} stored bars reproduce their stored hash</span>{% endif %}
+        <span class="note">(this symbol only; not a run-level result)</span>
+        <div class="note" id="hash-note">Checks that stored bars match their stored hash. It does not prove the vendor data is unchanged; vendor revisions are detected by the Snapshot Audit compare.</div></div>
     </td><td>{{ layer("ScanRun") }}</td></tr>
     <tr><th>ScanRun id</th><td><code>{{ run.run_id }}</code></td><td>{{ layer("ScanRun") }}</td></tr>
     <tr><th>Run provenance</th><td>git {{ v(run.git_commit) }}{% if run.git_dirty %} (dirty tree){% endif %} &middot; review-list version {% if run.corporate_action_review_version %}<code>{{ run.corporate_action_review_version }}</code>{% else %}{{ v(none) }}{% endif %}</td><td>{{ layer("ScanRun") }}</td></tr>
