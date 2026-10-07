@@ -498,3 +498,279 @@ def get_scan_history(conn, page: int = 1, page_size: int = 25):
         (page_size, offset),
     )
     return total, rows
+
+
+# ---------------------------------------------------------------------------
+# Snapshot Audit queries (Phase 3): compare the STORED price_fetch_snapshots of two COMPLETE full runs.
+#
+# Nothing here recomputes a hash: the only hash operation is string equality between two stored
+# content_hash values. All SQL is parameterized; the only text interpolated into SQL is taken from the
+# whitelists below. One bar is (symbol, trading_date, source); the primary key of price_fetch_snapshots
+# is (scan_run_id, symbol, trading_date, source), so looking the same bar up in the other run is an
+# index search, never a scan.
+# ---------------------------------------------------------------------------
+
+ELIGIBLE_RUN_SQL = "status = 'COMPLETE' AND symbols_filter_json IS NULL"  # same rule as get_latest_complete_run
+ELIGIBLE_RUN_LIST_LIMIT = 50
+INELIGIBLE_RUN_LIST_LIMIT = 20
+REVISION_ROW_CAP = 300
+AUDIT_SORT_COLUMNS = {"symbol": "s.symbol", "company_name": "s.company_name", "sector": "s.sector"}
+SET_DIFF_VIEWS = ("added", "removed")
+
+_RUN_LIST_COLUMNS = (
+    "run_id, started_at, finished_at, status, abort_reason, latest_closed_session, universe_version, "
+    "corporate_action_review_version, requested_symbols, successful_symbols, failed_symbols, symbols_filter_json"
+)
+_STORED_SYMBOLS = "(SELECT COUNT(*) FROM symbol_scan_results s WHERE s.scan_run_id = r.run_id) AS stored_symbols"
+
+
+def get_eligible_runs(conn, limit: int = ELIGIBLE_RUN_LIST_LIMIT) -> dict:
+    """COMPLETE full runs (the only runs a comparison may use), newest first.
+
+    {"total": how many exist, "runs": up to `limit` of them, "more": how many are not listed}. A NULL
+    requested / successful / failed count stays None ("unavailable"), never 0.
+    """
+    limit = max(int(limit), 1)
+    total = conn.execute(f"SELECT COUNT(*) FROM scan_runs WHERE {ELIGIBLE_RUN_SQL}").fetchone()[0]
+    runs = _fetch_all_dicts(
+        conn,
+        f"SELECT {_RUN_LIST_COLUMNS}, {_STORED_SYMBOLS} FROM scan_runs r WHERE {ELIGIBLE_RUN_SQL} "
+        "ORDER BY started_at DESC, run_id DESC LIMIT ?",
+        (limit,),
+    )
+    for run in runs:
+        run.pop("symbols_filter_json", None)
+    return {"total": total, "runs": runs, "more": max(total - len(runs), 0)}
+
+
+def _ineligible_reason(run: dict) -> tuple[str, str]:
+    """(kind, reason) for a run that may not be compared: ABORTED, RUNNING, or a COMPLETE --symbols smoke run."""
+    if run["status"] == "ABORTED":
+        return "ABORTED", f"ABORTED ({run['abort_reason'] or 'no abort reason recorded'})"
+    if run["status"] == "RUNNING":
+        return "RUNNING", "RUNNING (not finished)"
+    try:
+        symbols = len(json.loads(run["symbols_filter_json"]))
+        return "SMOKE", f"smoke run (--symbols, {symbols} symbols)"
+    except (TypeError, ValueError):
+        return "SMOKE", "smoke run (--symbols, symbol list unreadable)"
+
+
+def get_ineligible_runs(conn, limit: int = INELIGIBLE_RUN_LIST_LIMIT) -> dict:
+    """ABORTED, RUNNING and COMPLETE smoke runs: listed so they are visible, never usable in a comparison.
+
+    {"total", "runs" (newest `limit`), "more" (how many older ones are not listed)}. Each run carries its
+    `kind`, `reason`, `requested_symbols` (None when the run recorded none: "unavailable") and `stored_symbols`
+    (the symbol result rows actually stored for it).
+    """
+    limit = max(int(limit), 1)
+    total = conn.execute(f"SELECT COUNT(*) FROM scan_runs WHERE NOT ({ELIGIBLE_RUN_SQL})").fetchone()[0]
+    runs = _fetch_all_dicts(
+        conn,
+        f"SELECT {_RUN_LIST_COLUMNS}, {_STORED_SYMBOLS} FROM scan_runs r WHERE NOT ({ELIGIBLE_RUN_SQL}) "
+        "ORDER BY started_at DESC, run_id DESC LIMIT ?",
+        (limit,),
+    )
+    for run in runs:
+        run["kind"], run["reason"] = _ineligible_reason(run)
+        run.pop("symbols_filter_json", None)
+    return {"total": total, "runs": runs, "more": max(total - len(runs), 0)}
+
+
+def _escape_like(text: str) -> str:
+    return text.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
+
+
+def get_symbol_set_diff(
+    conn,
+    base_run_id: str,
+    other_run_id: str,
+    *,
+    view: Optional[str] = None,
+    q: Optional[str] = None,
+    sector: Optional[str] = None,
+    sort: str = "symbol",
+    sort_dir: str = "asc",
+    page: int = 1,
+    page_size: int = 25,
+) -> dict:
+    """Which symbols exist in which run. `base` is the older run, `other` the newer.
+
+    counts: symbols in each run, `added` (only in the newer run), `removed` (only in the older run) and
+    `in_both`. With view="added" or "removed" the matching symbols are also returned, filtered (`q` is a
+    literal substring of symbol or company name; `sector`, "UNKNOWN" meaning none stored), sorted by one
+    of AUDIT_SORT_COLUMNS and paginated: {"total", "rows"}. The counts never depend on the filters.
+    """
+    if view is not None and view not in SET_DIFF_VIEWS:
+        raise ValueError(f"unknown view: {view!r}")
+    if sort not in AUDIT_SORT_COLUMNS:
+        raise ValueError(f"unknown sort column: {sort!r}")
+    if sort_dir not in ("asc", "desc"):
+        raise ValueError(f"unknown sort direction: {sort_dir!r}")
+    params = {"base": base_run_id, "other": other_run_id}
+    in_base, in_other, in_both = conn.execute(
+        "SELECT (SELECT COUNT(*) FROM symbol_scan_results WHERE scan_run_id = :base), "
+        "(SELECT COUNT(*) FROM symbol_scan_results WHERE scan_run_id = :other), "
+        "(SELECT COUNT(*) FROM symbol_scan_results o JOIN symbol_scan_results b "
+        " ON b.scan_run_id = :base AND b.symbol = o.symbol WHERE o.scan_run_id = :other)",
+        params,
+    ).fetchone()
+    result: dict = {
+        "view": view,
+        "counts": {"symbols_base": in_base, "symbols_other": in_other, "added": in_other - in_both,
+                   "removed": in_base - in_both, "in_both": in_both},
+        "total": None,
+        "rows": [],
+    }
+    if view is None:
+        return result
+
+    owner, absent_from = ("other", "base") if view == "added" else ("base", "other")
+    conditions = [
+        "s.scan_run_id = :owner",
+        "NOT EXISTS (SELECT 1 FROM symbol_scan_results x WHERE x.scan_run_id = :absent AND x.symbol = s.symbol)",
+    ]
+    where_params: dict = {"owner": params[owner], "absent": params[absent_from]}
+    if q:
+        conditions.append("(s.symbol LIKE :like ESCAPE '\\' OR s.company_name LIKE :like ESCAPE '\\')")
+        where_params["like"] = f"%{_escape_like(q)}%"
+    if sector:
+        if sector == "UNKNOWN":
+            conditions.append("s.sector IS NULL")
+        else:
+            conditions.append("s.sector = :sector")
+            where_params["sector"] = sector
+    where = " AND ".join(conditions)
+    column = AUDIT_SORT_COLUMNS[sort]
+    direction = "DESC" if sort_dir == "desc" else "ASC"
+    result["total"] = conn.execute(f"SELECT COUNT(*) FROM symbol_scan_results s WHERE {where}", where_params).fetchone()[0]
+    result["rows"] = _fetch_all_dicts(
+        conn,
+        f"SELECT s.symbol, s.company_name, s.sector, s.symbol_data_status, s.status_reason "
+        f"FROM symbol_scan_results s WHERE {where} "
+        f"ORDER BY ({column} IS NULL), {column} {direction}, s.symbol LIMIT :limit OFFSET :offset",
+        {**where_params, "limit": page_size, "offset": (page - 1) * page_size},
+    )
+    return result
+
+
+# One aggregate join of the two runs, grouped by symbol. `overlap` joins each bar of the newer run to the SAME
+# bar (symbol, trading_date, source) of the older run through the primary key and counts those whose stored
+# content_hash differs; `bars` counts every stored bar per run and symbol. A bar that exists in only one run is
+# never in `overlap`, so it is never counted as differing.
+REVISION_SUMMARY_SQL = """
+WITH overlap AS (
+    SELECT o.symbol AS symbol,
+           COUNT(*) AS overlapping,
+           SUM(CASE WHEN o.content_hash <> b.content_hash THEN 1 ELSE 0 END) AS differing,
+           MIN(CASE WHEN o.content_hash <> b.content_hash THEN o.trading_date END) AS first_differing_date,
+           MAX(CASE WHEN o.content_hash <> b.content_hash THEN o.trading_date END) AS last_differing_date
+    FROM price_fetch_snapshots o
+    JOIN price_fetch_snapshots b
+      ON b.scan_run_id = :base AND b.symbol = o.symbol AND b.trading_date = o.trading_date AND b.source = o.source
+    WHERE o.scan_run_id = :other
+    GROUP BY o.symbol
+), bars AS (
+    SELECT scan_run_id, symbol, COUNT(*) AS n
+    FROM price_fetch_snapshots
+    WHERE scan_run_id IN (:base, :other)
+    GROUP BY scan_run_id, symbol
+)
+SELECT n.symbol, n.company_name, n.sector,
+       a.symbol_data_status AS base_status, n.symbol_data_status AS other_status,
+       COALESCE(bb.n, 0) AS bars_base, COALESCE(bo.n, 0) AS bars_other,
+       COALESCE(v.overlapping, 0) AS overlapping, COALESCE(v.differing, 0) AS differing,
+       v.first_differing_date, v.last_differing_date
+FROM symbol_scan_results n
+JOIN symbol_scan_results a ON a.scan_run_id = :base AND a.symbol = n.symbol
+LEFT JOIN overlap v ON v.symbol = n.symbol
+LEFT JOIN bars bb ON bb.scan_run_id = :base AND bb.symbol = n.symbol
+LEFT JOIN bars bo ON bo.scan_run_id = :other AND bo.symbol = n.symbol
+WHERE n.scan_run_id = :other
+ORDER BY n.symbol
+"""
+
+
+def _not_comparable_reason(row: dict) -> Optional[str]:
+    """Why a symbol present in both runs cannot be compared bar by bar, or None when it can."""
+    reasons = []
+    if row["base_status"] == "FAILED":
+        reasons.append("FAILED in the older run")
+    if row["other_status"] == "FAILED":
+        reasons.append("FAILED in the newer run")
+    if row["bars_base"] == 0 and row["base_status"] != "FAILED":
+        reasons.append("no stored bars in the older run")
+    if row["bars_other"] == 0 and row["other_status"] != "FAILED":
+        reasons.append("no stored bars in the newer run")
+    return "; ".join(reasons) if reasons else None
+
+
+def get_revision_summary(conn, base_run_id: str, other_run_id: str) -> dict:
+    """Bars whose STORED hash differs between two COMPLETE full runs (`base` older, `other` newer).
+
+    A bar is (symbol, trading_date, source). It counts as "differing" only when the same bar exists in both
+    runs with a different stored content_hash. Bars present in one run only are counted separately
+    (`only_in_older`, `only_in_newer`). Nothing is recomputed; a difference says the stored bytes differ, not why.
+
+    `symbols` has one row per symbol present in BOTH runs (sorted by symbol), each with its own overlap numbers
+    and `not_comparable_reason` (None when comparable). `counts` holds the denominators and totals; bar totals
+    cover comparable symbols only (a symbol that is FAILED or has no bars in either run cannot be compared).
+    """
+    rows = _fetch_all_dicts(conn, REVISION_SUMMARY_SQL, {"base": base_run_id, "other": other_run_id})
+    comparable = 0
+    totals = {"overlapping_bars": 0, "differing_bars": 0, "only_in_older": 0, "only_in_newer": 0, "symbols_with_differing_bars": 0}
+    for row in rows:
+        row["not_comparable_reason"] = _not_comparable_reason(row)
+        row["comparable"] = row["not_comparable_reason"] is None
+        row["only_in_older"] = row["bars_base"] - row["overlapping"]
+        row["only_in_newer"] = row["bars_other"] - row["overlapping"]
+        if row["comparable"]:
+            comparable += 1
+            totals["overlapping_bars"] += row["overlapping"]
+            totals["differing_bars"] += row["differing"]
+            totals["only_in_older"] += row["only_in_older"]
+            totals["only_in_newer"] += row["only_in_newer"]
+            totals["symbols_with_differing_bars"] += 1 if row["differing"] else 0
+    counts = get_symbol_set_diff(conn, base_run_id, other_run_id)["counts"]
+    counts.update(totals)
+    counts["comparable_symbols"] = comparable
+    counts["not_comparable_symbols"] = len(rows) - comparable
+    return {"counts": counts, "symbols": rows}
+
+
+def get_symbol_revisions(conn, base_run_id: str, other_run_id: str, symbol: str, limit: int = REVISION_ROW_CAP) -> dict:
+    """One symbol's differing bars with the STORED values of both runs side by side, oldest date first.
+
+    At most REVISION_ROW_CAP (300) bars are returned however large `limit` is: `truncated` says whether
+    more exist and `differing` is the real total. `overlapping`, `only_in_older` and `only_in_newer` are the
+    denominators for this symbol. No hash is recomputed here.
+    """
+    cap = min(max(int(limit), 1), REVISION_ROW_CAP)
+    params = {"base": base_run_id, "other": other_run_id, "symbol": symbol}
+    bars_base, bars_other, overlapping, differing = conn.execute(
+        "SELECT (SELECT COUNT(*) FROM price_fetch_snapshots WHERE scan_run_id = :base AND symbol = :symbol), "
+        "(SELECT COUNT(*) FROM price_fetch_snapshots WHERE scan_run_id = :other AND symbol = :symbol), "
+        "COUNT(*), COALESCE(SUM(CASE WHEN o.content_hash <> b.content_hash THEN 1 ELSE 0 END), 0) "
+        "FROM price_fetch_snapshots o JOIN price_fetch_snapshots b "
+        "ON b.scan_run_id = :base AND b.symbol = o.symbol AND b.trading_date = o.trading_date AND b.source = o.source "
+        "WHERE o.scan_run_id = :other AND o.symbol = :symbol",
+        params,
+    ).fetchone()
+    rows = _fetch_all_dicts(
+        conn,
+        "SELECT o.trading_date, o.source, "
+        "b.open AS base_open, b.high AS base_high, b.low AS base_low, b.close AS base_close, b.volume AS base_volume, "
+        "b.content_hash AS base_hash, b.candle_validation_status AS base_validation, "
+        "o.open AS other_open, o.high AS other_high, o.low AS other_low, o.close AS other_close, o.volume AS other_volume, "
+        "o.content_hash AS other_hash, o.candle_validation_status AS other_validation "
+        "FROM price_fetch_snapshots o JOIN price_fetch_snapshots b "
+        "ON b.scan_run_id = :base AND b.symbol = o.symbol AND b.trading_date = o.trading_date AND b.source = o.source "
+        "WHERE o.scan_run_id = :other AND o.symbol = :symbol AND o.content_hash <> b.content_hash "
+        "ORDER BY o.trading_date, o.source LIMIT :cap",
+        {**params, "cap": cap},
+    )
+    return {
+        "symbol": symbol, "overlapping": overlapping, "differing": differing,
+        "only_in_older": bars_base - overlapping, "only_in_newer": bars_other - overlapping,
+        "rows": rows, "cap": cap, "truncated": differing > len(rows),
+    }
