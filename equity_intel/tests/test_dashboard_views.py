@@ -142,7 +142,7 @@ def test_new_views_add_no_routes_and_no_write_methods(populated):
     app = populated.application
     rules = sorted(r.rule for r in app.url_map.iter_rules() if r.endpoint != "static")
     assert rules == ["/api/equity/candidates", "/api/equity/exceptions", "/api/equity/scan-history",
-                     "/api/equity/sectors", "/api/equity/stock/<symbol>", "/api/equity/summary", "/equity",
+                     "/api/equity/sectors", "/api/equity/snapshot-audit", "/api/equity/stock/<symbol>", "/api/equity/summary", "/equity",
                      "/equity/exceptions",
                      "/equity/stock/<symbol>"]  # Stage 1 stock page and Phase 2 exceptions page and API (GET only)
     for rule in rules:

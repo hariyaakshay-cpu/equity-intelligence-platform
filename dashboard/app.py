@@ -30,7 +30,7 @@ from typing import Optional, Union
 
 from flask import Flask, jsonify, render_template, request
 
-from dashboard import aggregates, exceptions, queries, stock_detail
+from dashboard import aggregates, exceptions, queries, snapshot_audit, stock_detail
 from equity_intel.indicators.trend import exponential_moving_average
 from equity_intel.persistence import connection, db_path_guard
 from equity_intel.persistence.schema import SCHEMA_VERSION
@@ -327,6 +327,17 @@ def create_app(demo: bool = False, db_path: Optional[Union[str, Path]] = None) -
         body = exceptions.build(conn, params)
         if body["run"] is not None:
             body["review_file"] = exceptions.review_panel(conn, body, app.config["DEMO_MODE"])
+        return jsonify({"demo": app.config["DEMO_MODE"], **body})
+
+    @app.get("/api/equity/snapshot-audit")
+    @_guarded
+    def api_snapshot_audit(conn):
+        """Bars whose stored hash differs between two COMPLETE full runs. GET only; base and other are the only run selectors."""
+        try:
+            params = snapshot_audit.parse_params(request.args)
+            body = snapshot_audit.build(conn, params)
+        except snapshot_audit.ParamError as exc:
+            return jsonify({"error": str(exc)}), 400
         return jsonify({"demo": app.config["DEMO_MODE"], **body})
 
     @app.get("/api/equity/summary")
