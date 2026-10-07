@@ -647,6 +647,7 @@ def _build_bench_db(db):
     return expected
 
 
+@pytest.mark.slow
 def test_benchmark_500_symbols_by_260_bars_revision_summary_is_correct_indexed_and_timed(db):
     expected = _build_bench_db(db)
     conn = _ro(db)

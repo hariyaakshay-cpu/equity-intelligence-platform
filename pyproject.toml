@@ -1,0 +1,6 @@
+[tool.pytest.ini_options]
+# `slow` tests (for example the 500 x 260 snapshot benchmark) run in the full suite; skip them locally with:
+#   python -m pytest -m "not slow"
+markers = [
+    "slow: large synthetic-data tests; run in the full suite, skippable with -m 'not slow'",
+]
