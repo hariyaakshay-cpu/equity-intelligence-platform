@@ -364,7 +364,7 @@ def test_company_and_sector_text_from_the_database_is_escaped(db, client):
 def test_links_keep_the_resolved_run_ids_and_every_followed_link_works(db, client):
     _view_runs(db)
     page = _page(client, "page_size=3&sort=company_name&dir=desc")[1]
-    own = [h for h in _hrefs(page) if h.startswith(PAGE)]
+    own = [h for h in _hrefs(page) if h.startswith(PAGE) and h != PAGE]  # the bare header link is the nav entry, not a pinned page link
     assert own
     for href in own:
         query = parse_qs(urlsplit(href).query)
@@ -373,7 +373,7 @@ def test_links_keep_the_resolved_run_ids_and_every_followed_link_works(db, clien
     default_page = _page(client)[1]
     assert all("base=r-old&other=r-new" in h for h in _hrefs(default_page) if h.startswith(PAGE + "?"))
     # a later run does not move a bookmark taken from the default page
-    bookmark = [h for h in _hrefs(default_page) if h.startswith(PAGE)][0]
+    bookmark = [h for h in _hrefs(default_page) if h.startswith(PAGE) and h != PAGE][0]  # h != PAGE skips the bare header nav link
     _make_run(db, "r-later", "2026-09-20T09:00:00", [("R1", "VALID", _bars(revised_on=3))])
     assert ["Run", "r-old", "r-new"] in _table_rows(_section(client.get(bookmark).get_data(as_text=True), "run-selection"))
 

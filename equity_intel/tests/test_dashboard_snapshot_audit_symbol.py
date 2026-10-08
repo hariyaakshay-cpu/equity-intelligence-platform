@@ -391,14 +391,14 @@ def test_run_selection_and_other_parameters(db, client):
 def test_every_link_on_the_drill_down_page_carries_the_resolved_pair_and_works(db, client):
     _three_runs(db)
     page = _page(client, "AAA", "base=r1&other=r3")[1]
-    own = [h for h in _hrefs(page) if h.startswith(MAIN_PAGE)]
+    own = [h for h in _hrefs(page) if h.startswith(MAIN_PAGE) and h != MAIN_PAGE]  # h != MAIN_PAGE skips the bare header nav link
     assert own
     for href in own:
         assert parse_qs(urlsplit(href).query) == {"base": ["r1"], "other": ["r3"]}, href
         assert client.get(href).status_code == 200, href
     assert "/equity/stock/AAA" in _hrefs(page)
     default = _page(client, "AAA")[1]
-    assert all(parse_qs(urlsplit(h).query) == {"base": ["r2"], "other": ["r3"]} for h in _hrefs(default) if h.startswith(MAIN_PAGE))
+    assert all(parse_qs(urlsplit(h).query) == {"base": ["r2"], "other": ["r3"]} for h in _hrefs(default) if h.startswith(MAIN_PAGE) and h != MAIN_PAGE)
 
 
 def test_the_builder_rows_carry_a_drilldown_url_for_the_revised_view_only(db, client):

@@ -153,7 +153,7 @@
     <tr><th>Detection rule</th><td>{{ pb.rule }}</td><td></td></tr>
     <tr><th>Rule version</th><td>{{ pb.rule_version }}</td><td></td></tr>
   </tbody></table></div>
-  <p class="note">Exception view and snapshot-changes view: <span class="nr">not built yet (Phases 3 and 4)</span>. This page is read-only; there is no review action.</p>
+  <p class="note">Exception view: <a href="/equity/exceptions">Exceptions</a>. Snapshot-changes view: <a href="/equity/snapshot-audit/symbol/{{ symbol|urlencode }}" id="snapshot-audit-link">Snapshot Audit for this symbol</a> <span class="sub">(uses the two newest COMPLETE full runs)</span>. This page is read-only; there is no review action.</p>
   <p class="note">Other flags &middot; history gaps: {{ "yes" if r.history_gaps_flag else "no" }} &middot; non-EQ series: {{ "yes" if r.non_eq_series_flag else "no" }} {{ layer("ScanRun") }}</p>
 </div>
 {% endblock %}
