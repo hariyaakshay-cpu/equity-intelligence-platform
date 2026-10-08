@@ -787,3 +787,170 @@ def get_symbol_revisions(conn, base_run_id: str, other_run_id: str, symbol: str,
         "only_in_older": bars_base - overlapping, "only_in_newer": bars_other - overlapping,
         "rows": rows, "cap": cap, "truncated": differing > len(rows),
     }
+
+
+# ---------------------------------------------------------------------------
+# Phase 4 queries: the inputs of the layer counts and the freshness panel.
+#
+# SELECT-only and parameterized. Nothing is judged here (no OK / WARN): each function returns what is
+# stored, plus whether it could be read. A NULL, empty or unparseable value is reported as missing
+# (None) and never replaced by a default. Timestamps: scan_runs.* are naive IST wall-clock text (see
+# now_ist_naive); e4_scan_runs.* are UTC-aware text. Both are converted to naive IST by
+# _parse_timestamp, so a value from one layer can be compared with a value from the other.
+# ---------------------------------------------------------------------------
+
+ABORTED_LIST_LIMIT = 50
+
+
+def _ist_datetime(value) -> Optional[datetime]:
+    """`value` as a naive IST datetime, or None when it is NULL, empty or not a timestamp."""
+    try:
+        return _parse_timestamp(value)
+    except (TypeError, ValueError):
+        return None
+
+
+def _ist_text(value) -> Optional[str]:
+    parsed = _ist_datetime(value)
+    return None if parsed is None else parsed.isoformat(timespec="seconds")
+
+
+def _iso_date_or_none(value) -> Optional[str]:
+    """`value` when it is an ISO calendar date (YYYY-MM-DD), else None."""
+    if not isinstance(value, str):
+        return None
+    try:
+        return date.fromisoformat(value).isoformat() if len(value) == 10 else None
+    except ValueError:
+        return None
+
+
+def get_latest_e4_scan_detail(conn) -> Optional[dict]:
+    """The latest COMPLETE E4 scan, the same one get_latest_e4_scan picks (same tables, same status and
+    ordering), with what that function leaves out: both timestamps and the acquisition run id.
+
+    `started_at` / `completed_at` are the stored text; `started_at_ist` / `completed_at_ist` are naive IST
+    text, None when the stored value is NULL or unparseable. `asof_date` is the stored date when it is a
+    valid ISO date, else None; `asof_date_raw` always holds what is stored. None when there is no such scan.
+    """
+    if not (_has_table(conn, "e4_scan_runs") and _has_table(conn, "e4_feature_sets")):
+        return None
+    scan = _fetch_one_dict(
+        conn,
+        "SELECT scan_id, acquisition_run_id, started_at, completed_at, asof_date, calendar_status "
+        "FROM e4_scan_runs WHERE status = 'COMPLETE' ORDER BY started_at DESC LIMIT 1",
+    )
+    if scan is None:
+        return None
+    scan["asof_date_raw"] = scan["asof_date"]
+    scan["asof_date"] = _iso_date_or_none(scan["asof_date"])
+    scan["started_at_ist"] = _ist_text(scan["started_at"])
+    scan["completed_at_ist"] = _ist_text(scan["completed_at"])
+    return scan
+
+
+def get_e4_status_counts(conn, scan_id: str) -> Optional[dict]:
+    """The E4 layer's own status counts for one E4 scan, from e4_data_quality_results.
+
+    {"scan_id", "total", "counts": {status: n}, "feature_sets": n or None}. The statuses are whatever the
+    table holds (sorted by name); none is assumed and none is added with a zero. `total` is the number of
+    quality rows, the E4 layer's own denominator. None when the table does not exist.
+    """
+    if not _has_table(conn, "e4_data_quality_results"):
+        return None
+    rows = conn.execute(
+        "SELECT status, COUNT(*) FROM e4_data_quality_results WHERE scan_id = ? GROUP BY status ORDER BY status",
+        (scan_id,),
+    ).fetchall()
+    counts = {status: n for status, n in rows}
+    feature_sets = None
+    if _has_table(conn, "e4_feature_sets"):
+        feature_sets = conn.execute("SELECT COUNT(*) FROM e4_feature_sets WHERE scan_id = ?", (scan_id,)).fetchone()[0]
+    return {"scan_id": scan_id, "total": sum(counts.values()), "counts": counts, "feature_sets": feature_sets}
+
+
+def get_aborted_runs_since(conn, cutoff: datetime) -> dict:
+    """ABORTED runs whose started_at is at or after `cutoff` (a naive IST datetime), split into full runs
+    and `--symbols` smoke runs (symbols_filter_json NOT NULL), which are never added together.
+
+    The boundary is inclusive: a run that started exactly at `cutoff` counts. started_at is compared as a
+    parsed timestamp, not as text, so a run whose started_at cannot be parsed is not silently dropped or
+    counted: it is listed in `unparseable`. Each of `full` and `smoke` is {"count", "runs" (newest first,
+    at most ABORTED_LIST_LIMIT), "more"}. RUNNING and COMPLETE runs are never included, and nothing here
+    makes an ABORTED run the "latest" anything.
+    """
+    rows = _fetch_all_dicts(
+        conn,
+        "SELECT run_id, started_at, finished_at, abort_reason, symbols_filter_json FROM scan_runs "
+        "WHERE status = ? ORDER BY started_at DESC, run_id DESC",
+        ("ABORTED",),
+    )
+    out = {
+        "cutoff": cutoff.isoformat(timespec="seconds"), "aborted_total": len(rows), "unparseable": [],
+        "full": {"count": 0, "runs": [], "more": 0}, "smoke": {"count": 0, "runs": [], "more": 0},
+    }
+    for row in rows:
+        started = _ist_datetime(row["started_at"])
+        if started is None:
+            out["unparseable"].append(row["run_id"])
+            continue
+        if started < cutoff:
+            continue
+        bucket = out["smoke" if row["symbols_filter_json"] is not None else "full"]
+        bucket["count"] += 1
+        if len(bucket["runs"]) < ABORTED_LIST_LIMIT:
+            bucket["runs"].append({
+                "run_id": row["run_id"], "started_at": started.isoformat(timespec="seconds"),
+                "abort_reason": row["abort_reason"],
+            })
+        else:
+            bucket["more"] += 1
+    return out
+
+
+def get_benchmark_last_dates(conn, acquisition_run_id: str) -> Optional[list]:
+    """The E4 layer's index candles: one entry per benchmark_key stored for the acquisition run,
+    {"benchmark_key", "last_date", "sessions"}, ordered by key. No key is assumed or filtered on: the real
+    key is `NSE_INDEX|Nifty 500` and the demo's is `DEMO_INDEX`, and each is returned as stored.
+
+    `last_date` is the newest stored trading_date when it is a valid ISO date, else None. This is stored
+    data from one acquisition: it cannot show whether a newer session exists. None when the table does not
+    exist; [] when the run has no benchmark rows.
+    """
+    if not _has_table(conn, "acquired_benchmark"):
+        return None
+    rows = conn.execute(
+        "SELECT benchmark_key, MAX(trading_date), COUNT(DISTINCT trading_date) FROM acquired_benchmark "
+        "WHERE run_id = ? GROUP BY benchmark_key ORDER BY benchmark_key",
+        (acquisition_run_id,),
+    ).fetchall()
+    return [{"benchmark_key": key, "last_date": _iso_date_or_none(last), "sessions": n} for key, last, n in rows]
+
+
+def get_calendar_last_date(conn, run_id: str) -> Optional[dict]:
+    """The ScanRun layer's index candles: the newest session date in scan_runs.calendar_dates_json, the
+    positive list of Nifty 500 session dates the scan built its calendar from.
+
+    {"state": "ok" | "missing" | "unparseable", "last_date", "sessions"}. "missing" is a NULL / empty column
+    or an empty list; "unparseable" is invalid JSON, a value that is not a list, or any item that is not an
+    ISO date (the list is never partly trusted). Stored data from one scan: it cannot show whether a newer
+    session exists. None when the run does not exist.
+    """
+    row = _fetch_one_dict(conn, "SELECT calendar_dates_json FROM scan_runs WHERE run_id = ?", (run_id,))
+    if row is None:
+        return None
+    raw = row["calendar_dates_json"]
+    if raw is None or raw == "":
+        return {"state": "missing", "last_date": None, "sessions": 0}
+    try:
+        items = json.loads(raw)
+    except (TypeError, ValueError):
+        return {"state": "unparseable", "last_date": None, "sessions": 0}
+    if not isinstance(items, list):
+        return {"state": "unparseable", "last_date": None, "sessions": 0}
+    if not items:
+        return {"state": "missing", "last_date": None, "sessions": 0}
+    dates = [_iso_date_or_none(item) for item in items]
+    if any(d is None for d in dates):
+        return {"state": "unparseable", "last_date": None, "sessions": 0}
+    return {"state": "ok", "last_date": max(dates), "sessions": len(set(dates))}

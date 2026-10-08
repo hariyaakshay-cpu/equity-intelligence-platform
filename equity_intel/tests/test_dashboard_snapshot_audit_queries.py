@@ -386,7 +386,7 @@ def test_the_new_queries_never_import_or_call_a_hash_function():
 
 
 def test_all_new_query_text_is_parameterized(db):
-    section = inspect.getsource(queries).split("# Snapshot Audit queries (Phase 3)")[1]
+    section = inspect.getsource(queries).split("# Snapshot Audit queries (Phase 3)")[1].split("# Phase 4 queries")[0]   # Phase 3 text only
     assert not re.search(r"""f["'][^"']*\{(base|other|run_id|symbol|q|sector)\b""", section)
     assert "format(" not in section and "% (" not in section
     assert ":base" in queries.REVISION_SUMMARY_SQL and ":other" in queries.REVISION_SUMMARY_SQL
