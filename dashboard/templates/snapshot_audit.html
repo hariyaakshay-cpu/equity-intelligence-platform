@@ -143,7 +143,7 @@
         <th>{% set s = links.sort[col] %}<a href="{{ s.url }}">{{ label }}</a>{% if s.active %} {% if s.dir == "asc" %}&#9650;{% else %}&#9660;{% endif %}{% endif %}</th>
       {% endfor %}
       {% if view == "revised" %}
-      <th>Overlapping bars</th><th>{{ metric.name }}</th><th>First differing date</th><th>Last differing date</th>
+      <th>Overlapping bars</th><th>{{ metric.name }}</th><th>First differing date</th><th>Last differing date</th><th>Compare</th>
       {% else %}
       <th>Status</th>
       {% endif %}
@@ -159,6 +159,7 @@
         <td class="num">{{ r.differing_bars }}</td>
         <td>{{ v(r.first_differing_date) }}</td>
         <td>{{ v(r.last_differing_date) }}</td>
+        <td><a href="{{ r.drilldown_url }}">compare the differing bars</a></td>
         {% else %}
         <td><span class="badge b-{{ r.status }}">{{ r.status }}</span>{% if r.status_reason %}<div class="note">{{ r.status_reason }}</div>{% endif %}</td>
         {% endif %}

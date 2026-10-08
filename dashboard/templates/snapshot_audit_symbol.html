@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% block title %}Snapshot Audit: {{ symbol }}{% endblock %}
+{% macro v(x) %}{% if x is none or x == "" %}<span class="nr">{{ not_recorded }}</span>{% else %}{{ x }}{% endif %}{% endmacro %}
+{% macro layer(l) %}<span class="layer layer-{{ l }}">{{ l }}</span>{% endmacro %}
+{% macro cell(row, side, field) %}<td class="num">{% if field in row.differing_fields %}<b>{{ v(row[side][field]) }}</b>{% else %}{{ v(row[side][field]) }}{% endif %}</td>{% endmacro %}
+{% block body %}
+{# 1. Header #}
+<div class="card" id="header">
+  <h1>Snapshot Audit: {{ symbol }}</h1>
+  <p>{{ v(company_name) }} &middot; sector {{ v(sector) }} {{ layer("ScanRun") }}</p>
+  <p class="note"><a href="{{ links.back }}" id="back-link">&larr; Snapshot Audit, same two runs</a> &middot; <a href="{{ stock_url }}" id="stock-link">Stock Detail</a></p>
+  <p class="note" id="metric-note"><b>{{ metric.name }}.</b> {{ metric.note }}</p>
+  <p class="note" id="compares-stored">The comparison of the two runs uses stored hashes. The only hash recomputed on this page is the stored-row integrity check below, over this symbol's stored bars.</p>
+  <p class="note" id="adjustment-note">{{ adjustment_note }}</p>
+</div>
+
+{# 2. Runs #}
+<div class="card" id="run-selection">
+  <h2>Runs compared {{ layer("ScanRun") }}</h2>
+  {% if swapped %}<p class="notice" id="swap-note">{{ swap_note }}.</p>{% endif %}
+  <div class="tablewrap"><table id="run-details">
+    <thead><tr><th></th><th>Base (older)</th><th>Other (newer)</th></tr></thead>
+    <tbody>
+      <tr><td>Run</td><td><code>{{ base_run.run_id }}</code></td><td><code>{{ other_run.run_id }}</code></td></tr>
+      <tr><td>Started</td><td>{{ v(base_run.started_at) }}</td><td>{{ v(other_run.started_at) }}</td></tr>
+      <tr><td>Symbol status</td><td>{% if base_symbol.present %}<span class="badge b-{{ base_symbol.status }}">{{ base_symbol.status }}</span>{% else %}<span class="nr">not in this run</span>{% endif %}</td>
+        <td>{% if other_symbol.present %}<span class="badge b-{{ other_symbol.status }}">{{ other_symbol.status }}</span>{% else %}<span class="nr">not in this run</span>{% endif %}</td></tr>
+      <tr><td>Status reason</td><td>{{ v(base_symbol.status_reason) }}</td><td>{{ v(other_symbol.status_reason) }}</td></tr>
+      <tr><td>Stored bars of this symbol</td><td class="num">{{ base_symbol.stored_bars }}</td><td class="num">{{ other_symbol.stored_bars }}</td></tr>
+    </tbody>
+  </table></div>
+  <ul id="comparability-notes">
+    {% for note in comparability_notes %}<li>{{ note }}</li>{% endfor %}
+  </ul>
+</div>
+
+{# 3. Stored-row integrity #}
+<div class="card" id="integrity">
+  <h2>Stored-row integrity {{ layer("ScanRun") }}</h2>
+  <ul>
+    {% for key, label in (("base", "Older run " ~ base_run.run_id), ("other", "Newer run " ~ other_run.run_id)) %}
+    <li id="integrity-{{ key }}"><b>{{ label }}:</b>
+      <span class="integrity-state {{ 'ok' if integrity[key].state == 'MATCH' else ('bad' if integrity[key].state == 'MISMATCH' else 'nr') }}">{{ integrity[key].state }}</span>
+      <span class="note">({{ integrity[key].detail }})</span></li>
+    {% endfor %}
+  </ul>
+  <p class="note" id="integrity-note">{{ integrity_note }}</p>
+</div>
+
+{% if state != "comparable" %}
+<div class="card" id="state">
+  <h2>Comparison</h2>
+  <p id="state-message">{{ message }}.</p>
+</div>
+{% else %}
+{# 4. Counts #}
+<div class="card" id="counts">
+  <h2>Counts {{ layer("ScanRun") }}</h2>
+  <ul id="counts-text">
+    <li>{{ counts_text.differing }}</li>
+    <li>{{ counts_text.one_sided }}</li>
+  </ul>
+  {% if no_overlap_note %}<p class="note" id="no-overlap-note">{{ no_overlap_note }}.</p>{% endif %}
+</div>
+
+{# 5. Differing bars #}
+<div class="card" id="results">
+  <h2>Bars whose stored hash differs, newest date first {{ layer("ScanRun") }}</h2>
+  {% if truncation_notice %}<p class="notice" id="truncation-notice">{{ truncation_notice }}.</p>{% endif %}
+  {% if rows %}
+  <div class="tablewrap"><table id="differing-bars">
+    <thead>
+      <tr><th rowspan="2">Date</th><th rowspan="2">Source</th>
+        {% for field in ("Open", "High", "Low", "Close", "Volume") %}<th colspan="2">{{ field }}</th>{% endfor %}
+        <th rowspan="2">Stored fields that differ</th></tr>
+      <tr>{% for field in range(5) %}<th>older</th><th>newer</th>{% endfor %}</tr>
+    </thead>
+    <tbody>
+    {% for r in rows %}
+      <tr>
+        <td>{{ r.trading_date }}</td><td>{{ r.source }}</td>
+        {% for field in ("open", "high", "low", "close", "volume") %}{{ cell(r, "base", field) }}{{ cell(r, "other", field) }}{% endfor %}
+        <td>{% if r.differing_fields %}{{ r.differing_fields|join(", ") }}{% else %}<span class="note">{{ r.note }}</span>{% endif %}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table></div>
+  <p class="note">Values are as stored, shown as text. A bold value is one that differs between the two runs.</p>
+  {% else %}
+  <p id="empty-state">{{ counts_text.differing }}.</p>
+  {% endif %}
+  <p class="note">Bookmark this view (it keeps both run ids): <a href="{{ links.this_page }}">{{ links.this_page }}</a></p>
+</div>
+{% endif %}
+{% endblock %}

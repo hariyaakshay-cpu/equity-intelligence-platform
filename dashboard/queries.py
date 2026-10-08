@@ -738,13 +738,27 @@ def get_revision_summary(conn, base_run_id: str, other_run_id: str) -> dict:
     return {"counts": counts, "symbols": rows}
 
 
-def get_symbol_revisions(conn, base_run_id: str, other_run_id: str, symbol: str, limit: int = REVISION_ROW_CAP) -> dict:
-    """One symbol's differing bars with the STORED values of both runs side by side, oldest date first.
+def get_stored_bars(conn, run_id: str, symbol: str) -> list[dict]:
+    """Every stored bar of ONE symbol in ONE run (trading_date, source, the five stored values, content_hash),
+    oldest first, as stored. The rows the per-symbol stored-row integrity check hashes; nothing is computed here."""
+    return _fetch_all_dicts(
+        conn,
+        "SELECT trading_date, source, open, high, low, close, volume, content_hash FROM price_fetch_snapshots "
+        "WHERE scan_run_id = ? AND symbol = ? ORDER BY trading_date, source",
+        (run_id, symbol),
+    )
+
+
+def get_symbol_revisions(conn, base_run_id: str, other_run_id: str, symbol: str, limit: int = REVISION_ROW_CAP,
+                         newest_first: bool = False) -> dict:
+    """One symbol's differing bars with the STORED values of both runs side by side, oldest date first
+    (newest first with `newest_first=True`, in which case the cap keeps the newest bars).
 
     At most REVISION_ROW_CAP (300) bars are returned however large `limit` is: `truncated` says whether
     more exist and `differing` is the real total. `overlapping`, `only_in_older` and `only_in_newer` are the
     denominators for this symbol. No hash is recomputed here.
     """
+    order = "ORDER BY o.trading_date DESC, o.source" if newest_first else "ORDER BY o.trading_date, o.source"  # fixed text, never user input
     cap = min(max(int(limit), 1), REVISION_ROW_CAP)
     params = {"base": base_run_id, "other": other_run_id, "symbol": symbol}
     bars_base, bars_other, overlapping, differing = conn.execute(
@@ -765,8 +779,7 @@ def get_symbol_revisions(conn, base_run_id: str, other_run_id: str, symbol: str,
         "o.content_hash AS other_hash, o.candle_validation_status AS other_validation "
         "FROM price_fetch_snapshots o JOIN price_fetch_snapshots b "
         "ON b.scan_run_id = :base AND b.symbol = o.symbol AND b.trading_date = o.trading_date AND b.source = o.source "
-        "WHERE o.scan_run_id = :other AND o.symbol = :symbol AND o.content_hash <> b.content_hash "
-        "ORDER BY o.trading_date, o.source LIMIT :cap",
+        f"WHERE o.scan_run_id = :other AND o.symbol = :symbol AND o.content_hash <> b.content_hash {order} LIMIT :cap",
         {**params, "cap": cap},
     )
     return {

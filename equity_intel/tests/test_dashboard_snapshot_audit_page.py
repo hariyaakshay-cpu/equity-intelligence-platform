@@ -125,10 +125,11 @@ def test_revised_view_table_has_the_listed_columns_and_matches_the_json_rows(db,
     res, page = _page(client)
     rows = _table_rows(_section(page, "results"))
     assert rows[0] == ["Symbol ▲", "Company", "Sector", "Overlapping bars", "bars whose stored hash differs",
-                       "First differing date", "Last differing date"]
+                       "First differing date", "Last differing date", "Compare"]
     api_rows = client.get(API).get_json()["rows"]
     assert [r[0] for r in rows[1:]] == [r["symbol"] for r in api_rows] == ["R1", "R2", "R3", "R4", "R5", "R6", "R7"]
-    assert rows[1] == ["R1", "Alpha 50% Co", "IT", "5", "1", api_rows[0]["first_differing_date"], api_rows[0]["last_differing_date"]]
+    assert rows[1] == ["R1", "Alpha 50% Co", "IT", "5", "1", api_rows[0]["first_differing_date"], api_rows[0]["last_differing_date"],
+                       "compare the differing bars"]
     assert rows[5][2] == "not recorded"            # R5 has no stored sector
     assert "/equity/stock/R1" in _hrefs(page)
 
@@ -384,11 +385,18 @@ def test_the_page_and_the_json_route_show_the_same_rows_for_every_view_and_pair(
         assert symbols == [r["symbol"] for r in client.get(f"{API}?{query}").get_json()["rows"]], query
 
 
-def test_there_is_no_drill_down_link_yet(db, client):
+def test_drill_down_links_are_on_the_revised_view_only_and_carry_base_and_other(db, client):
     _view_runs(db)
-    for query in ("", "view=added", "view=removed"):
+    for query in ("view=added", "view=removed"):
         for href in _hrefs(_page(client, query)[1]):
             assert not href.startswith(PAGE + "/"), href
+    for query, pair in (("", ("r-old", "r-new")), ("base=r-new&other=r-old", ("r-old", "r-new"))):
+        page = _page(client, query)[1]
+        links = [h for h in _hrefs(page) if h.startswith(PAGE + "/symbol/")]
+        assert len(links) == 7
+        for href in links:
+            assert parse_qs(urlsplit(href).query) == {"base": [pair[0]], "other": [pair[1]]}, href
+            assert client.get(href).status_code == 200, href
 
 
 # ---------------------------------------------------------------- hashing, read-only, resources, wording

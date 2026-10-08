@@ -2,10 +2,10 @@
 
 Compares the STORED price_fetch_snapshots of two COMPLETE full runs and reports "bars whose stored hash
 differs". Descriptive only: no score, rank, band or signal, no sort by how many bars differ, and no claim about
-why a bar differs. Nothing here recomputes a hash (the per-symbol integrity check lives on the drill-down, not
-here); the only comparison is string equality of two stored content_hash values, done in SQL by
-queries.get_revision_summary. It only runs SELECTs on a connection the caller opened read-only and never
-imports sqlite3.
+why a bar differs. The main view (build) recomputes no hash: the only comparison is string equality of two
+stored content_hash values, done in SQL by queries.get_revision_summary. The one place a hash is recomputed is
+the per-symbol drill-down (build_symbol), through stored_row_integrity.check_rows over that symbol's stored bars
+only. It only runs SELECTs on a connection the caller opened read-only and never imports sqlite3.
 
 Layer: everything here is the ScanRun layer (scan_runs / symbol_scan_results / price_fetch_snapshots).
 """
@@ -15,7 +15,7 @@ import math
 from typing import Optional
 from urllib.parse import quote, urlencode
 
-from dashboard import queries, stock_detail
+from dashboard import queries, stock_detail, stored_row_integrity
 
 DEFAULT_VIEW = "revised"
 VIEWS = ("revised", "added", "removed")
@@ -25,6 +25,12 @@ MAX_TEXT_LENGTH = 100
 SORT_COLUMNS = ("symbol", "company_name", "sector")  # plain columns only; never the number of differing bars
 SORT_DIRECTIONS = ("asc", "desc")
 PAGE_PATH = "/equity/snapshot-audit"
+SYMBOL_PATH = PAGE_PATH + "/symbol"
+VALUE_FIELDS = ("open", "high", "low", "close", "volume")  # the stored values shown side by side
+SAME_VALUES_NOTE = "stored hash differs although the displayed values are equal; this page does not explain why"
+INTEGRITY_NOTE = ("Checks that stored bars match their stored hash. It does not prove the vendor data is unchanged; "
+                  "vendor revisions are detected by comparing the two runs above.")
+ADJUSTMENT_NOTE = "Values are shown as stored when retrieved. The adjustment basis is NOT_DEFINED; this page does not adjust or compute any value."
 
 METRIC_NAME = "bars whose stored hash differs"
 METRIC_NOTE = (
@@ -71,6 +77,19 @@ def _text(args, name: str) -> Optional[str]:
     return raw
 
 
+def _pair(args) -> tuple[Optional[str], Optional[str]]:
+    base, other = _text(args, "base"), _text(args, "other")
+    if (base is None) != (other is None):
+        raise ParamError("base and other must be given together (or both left out to use the two newest runs)")
+    return base, other
+
+
+def parse_symbol_params(args) -> dict:
+    """The drill-down takes the same two run selectors as the main page and nothing else."""
+    base, other = _pair(args)
+    return {"base": base, "other": other}
+
+
 def parse_params(args) -> dict:
     """Validate the query string. Invalid VALUES raise ParamError (never silently reset to a default).
 
@@ -86,9 +105,7 @@ def parse_params(args) -> dict:
     direction = args.get("dir") or "asc"
     if direction not in SORT_DIRECTIONS:
         raise ParamError(f"dir must be asc or desc, got {direction!r}")
-    base, other = _text(args, "base"), _text(args, "other")
-    if (base is None) != (other is None):
-        raise ParamError("base and other must be given together (or both left out to use the two newest runs)")
+    base, other = _pair(args)
     return {
         "base": base, "other": other, "view": view, "q": _text(args, "q"), "sector": _text(args, "sector"),
         "page": _positive_int(args, "page", 1),
@@ -179,7 +196,12 @@ def _sorted_like_sql(rows: list, sort: str, direction: str) -> list:
     return present + sorted((r for r in rows if r[sort] is None), key=lambda r: r["symbol"])
 
 
-def _revised_rows(summary_symbols: list, params: dict) -> tuple[int, list]:
+def drilldown_url(symbol: str, base: str, other: str) -> str:
+    """The per-symbol page for the RESOLVED pair, so a link never moves to a newer pair."""
+    return f"{SYMBOL_PATH}/{quote(symbol, safe='')}?{urlencode([('base', base), ('other', other)])}"
+
+
+def _revised_rows(summary_symbols: list, params: dict, base: str, other: str) -> tuple[int, list]:
     """Comparable symbols with at least one differing bar, filtered, sorted by a plain column, one page of them."""
     rows = [r for r in summary_symbols if r["comparable"] and r["differing"] > 0 and _matches(r, params["q"], params["sector"])]
     rows = _sorted_like_sql(rows, params["sort"], params["dir"])
@@ -190,7 +212,7 @@ def _revised_rows(summary_symbols: list, params: dict) -> tuple[int, list]:
          "overlapping_bars": r["overlapping"], "differing_bars": r["differing"],
          "first_differing_date": r["first_differing_date"], "last_differing_date": r["last_differing_date"],
          "bars_older_run": r["bars_base"], "bars_newer_run": r["bars_other"],
-         "stock_url": f"/equity/stock/{quote(r['symbol'], safe='')}"}
+         "stock_url": f"/equity/stock/{quote(r['symbol'], safe='')}", "drilldown_url": drilldown_url(r["symbol"], base, other)}
         for r in page
     ]
 
@@ -262,7 +284,7 @@ def build(conn, params: dict) -> dict:
     summary = queries.get_revision_summary(conn, older["run_id"], newer["run_id"])
     counts = summary["counts"]
     view = params["view"]
-    total, rows = _revised_rows(summary["symbols"], params) if view == "revised" else _set_rows(conn, older, newer, params)
+    total, rows = _revised_rows(summary["symbols"], params, older["run_id"], newer["run_id"]) if view == "revised" else _set_rows(conn, older, newer, params)
     body.update({
         "comparison_available": True,
         "message": None,
@@ -332,3 +354,111 @@ def page_links(body: dict) -> Optional[dict]:
         "clear_filters": page_url(p, base, other, q=None, sector=None, page=1),
         "this_page": page_url(p, base, other),
     }
+
+
+# ---------------------------------------------------------------- the per-symbol drill-down
+
+def _as_text(value) -> Optional[str]:
+    return None if value is None else str(value)
+
+
+def _side(result: Optional[dict], bars: list) -> dict:
+    return {"present": result is not None, "status": result["symbol_data_status"] if result else None,
+            "status_reason": result["status_reason"] if result else None, "stored_bars": len(bars)}
+
+
+def _integrity(present: bool, bars: list) -> dict:
+    """The stored-row integrity of one run's bars of this symbol: the only hash recompute in Phase 3."""
+    check = stored_row_integrity.check_rows(bars)  # one recompute per stored bar of THIS symbol in THIS run
+    if not present:
+        detail = "the symbol is not in this run"
+    elif check["state"] == "UNAVAILABLE":
+        detail = "no stored bars to check"
+    elif check["state"] == "MISMATCH":
+        shown = ", ".join(check["mismatched"][:5]) + (", ..." if len(check["mismatched"]) > 5 else "")
+        detail = f"{len(check['mismatched'])} of {check['bars']} stored bars do not reproduce their stored hash ({shown})"
+    else:
+        detail = f"all {check['bars']} stored bars reproduce their stored hash"
+    return {**check, "detail": detail}
+
+
+def _side_by_side(row: dict) -> dict:
+    base = {f: row[f"base_{f}"] for f in VALUE_FIELDS}
+    other = {f: row[f"other_{f}"] for f in VALUE_FIELDS}
+    differing = [f for f in VALUE_FIELDS if _as_text(base[f]) != _as_text(other[f])]  # compared as stored text
+    return {"trading_date": row["trading_date"], "source": row["source"], "base": base, "other": other,
+            "differing_fields": differing, "note": None if differing else SAME_VALUES_NOTE}
+
+
+def build_symbol(conn, params: dict, symbol: str) -> dict:
+    """The drill-down payload for one symbol. `params` comes from parse_symbol_params; a bad run selection or an
+    over-long symbol raises ParamError. `state` is comparable, not_comparable, added, removed or absent."""
+    if len(symbol) > MAX_TEXT_LENGTH:
+        raise ParamError(f"symbol must be at most {MAX_TEXT_LENGTH} characters")
+    older, newer, swapped, swap_note = _choose_pair(conn, params)
+    body: dict = {
+        "scoring_status": "BLOCKED_B2", "layer": "ScanRun", "metric": {"name": METRIC_NAME, "note": METRIC_NOTE},
+        "params": params, "symbol": symbol, "comparison_available": older is not None, "message": None, "state": None,
+        "base_run": None, "other_run": None, "swapped": swapped, "swap_note": swap_note, "comparability_notes": [],
+        "company_name": None, "sector": None, "base_symbol": None, "other_symbol": None, "reason": None,
+        "counts": None, "counts_text": None, "rows": [], "cap": queries.REVISION_ROW_CAP, "truncated": False,
+        "truncation_notice": None, "integrity": None, "integrity_note": INTEGRITY_NOTE, "adjustment_note": ADJUSTMENT_NOTE,
+        "no_overlap_note": None, "stock_url": f"/equity/stock/{quote(symbol, safe='')}",
+    }
+    if older is None:
+        found = queries.get_eligible_runs(conn)["total"]
+        body["message"] = f"a comparison needs two COMPLETE full runs; found {found}"
+        return body
+    old_id, new_id = older["run_id"], newer["run_id"]
+    base_result, other_result = queries.get_symbol_result(conn, old_id, symbol), queries.get_symbol_result(conn, new_id, symbol)
+    base_bars, other_bars = queries.get_stored_bars(conn, old_id, symbol), queries.get_stored_bars(conn, new_id, symbol)
+    present = base_result or other_result
+    body.update({
+        "base_run": _run_view(older), "other_run": _run_view(newer), "comparability_notes": _comparability_notes(older, newer),
+        "company_name": present["company_name"] if present else None, "sector": present["sector"] if present else None,
+        "base_symbol": _side(base_result, base_bars), "other_symbol": _side(other_result, other_bars),
+    })
+    if other_result is not None:
+        body.update({"company_name": other_result["company_name"], "sector": other_result["sector"]})
+    if present is None:
+        body.update({"state": "absent", "message": f"symbol {symbol} is in neither run ({old_id} nor {new_id})"})
+        return body
+    body["integrity"] = {"base": _integrity(base_result is not None, base_bars), "other": _integrity(other_result is not None, other_bars)}
+    if base_result is None or other_result is None:
+        state, where = ("added", f"in the newer run {new_id} but not in the older run {old_id}") if base_result is None \
+            else ("removed", f"in the older run {old_id} but not in the newer run {new_id}")
+        body.update({"state": state, "message": f"{symbol} was {state}: it is {where}. There is nothing to compare bar by bar."})
+        return body
+    reason = queries._not_comparable_reason({
+        "base_status": base_result["symbol_data_status"], "other_status": other_result["symbol_data_status"],
+        "bars_base": len(base_bars), "bars_other": len(other_bars)})
+    if reason is not None:
+        body.update({"state": "not_comparable", "reason": reason, "message": f"{symbol} cannot be compared bar by bar: {reason}"})
+        return body
+    revisions = queries.get_symbol_revisions(conn, old_id, new_id, symbol, newest_first=True)
+    differing, overlapping = revisions["differing"], revisions["overlapping"]
+    body.update({
+        "state": "comparable",
+        "counts": {"overlapping_bars": overlapping, "differing_bars": differing,
+                   "only_in_older": revisions["only_in_older"], "only_in_newer": revisions["only_in_newer"]},
+        "counts_text": {
+            "differing": f"{differing} of {overlapping} overlapping bars differ ({METRIC_NAME})",
+            "one_sided": (f"{revisions['only_in_older']} bars are only in the older run and "
+                          f"{revisions['only_in_newer']} are only in the newer run"),
+        },
+        "rows": [_side_by_side(r) for r in revisions["rows"]],
+        "cap": revisions["cap"], "truncated": revisions["truncated"],
+        "truncation_notice": (f"truncated at {revisions['cap']} of {differing} differing bars: the {revisions['cap']} newest are shown"
+                              if revisions["truncated"] else None),
+        "no_overlap_note": "the two runs share no bar (trading date and source) for this symbol" if overlapping == 0 else None,
+    })
+    return body
+
+
+def symbol_links(body: dict) -> Optional[dict]:
+    """Links of the drill-down page, or None when no comparison is available. Both resolved run ids are kept."""
+    if not body["comparison_available"]:
+        return None
+    base, other = body["base_run"]["run_id"], body["other_run"]["run_id"]
+    defaults = {"view": DEFAULT_VIEW, "q": None, "sector": None, "page": 1, "page_size": DEFAULT_PAGE_SIZE, "sort": "symbol", "dir": "asc"}
+    return {"back": page_url(defaults, base, other), "this_page": drilldown_url(body["symbol"], base, other)}

@@ -352,6 +352,44 @@ def create_app(demo: bool = False, db_path: Optional[Union[str, Path]] = None) -
         return render_template("snapshot_audit.html", demo=app.config["DEMO_MODE"], not_recorded=stock_detail.NOT_RECORDED,
                                links=snapshot_audit.page_links(body), **body)
 
+    @app.get("/equity/snapshot-audit/symbol/<symbol>")
+    def snapshot_audit_symbol_page(symbol):
+        """One symbol's differing bars and stored-row integrity for a pair of runs, server-rendered. GET only."""
+        try:
+            conn = _open_checked_connection(app.config["DB_PATH"])
+        except _DatabaseUnavailable:
+            return _message_page("No scans yet", _no_scans_body(app.config["DEMO_MODE"])["message"])
+        except _DatabaseVersionMismatch as exc:
+            return _message_page("Database version mismatch",
+                                 _version_mismatch_body(app.config["DEMO_MODE"], exc.found_version)["message"])
+        except _DatabaseError as exc:
+            return _message_page("Database error", _database_error_body(app.config["DEMO_MODE"], exc.detail)["message"])
+        try:
+            try:
+                params = snapshot_audit.parse_symbol_params(request.args)
+                body = snapshot_audit.build_symbol(conn, params, symbol)
+            except snapshot_audit.ParamError as exc:
+                return _message_page("Invalid parameter", str(exc), 400)
+        finally:
+            conn.close()
+        if body["state"] == "absent":
+            return _message_page("Symbol not found", body["message"], 404)
+        if not body["comparison_available"]:
+            return _message_page("No comparison available", body["message"])
+        return render_template("snapshot_audit_symbol.html", demo=app.config["DEMO_MODE"], not_recorded=stock_detail.NOT_RECORDED,
+                               links=snapshot_audit.symbol_links(body), **body)
+
+    @app.get("/api/equity/snapshot-audit/symbol/<symbol>")
+    @_guarded
+    def api_snapshot_audit_symbol(conn, symbol):
+        """The same payload as the drill-down page. 404 when the symbol is in neither run. GET only."""
+        try:
+            params = snapshot_audit.parse_symbol_params(request.args)
+            body = snapshot_audit.build_symbol(conn, params, symbol)
+        except snapshot_audit.ParamError as exc:
+            return jsonify({"error": str(exc)}), 400
+        return jsonify({"demo": app.config["DEMO_MODE"], **body}), (404 if body["state"] == "absent" else 200)
+
     @app.get("/api/equity/snapshot-audit")
     @_guarded
     def api_snapshot_audit(conn):
