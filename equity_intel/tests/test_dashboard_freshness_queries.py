@@ -314,3 +314,60 @@ def test_the_new_functions_do_not_judge_or_score(db):
     blob = json.dumps([_call(db, queries.get_latest_e4_scan_detail), _call(db, queries.get_e4_status_counts, "e4-1"),
                        _call(db, queries.get_aborted_runs_since, CUTOFF)]).lower()
     assert not re.search(r"\b(ok|warn|warning|score|rank|signal|stale_state)\b", blob)
+
+
+# ---------------------------------------------------------------- RUNNING runs and the cross-layer status differences (commit 2)
+
+def test_running_runs_are_listed_newest_first_with_a_smoke_flag_and_unparseable_starts_kept(db):
+    _make_run(db, "r-old", "2026-10-01T09:00:00", end="RUNNING")
+    _make_run(db, "r-smoke", "2026-10-02T09:00:00", [("AAA", "VALID", [])], end="RUNNING", smoke=json.dumps(["AAA"]))
+    _make_run(db, "r-bad", "garbage", end="RUNNING")
+    _make_run(db, "r-utc", "2026-10-01T06:30:00+00:00", end="RUNNING")
+    _make_run(db, "r-abort", "2026-10-03T09:00:00", end="ABORTED")
+    _make_run(db, "r-done", "2026-10-03T10:00:00", [("AAA", "VALID", [])])
+    runs = {r["run_id"]: r for r in _call(db, queries.get_running_runs)}
+    assert set(runs) == {"r-old", "r-smoke", "r-bad", "r-utc"}                        # ABORTED and COMPLETE are never RUNNING
+    ordered = [r["run_id"] for r in _call(db, queries.get_running_runs) if r["run_id"] != "r-bad"]    # text order; an unparseable value sorts wherever its text does
+    assert ordered[0] == "r-smoke" and ordered[-1] == "r-utc"
+    assert runs["r-smoke"]["smoke"] is True and runs["r-old"]["smoke"] is False
+    assert runs["r-bad"]["started_at_ist"] is None and runs["r-bad"]["started_at"] == "garbage"
+    assert runs["r-utc"]["started_at_ist"] == "2026-10-01T12:00:00"
+
+
+def _layer_pair(db, scanrun, e4):
+    """A COMPLETE ScanRun with {symbol: status} and an E4 scan with {symbol: status}."""
+    from equity_intel.tests.test_dashboard_snapshot_audit_queries import _make_run as make
+    make(db, "r1", "2026-10-02T09:00:00", [(s, status, []) for s, status in scanrun.items()])
+    conn = connection.connect(db)
+    try:
+        conn.execute("INSERT INTO e4_scan_runs(scan_id,acquisition_run_id,started_at,status,asof_date,calendar_status,indicator_config_json) "
+                     "VALUES('e4-1','acq-1','2026-10-02T10:00:00+00:00','COMPLETE','2026-10-01','PROVISIONAL','{}')")
+        for symbol, status in e4.items():
+            conn.execute("INSERT INTO e4_data_quality_results(scan_id,symbol,status,reason,n_bars,w52_complete,break_date,break_ratio,volume_usable) "
+                         "VALUES('e4-1',?,?,?,252,1,NULL,NULL,1)", (symbol, status, "40 bars; 252 required" if status != "VALID" else None))
+        conn.commit()
+    finally:
+        conn.close()
+
+
+def test_layer_disagreements_list_symbols_whose_status_differs_and_count_one_sided_ones_separately(db):
+    _layer_pair(db, {"AAA": "VALID", "BBB": "VALID", "CCC": "INSUFFICIENT_HISTORY", "ONLYSCAN": "VALID", "FAILEDONE": "FAILED"},
+                {"AAA": "VALID", "BBB": "INSUFFICIENT_HISTORY", "CCC": "INSUFFICIENT_HISTORY", "ONLYE4": "VALID"})
+    out = _call(db, queries.get_layer_status_disagreements, "r1", "e4-1")
+    assert (out["in_both"], out["different"], out["only_in_scanrun"], out["only_in_e4"], out["more"]) == (3, 1, 2, 1, 0)
+    (row,) = out["rows"]
+    assert (row["symbol"], row["scanrun_status"], row["e4_status"], row["e4_reason"]) == ("BBB", "VALID", "INSUFFICIENT_HISTORY", "40 bars; 252 required")
+    assert "FAILEDONE" not in json.dumps(out) and "ONLYE4" not in json.dumps(out)    # one-sided symbols are counted, not listed as differences
+
+
+def test_layer_disagreements_are_capped_with_a_true_count_ordered_by_symbol_and_parameterized(db):
+    symbols = [f"S{i:03d}" for i in range(7)]
+    _layer_pair(db, {s: "VALID" for s in symbols}, {s: "INSUFFICIENT_HISTORY" for s in symbols})
+    out = _call(db, queries.get_layer_status_disagreements, "r1", "e4-1", 3)
+    assert out["different"] == 7 and [r["symbol"] for r in out["rows"]] == ["S000", "S001", "S002"] and out["more"] == 4
+    empty = _call(db, queries.get_layer_status_disagreements, "r1' OR '1'='1", "e4-1")
+    assert (empty["in_both"], empty["different"], empty["rows"]) == (0, 0, [])
+
+
+def test_layer_disagreements_is_none_without_the_e4_table(db):
+    assert _call(db, queries.get_layer_status_disagreements, "r1", "e4-1") is None

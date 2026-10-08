@@ -954,3 +954,54 @@ def get_calendar_last_date(conn, run_id: str) -> Optional[dict]:
     if any(d is None for d in dates):
         return {"state": "unparseable", "last_date": None, "sessions": 0}
     return {"state": "ok", "last_date": max(dates), "sessions": len(set(dates))}
+
+
+DISAGREEMENT_LIST_LIMIT = 100
+
+
+def get_running_runs(conn) -> list:
+    """Every RUNNING run, ordered by the stored started_at text, newest first: {"run_id", "started_at" (stored text), "started_at_ist" (naive IST
+    text, None when unparseable), "smoke" (a --symbols run)}. The caller decides which are stale."""
+    rows = _fetch_all_dicts(
+        conn,
+        "SELECT run_id, started_at, symbols_filter_json FROM scan_runs WHERE status = ? ORDER BY started_at DESC, run_id DESC",
+        ("RUNNING",),
+    )
+    return [{"run_id": r["run_id"], "started_at": r["started_at"], "started_at_ist": _ist_text(r["started_at"]),
+             "smoke": r["symbols_filter_json"] is not None} for r in rows]
+
+
+def get_layer_status_disagreements(conn, scan_run_id: str, e4_scan_id: str, limit: int = DISAGREEMENT_LIST_LIMIT) -> Optional[dict]:
+    """Symbols whose status differs between the ScanRun layer (symbol_scan_results.symbol_data_status of one
+    run) and the E4 layer (e4_data_quality_results.status of one E4 scan). Status names are compared as stored.
+
+    {"in_both", "different", "rows" (symbol order, at most `limit`), "more", "only_in_scanrun", "only_in_e4"}.
+    A symbol present in one layer only is counted separately and is not a "difference". Descriptive: nothing
+    here says which layer is right or why they differ. None when the E4 quality table does not exist.
+    """
+    if not _has_table(conn, "e4_data_quality_results"):
+        return None
+    limit = max(int(limit), 1)
+    join = "FROM symbol_scan_results s JOIN e4_data_quality_results q ON q.scan_id = ? AND q.symbol = s.symbol WHERE s.scan_run_id = ?"
+    params = (e4_scan_id, scan_run_id)
+    in_both = conn.execute(f"SELECT COUNT(*) {join}", params).fetchone()[0]
+    different = conn.execute(f"SELECT COUNT(*) {join} AND s.symbol_data_status <> q.status", params).fetchone()[0]
+    rows = _fetch_all_dicts(
+        conn,
+        "SELECT s.symbol AS symbol, s.company_name AS company_name, s.symbol_data_status AS scanrun_status, "
+        "s.status_reason AS scanrun_reason, q.status AS e4_status, q.reason AS e4_reason "
+        f"{join} AND s.symbol_data_status <> q.status ORDER BY s.symbol LIMIT ?",
+        (*params, limit),
+    )
+    only_scanrun = conn.execute(
+        "SELECT COUNT(*) FROM symbol_scan_results s WHERE s.scan_run_id = ? AND NOT EXISTS "
+        "(SELECT 1 FROM e4_data_quality_results q WHERE q.scan_id = ? AND q.symbol = s.symbol)",
+        (scan_run_id, e4_scan_id),
+    ).fetchone()[0]
+    only_e4 = conn.execute(
+        "SELECT COUNT(*) FROM e4_data_quality_results q WHERE q.scan_id = ? AND NOT EXISTS "
+        "(SELECT 1 FROM symbol_scan_results s WHERE s.scan_run_id = ? AND s.symbol = q.symbol)",
+        (e4_scan_id, scan_run_id),
+    ).fetchone()[0]
+    return {"in_both": in_both, "different": different, "rows": rows, "more": max(different - len(rows), 0),
+            "only_in_scanrun": only_scanrun, "only_in_e4": only_e4}
