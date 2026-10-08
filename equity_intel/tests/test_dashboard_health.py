@@ -28,10 +28,18 @@ def test_the_reference_calendar_is_what_these_tests_assume():
 
 
 def _complete(db, run_id, started, *, finished="auto", session="2026-10-07", calendar="auto", source="NSE_INDEX|Nifty 500",
-              verification="UNVERIFIED_INDEX_ONLY", symbols=()):
+              verification="UNVERIFIED_INDEX_ONLY", symbols=(), reasons=None):
     """A COMPLETE full run with chosen finished / session / calendar values (finished runs are frozen, so the run is
     created RUNNING and completed in one UPDATE, exactly like the scanner)."""
     _make_run(db, run_id, started, symbols, end="RUNNING")
+    if reasons:  # status_reason can only be set while the run is RUNNING
+        conn = connection.get_connection(db)
+        try:
+            for symbol, reason in reasons.items():
+                conn.execute("UPDATE symbol_scan_results SET status_reason = ? WHERE scan_run_id = ? AND symbol = ?", (reason, run_id, symbol))
+            conn.commit()
+        finally:
+            conn.close()
     if finished == "auto":
         finished = (datetime.fromisoformat(started) + timedelta(minutes=30)).isoformat()
     if calendar == "auto":
@@ -632,3 +640,191 @@ def test_the_demo_database_builds_a_full_panel(tmp_path, monkeypatch):
     assert _rows(panel)["F1"]["state"] == "OK"                                           # the demo session is the Friday before this injected now
     assert _rows(panel)["F8a"]["state"] == "UNKNOWN" and "DEMO_INDEX" in _rows(panel)["F4b"]["value"]
     assert _rows(_panel(demo, datetime(2026, 10, 8, 9, 30, 0)))["F1"]["state"] == "WARN"
+
+
+# ---------------------------------------------------------------- short, safe forms of stored reasons
+
+def _classification_reason(valid, window, latest, required):
+    from equity_intel.scanner import classification
+    return classification.classify_symbol(valid_trading_dates=valid, window_sessions=window, latest_closed_session=latest,
+                                          required_sessions=required).status_reason
+
+
+def _compute_reason(closes):
+    from equity_intel.features.compute import compute_instrument
+    from equity_intel.tests.test_features import CFG, _bars as feature_bars
+    return compute_instrument("X", *feature_bars(closes), CFG)[0].reason
+
+
+WINDOW = ["2026-09-29", "2026-09-30", "2026-10-01"]
+SCANRUN_CASES = [
+    ("no instrument-master match for ISIN INE002A01018", "NO_INSTRUMENT_MATCH"),
+    ("auth failure (401)", "AUTH_FAILURE"),
+    # produced by the real classifier, so a template change in the scanner breaks this test
+    (_classification_reason([], WINDOW, "2026-10-01", 2), "TOO_FEW_VALID_CANDLES"),
+    (_classification_reason(["2026-09-29"], WINDOW, "2026-10-01", 1), "LATEST_CANDLE_OLDER_THAN_SESSION"),
+    (_classification_reason([], WINDOW, "2026-10-01", 0), "LATEST_CANDLE_OLDER_THAN_SESSION"),          # latest valid candle (None)
+]
+E4_CASES = [
+    # produced by the real feature computation
+    (_compute_reason([]), "NO_OBSERVATIONS"),
+    (_compute_reason([100.0, 0.0, 101.0]), "NON_POSITIVE_OR_MISSING_PRICES"),
+    (_compute_reason([100 + i * 0.1 for i in range(40)]), "TOO_FEW_BARS"),
+    (_compute_reason([100.0] * 10 + [30.0] * 260), "POSSIBLE_PRICE_BREAK"),
+    (_compute_reason([100.0] * 100 + [30.0 + i * 0.01 for i in range(152)]), "TOO_FEW_BARS_AND_POSSIBLE_PRICE_BREAK"),
+    ("last observation 2026-09-30, run as-of 2026-10-01", "LAST_OBSERVATION_BEFORE_ASOF"),                    # features/runner.py:100
+    *((f"acquisition {status}", f"ACQUISITION_{status}") for status in health.ACQUISITION_STATUSES),
+    ("acquisition EXCLUDED: Placeholder excluded by B3 resolution", "ACQUISITION_EXCLUDED"),
+    ("acquisition INSUFFICIENT_HISTORY: 40 observations; 252 required", "ACQUISITION_INSUFFICIENT_HISTORY"),
+]
+
+
+def test_the_real_producers_gave_the_expected_template_shapes():
+    assert SCANRUN_CASES[2][0].startswith("only 0 valid candle(s) in the trailing 3-session window (need 2)")
+    assert SCANRUN_CASES[3][0] == "latest valid candle (2026-09-29) is older than latest_closed_session (2026-10-01)"
+    assert SCANRUN_CASES[4][0] == "latest valid candle (None) is older than latest_closed_session (2026-10-01)"
+    assert [c[0] for c in E4_CASES[:5]] == ["no observations", "2 non-positive or missing price value(s)", "40 bars; 252 required",
+                                          E4_CASES[3][0], E4_CASES[4][0]]
+    assert E4_CASES[3][0].startswith("possible corporate-action break at bar index 10, close ratio ")
+    assert E4_CASES[4][0].startswith("152 post-break bars; 252 required; possible corporate-action break")
+
+
+@pytest.mark.parametrize("text, code", SCANRUN_CASES)
+def test_every_scanrun_reason_template_maps_to_its_code(text, code):
+    assert health.reason_code("ScanRun", text) == code and health.reason_fields("scanrun", "ScanRun", text) == {
+        "scanrun_reason_code": code, "scanrun_reason_recorded": True}
+
+
+@pytest.mark.parametrize("text, code", E4_CASES)
+def test_every_e4_reason_template_maps_to_its_code(text, code):
+    assert health.reason_code("E4", text) == code and health.reason_fields("e4", "E4", text) == {"e4_reason_code": code, "e4_reason_recorded": True}
+
+
+def test_the_acquisition_allow_list_is_exactly_what_the_acquisition_code_writes():
+    import re as regex
+    from pathlib import Path
+    root = Path(health.__file__).resolve().parents[1] / "equity_intel"
+    runner = (root / "acquisition" / "runner.py").read_text(encoding="utf-8")
+    found = set(regex.findall(r'SymbolResult\([^,]+,\s*"([A-Z_]+)"', runner))                       # :103 EXCLUDED, :136 NOT_REQUESTED, :153 and :161 REQUEST_FAILED
+    found |= set(regex.findall(r'"([A-Z_]+)" if not candles else "([A-Z_]+)"', runner)[0])           # :177 NO_DATA / SUCCESS
+    found |= set(regex.findall(r'result\.status, result\.reason = "([A-Z_]+)"', runner))           # :190 VALIDATION_FAILED
+    found |= set(regex.findall(r'result\.status = "([A-Z_]+)"', runner))                            # :193 INSUFFICIENT_HISTORY, :198 SUCCESS
+    found |= set(regex.findall(r'status = "(MAPPING_FAILED)" if', runner)) | set(regex.findall(r'"MAPPING_FAILED" if record\.mapping_status != "MAPPED" else "(REQUEST_FAILED)"', runner))
+    assert found == set(health.ACQUISITION_STATUSES) - {"MISSING"}, found ^ set(health.ACQUISITION_STATUSES)
+    assert 'acq_status, acq_reason = acquisition_status.get(symbol, ("MISSING", None))' in (root / "features" / "runner.py").read_text(encoding="utf-8")
+
+
+HOSTILE = {
+    "ScanRun": [
+        "https://api.upstox.com/v2/historical-candle/NSE_EQ|INE002A01018/day/2026-10-01/2026-01-01?access_token=SECRET123",
+        "Bearer eyJhbGciOiJIUzI1NiJ9.SECRET123.sig", "C:\\Users\\Akshay\\Equity - intraday\\.env", "/home/akshay/.env UPSTOX_ACCESS_TOKEN=SECRET123",
+        "Upstox resource not found (404): historical-candle/NSE_EQ|INE002A01018/day", "database is locked", "'NoneType' object is not subscriptable",
+        # a legitimate template followed by hostile text, or preceded by it, or with a line break: never a prefix match
+        "auth failure (401) Bearer SECRET123", "auth failure (401)\nBearer SECRET123", "auth failure (401)\n", "\nauth failure (401)", " auth failure (401)",
+        "no instrument-master match for ISIN INE002A01018 token=SECRET123", "no instrument-master match for ISIN INE002A01018\n",
+        "no instrument-master match for ISIN SHORT", "no instrument-master match for ISIN ine002a01018",
+        "only 3 valid candle(s) in the trailing 5-session window (need 7); Bearer SECRET123",
+        "only \u0663 valid candle(s) in the trailing 5-session window (need 7)",                                   # a non-ASCII digit
+        "latest valid candle (2026-09-29) is older than latest_closed_session (2026-10-01) https://x.example/SECRET123",
+        "latest valid candle (SECRET123) is older than latest_closed_session (2026-10-01)",
+        "AUTH FAILURE (401)", "auth failure (401", "x" * 50000,
+    ],
+    "E4": [
+        "https://api.upstox.com/v2/x?access_token=SECRET123", "Bearer SECRET123", "C:\\Users\\Akshay\\.env", "Traceback (most recent call last): SECRET123",
+        "acquisition REQUEST_FAILED: ProviderError: Upstox API returned HTTP 500 https://api.upstox.com/v2/x?access_token=SECRET123",
+        "acquisition REQUEST_FAILED: AuthenticationError: Invalid Upstox API credentials", "acquisition NOT_REQUESTED: Run stopped after Upstox authentication failure (HTTP 401)",
+        "acquisition MAPPING_FAILED: no match for SECRET123", "acquisition VALIDATION_FAILED: close <= 0",
+        "acquisition NOPE_STATUS", "acquisition SUCCESS extra", "acquisition success", "acquisition  SUCCESS", "acquisition SUCCESS\n", "acquisition SECRET123",
+        "acquisition EXCLUDED: Placeholder excluded by B3 resolution; Bearer SECRET123", "acquisition EXCLUDED: something else",
+        "acquisition INSUFFICIENT_HISTORY: 40 observations; 252 required; Bearer SECRET123", "acquisition INSUFFICIENT_HISTORY: forty observations; 252 required",
+        "no observations Bearer SECRET123", "no observations\n", "2 non-positive or missing price value(s) Bearer SECRET123", "2 non-positive or missing price value(s)\nSECRET123", "x2 non-positive or missing price value(s)", "40 bars; 252 required Bearer SECRET123", "3 bars; 252 required; SECRET123",
+        "possible corporate-action break at bar index 10, close ratio 0.3000 SECRET123", "possible corporate-action break at bar index 10, close ratio nan",
+        "last observation 2026-09-30, run as-of 2026-10-01 SECRET123", "last observation SECRET123, run as-of 2026-10-01", "x" * 50000,
+    ],
+}
+
+
+@pytest.mark.parametrize("layer", ["ScanRun", "E4"])
+def test_hostile_and_prefix_plus_suffix_reasons_are_never_mapped_to_a_template_code(layer):
+    for text in HOSTILE[layer]:
+        assert health.reason_code(layer, text) == health.RECORDED_TEXT_NOT_SHOWN, text[:80]
+        fields = health.reason_fields("x", layer, text)
+        assert fields == {"x_reason_code": "RECORDED_TEXT_NOT_SHOWN", "x_reason_recorded": True}
+        assert "SECRET123" not in json.dumps(fields) and len(json.dumps(fields)) < 100
+
+
+def test_a_code_never_contains_stored_text_and_codes_are_a_closed_set():
+    allowed = {c for _, c in health.SCANRUN_REASON_PATTERNS} | {c for _, c in health.E4_REASON_PATTERNS} | {health.RECORDED_TEXT_NOT_SHOWN}
+    for layer, cases in (("ScanRun", SCANRUN_CASES), ("E4", E4_CASES)):
+        for text, code in cases:
+            assert health.reason_code(layer, text) in allowed and re.fullmatch(r"[A-Z_]+", code), code      # upper-case letters and underscores only: no digit, date or ISIN
+            assert not [token for token in re.findall(r"INE[0-9A-Z]{9}|[0-9]{4}-[0-9]{2}-[0-9]{2}", text) if token in code]
+    assert all(re.fullmatch(r"[A-Z_]+", code) for code in allowed)
+
+
+@pytest.mark.parametrize("layer", ["ScanRun", "E4"])
+@pytest.mark.parametrize("text", [None, ""])
+def test_null_and_empty_give_no_code_and_recorded_false(layer, text):
+    assert health.reason_code(layer, text) is None
+    assert health.reason_fields("p", layer, text) == {"p_reason_code": None, "p_reason_recorded": False}
+
+
+@pytest.mark.parametrize("text", [" ", "   ", "\t", 0, 5, b"auth failure (401)", ["auth failure (401)"]])
+def test_whitespace_and_non_string_values_are_recorded_but_not_shown(text):
+    assert health.reason_fields("p", "ScanRun", text) == {"p_reason_code": "RECORDED_TEXT_NOT_SHOWN", "p_reason_recorded": True}
+
+
+def test_an_unknown_layer_is_a_programming_error():
+    with pytest.raises(ValueError):
+        health.reason_code("Other", "auth failure (401)")
+
+
+def _two_layer_db_with_reasons(db, scan_reasons, e4_reasons):
+    """Symbols S0, S1, ... VALID in the ScanRun layer, with a stored status_reason each, and not VALID in the E4 layer."""
+    symbols = [(f"S{i}", "VALID", []) for i in range(len(scan_reasons))]
+    _complete(db, "r1", "2026-10-02T09:00:00", session="2026-10-01", symbols=symbols, reasons={f"S{i}": r for i, r in enumerate(scan_reasons)})
+    _add_e4_scan(db, "e4-1", "2026-10-02T10:00:00+00:00", asof="2026-10-01", acq="acq-1")
+    conn = connection.connect(db)
+    try:
+        for i, e4_reason in enumerate(e4_reasons):
+            conn.execute("INSERT INTO e4_data_quality_results(scan_id,symbol,status,reason,n_bars,w52_complete,break_date,break_ratio,volume_usable) "
+                         "VALUES('e4-1',?,?,?,252,1,NULL,NULL,1)", (f"S{i}", "INSUFFICIENT_HISTORY", e4_reason))
+        conn.commit()
+    finally:
+        conn.close()
+
+
+def test_the_disagreement_rows_carry_codes_not_raw_reasons_and_keep_working(db):
+    scan = ["auth failure (401)", None, "", "https://api.upstox.com/v2/x?access_token=SECRET123", "auth failure (401) Bearer SECRET123"]
+    e4 = ["acquisition REQUEST_FAILED: ProviderError: HTTP 500 Bearer SECRET123", "40 bars; 252 required", None,
+          "C:\\Users\\Akshay\\.env", "acquisition SUCCESS"]
+    _two_layer_db_with_reasons(db, scan, e4)
+    panel = _panel(db)
+    text = json.dumps(panel)
+    for secret in ("SECRET123", "Bearer", "https://", "access_token", "C:\\\\Users", ".env", "ProviderError", "HTTP 500"):
+        assert secret not in text, secret
+    rows = panel["layer_disagreements"]["rows"]
+    assert [r["symbol"] for r in rows] == ["S0", "S1", "S2", "S3", "S4"]
+    expected_keys = {"symbol", "company_name", "scanrun_status", "scanrun_reason_code", "scanrun_reason_recorded", "e4_status",
+                     "e4_reason_code", "e4_reason_recorded", "stock_url"}
+    assert all(set(r) == expected_keys for r in rows)
+    assert [(r["scanrun_reason_code"], r["scanrun_reason_recorded"]) for r in rows] == [
+        ("AUTH_FAILURE", True), (None, False), (None, False), ("RECORDED_TEXT_NOT_SHOWN", True), ("RECORDED_TEXT_NOT_SHOWN", True)]
+    assert [(r["e4_reason_code"], r["e4_reason_recorded"]) for r in rows] == [
+        ("RECORDED_TEXT_NOT_SHOWN", True), ("TOO_FEW_BARS", True), (None, False), ("RECORDED_TEXT_NOT_SHOWN", True), ("ACQUISITION_SUCCESS", True)]
+    assert (rows[0]["scanrun_status"], rows[0]["e4_status"], rows[0]["stock_url"]) == ("VALID", "INSUFFICIENT_HISTORY", "/equity/stock/S0")
+    found = panel["layer_disagreements"]
+    assert (found["in_both"], found["different"]) == (5, 5) and found["sentence"].endswith("this page does not explain why.")
+
+
+def test_no_raw_reason_key_remains_anywhere_in_the_health_payload(db):
+    _two_layer_db_with_reasons(db, ["auth failure (401)"], ["acquisition SUCCESS"])
+    keys = set(_keys(_panel(db)))
+    assert "scanrun_reason" not in keys and "e4_reason" not in keys and "status_reason" not in keys and "reason" not in keys
+    assert {"scanrun_reason_code", "scanrun_reason_recorded", "e4_reason_code", "e4_reason_recorded"} <= keys
+
+
+def test_the_query_layer_is_unchanged_and_still_returns_the_raw_reasons(db):
+    _two_layer_db_with_reasons(db, ["auth failure (401)"], ["acquisition SUCCESS"])
+    row = queries.get_layer_status_disagreements(_ro(db), "r1", "e4-1")["rows"][0]
+    assert (row["scanrun_reason"], row["e4_reason"]) == ("auth failure (401)", "acquisition SUCCESS")           # only health.py maps them

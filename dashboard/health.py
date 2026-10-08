@@ -16,6 +16,7 @@ returns plain JSON-serialisable values with no absolute path and no secret.
 """
 from __future__ import annotations
 
+import re
 from datetime import date, datetime, timedelta
 from pathlib import Path, PurePosixPath, PureWindowsPath
 from typing import Optional
@@ -203,6 +204,64 @@ def calendar_row(row_id: str, label: str, layer: str, values: list) -> dict:
         if value == "UNVERIFIED_INDEX_ONLY":
             detail.append("UNVERIFIED_INDEX_ONLY: sessions come from Nifty 500 index candles only; no holiday file is used.")
     return _row(row_id, label, "UNKNOWN", "; ".join(shown), RULES["F8"], layer=layer, detail=detail)
+
+
+# ---------------------------------------------------------------- short, safe forms of stored reasons
+#
+# symbol_scan_results.status_reason and e4_data_quality_results.reason can hold raw exception text (see
+# scripts/equity_scan.py:302 and :374, acquisition/runner.py:153 and :161), so the health payload never carries
+# them. A reason is mapped to a fixed code only when the WHOLE stored string has exactly the structure of a
+# template the scanner writes (re.fullmatch, never a prefix match); the code never contains captured text. Any
+# other text, including a known prefix followed by extra text, becomes RECORDED_TEXT_NOT_SHOWN.
+
+RECORDED_TEXT_NOT_SHOWN = "RECORDED_TEXT_NOT_SHOWN"
+# Every symbol_acquisition_results.status the acquisition code writes (equity_intel/acquisition/runner.py: :47
+# MAPPING_FAILED / REQUEST_FAILED, :103 EXCLUDED, :136 NOT_REQUESTED, :177 NO_DATA / SUCCESS, :190 VALIDATION_FAILED,
+# :193 INSUFFICIENT_HISTORY) plus MISSING (equity_intel/features/runner.py:79, no acquisition row at all).
+ACQUISITION_STATUSES = ("MAPPING_FAILED", "REQUEST_FAILED", "EXCLUDED", "NOT_REQUESTED", "NO_DATA", "VALIDATION_FAILED",
+                        "INSUFFICIENT_HISTORY", "SUCCESS", "MISSING")
+_N = r"[0-9]+"
+_DATE = r"[0-9]{4}-[0-9]{2}-[0-9]{2}"
+_BARS = rf"{_N} (?:post-break )?bars; {_N} required"                                           # features/compute.py:72
+_BREAK = rf"possible corporate-action break at bar index {_N}, close ratio {_N}\.[0-9]{{4}}"    # features/compute.py:76
+SCANRUN_REASON_PATTERNS = (
+    (re.compile(r"no instrument-master match for ISIN [A-Z0-9]{12}"), "NO_INSTRUMENT_MATCH"),                          # scripts/equity_scan.py:280
+    (re.compile(r"auth failure \(401\)"), "AUTH_FAILURE"),                                                           # scripts/equity_scan.py:298
+    (re.compile(rf"only {_N} valid candle\(s\) in the trailing {_N}-session window \(need {_N}\)"), "TOO_FEW_VALID_CANDLES"),    # classification.py:85
+    (re.compile(rf"latest valid candle \((?:{_DATE}|None)\) is older than latest_closed_session \({_DATE}\)"),
+     "LATEST_CANDLE_OLDER_THAN_SESSION"),                                                                            # classification.py:98
+)
+E4_REASON_PATTERNS = (
+    (re.compile(r"no observations"), "NO_OBSERVATIONS"),                                                              # features/compute.py:35
+    (re.compile(rf"{_N} non-positive or missing price value\(s\)"), "NON_POSITIVE_OR_MISSING_PRICES"),                # features/compute.py:35
+    (re.compile(_BARS), "TOO_FEW_BARS"),
+    (re.compile(_BREAK), "POSSIBLE_PRICE_BREAK"),
+    (re.compile(f"{_BARS}; {_BREAK}"), "TOO_FEW_BARS_AND_POSSIBLE_PRICE_BREAK"),                                      # features/compute.py:77
+    (re.compile(rf"last observation {_DATE}, run as-of {_DATE}"), "LAST_OBSERVATION_BEFORE_ASOF"),                    # features/runner.py:100
+    *((re.compile(re.escape(f"acquisition {status}")), f"ACQUISITION_{status}") for status in ACQUISITION_STATUSES),    # features/runner.py:81 with no reason
+    (re.compile(re.escape("acquisition EXCLUDED: Placeholder excluded by B3 resolution")), "ACQUISITION_EXCLUDED"),    # acquisition/runner.py:103
+    (re.compile(rf"acquisition INSUFFICIENT_HISTORY: {_N} observations; {_N} required"), "ACQUISITION_INSUFFICIENT_HISTORY"),  # acquisition/runner.py:194
+)
+
+
+def reason_code(layer: str, text) -> Optional[str]:
+    """The fixed code for a stored reason, None for NULL or empty, RECORDED_TEXT_NOT_SHOWN for anything else.
+    `layer` is "ScanRun" or "E4". The whole string must match a known template; the code contains no stored text."""
+    if layer not in ("ScanRun", "E4"):
+        raise ValueError(f"unknown layer: {layer!r}")
+    if text is None or text == "":
+        return None
+    if not isinstance(text, str):
+        return RECORDED_TEXT_NOT_SHOWN
+    for pattern, code in (SCANRUN_REASON_PATTERNS if layer == "ScanRun" else E4_REASON_PATTERNS):
+        if pattern.fullmatch(text):
+            return code
+    return RECORDED_TEXT_NOT_SHOWN
+
+
+def reason_fields(prefix: str, layer: str, text) -> dict:
+    """{f"{prefix}_reason_code", f"{prefix}_reason_recorded"}: the only form in which a stored reason leaves this module."""
+    return {f"{prefix}_reason_code": reason_code(layer, text), f"{prefix}_reason_recorded": text is not None and text != ""}
 
 
 def safe_relative_name(name) -> Optional[str]:
@@ -467,8 +526,13 @@ def build(conn, now: datetime, db_file_info: Optional[dict] = None) -> dict:
             found["sentence"] = (f"{found['different']} of {found['in_both']} symbols present in both layers have a different status "
                                  f"in the two layers. {DISAGREEMENT_NOTE}")
             found["note"] = DISAGREEMENT_NOTE
-            for row in found["rows"]:
-                row["stock_url"] = f"/equity/stock/{quote(row['symbol'], safe='')}"
+            found["rows"] = [  # rebuilt, not edited: the raw *_reason texts are dropped here and only their short codes leave this module
+                {"symbol": row["symbol"], "company_name": row["company_name"],
+                 "scanrun_status": row["scanrun_status"], **reason_fields("scanrun", "ScanRun", row["scanrun_reason"]),
+                 "e4_status": row["e4_status"], **reason_fields("e4", "E4", row["e4_reason"]),
+                 "stock_url": f"/equity/stock/{quote(row['symbol'], safe='')}"}
+                for row in found["rows"]
+            ]
         disagreements = found
 
     rows = [
