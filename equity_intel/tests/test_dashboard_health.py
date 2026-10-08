@@ -294,6 +294,19 @@ def test_f4_scanrun_ok_and_warn(db):
     assert row["state"] == "WARN" and row["last_candle_date"] == "2026-10-01" and row["own_date"] == "2026-10-02"
 
 
+def test_f4_scanrun_is_unknown_with_a_clear_text_when_the_calendar_read_returns_none(db, monkeypatch):
+    """get_calendar_last_date is None only when the run row vanishes between two reads; the row must say so, not raise."""
+    _complete(db, "r1", "2026-10-07T19:00:00", session="2026-10-07", symbols=[("AAA", "VALID", [])])
+    monkeypatch.setattr(queries, "get_calendar_last_date", lambda conn, run_id: None)
+    panel = _panel(db)
+    row = _rows(panel)["F4a"]
+    assert row["state"] == "UNKNOWN" and row["last_candle_date"] is None and row["own_date"] == "2026-10-07"
+    assert row["value"] == "calendar dates could not be read: run r1 was not found; latest closed session 2026-10-07"
+    assert health.CANDLE_NOTE in row["detail"] and row["rule"] == health.RULES["F4"] and row["layer"] == "ScanRun"
+    assert [r["id"] for r in panel["freshness"]] == ["F1", "F2", "F3", "F4a", "F4b", "F5", "F6", "F7", "F8a", "F8b", "F9"]    # the rest of the panel still builds
+    assert json.loads(json.dumps(panel)) == panel
+
+
 @pytest.mark.parametrize("raw", [None, "[]", "bad json", '["2026-10-01", "x"]', '{"a": 1}'])
 def test_f4_scanrun_is_unknown_when_the_candle_dates_are_missing_or_unparseable(db, raw):
     _complete(db, "r1", "2026-10-03T19:00:00", session="2026-10-02", calendar=raw)

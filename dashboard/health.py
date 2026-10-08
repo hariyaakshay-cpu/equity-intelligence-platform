@@ -274,7 +274,11 @@ def _f4_scanrun(conn, run: Optional[dict]) -> dict:
                     detail=[CANDLE_NOTE])
     calendar = queries.get_calendar_last_date(conn, run["run_id"])
     own = queries._iso_date_or_none(run["latest_closed_session"])
-    last = calendar["last_date"] if calendar else None
+    if calendar is None:  # the run row vanished between the two reads; say so rather than guess
+        return _row("F4a", "Last index candle date (ScanRun calendar)", "UNKNOWN",
+                    f"calendar dates could not be read: run {run['run_id']} was not found; latest closed session {own or 'not recorded'}",
+                    RULES["F4"], layer="ScanRun", detail=[CANDLE_NOTE], extra={"last_candle_date": None, "own_date": own})
+    last = calendar["last_date"]
     state = _candle_state(last, own)
     if calendar["state"] == "ok":
         value = f"last candle date {last} ({calendar['sessions']} session dates stored); latest closed session {own or 'not recorded'}"
