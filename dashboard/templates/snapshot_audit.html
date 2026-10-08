@@ -1,0 +1,180 @@
+{% extends "base.html" %}
+{% block title %}Snapshot Audit{% endblock %}
+{% macro v(x) %}{% if x is none or x == "" %}<span class="nr">{{ not_recorded }}</span>{% else %}{{ x }}{% endif %}{% endmacro %}
+{% macro layer(l) %}<span class="layer layer-{{ l }}">{{ l }}</span>{% endmacro %}
+{% block body %}
+{# 1. Header #}
+<div class="card" id="header">
+  <h1>Snapshot Audit</h1>
+  <p class="note">Compares the stored daily bars of two COMPLETE full runs and counts the {{ metric.name }}. Descriptive counts of stored values only; read-only.</p>
+  <p class="note" id="metric-note"><b>{{ metric.name }}.</b> {{ metric.note }}</p>
+  <p class="note" id="compares-stored">This page compares stored hashes; it does not recompute them.</p>
+  <p class="note" id="one-sided-note">{{ one_sided_note }}</p>
+  {% if newer_run %}
+  <p class="notice" id="newer-run">A newer non-complete run exists: <code>{{ newer_run.run_id }}</code> started {{ newer_run.started_at }}
+    &mdash; {{ newer_run.reason }}; {{ newer_run.symbols }}. It is not used for this comparison.</p>
+  {% endif %}
+</div>
+
+{# 2. Run selection #}
+<div class="card" id="run-selection">
+  <h2>Runs compared {{ layer("ScanRun") }}</h2>
+  {% if comparison_available %}
+  <form method="get" action="/equity/snapshot-audit">
+    {% set listed = eligible_runs.runs | map(attribute="run_id") | list %}
+    <label>Base (older) run
+      <select name="base">
+        {% for r in eligible_runs.runs %}<option value="{{ r.run_id }}" {% if r.run_id == base_run.run_id %}selected{% endif %}>{{ r.run_id }} &middot; started {{ r.started_at }}</option>{% endfor %}
+        {% if base_run.run_id not in listed %}<option value="{{ base_run.run_id }}" selected>{{ base_run.run_id }} &middot; started {{ base_run.started_at }}</option>{% endif %}
+      </select>
+    </label>
+    <label>Other (newer) run
+      <select name="other">
+        {% for r in eligible_runs.runs %}<option value="{{ r.run_id }}" {% if r.run_id == other_run.run_id %}selected{% endif %}>{{ r.run_id }} &middot; started {{ r.started_at }}</option>{% endfor %}
+        {% if other_run.run_id not in listed %}<option value="{{ other_run.run_id }}" selected>{{ other_run.run_id }} &middot; started {{ other_run.started_at }}</option>{% endif %}
+      </select>
+    </label>
+    {% if params.view != "revised" %}<input type="hidden" name="view" value="{{ params.view }}">{% endif %}
+    {% if params.q %}<input type="hidden" name="q" value="{{ params.q }}">{% endif %}
+    {% if params.sector %}<input type="hidden" name="sector" value="{{ params.sector }}">{% endif %}
+    {% if params.sort != "symbol" %}<input type="hidden" name="sort" value="{{ params.sort }}">{% endif %}
+    {% if params.dir != "asc" %}<input type="hidden" name="dir" value="{{ params.dir }}">{% endif %}
+    {% if params.page_size != 25 %}<input type="hidden" name="page_size" value="{{ params.page_size }}">{% endif %}
+    <input type="submit" value="Compare these runs">
+  </form>
+  <p class="note">Lists the newest {{ eligible_runs.runs | length }} of {{ eligible_runs.total }} COMPLETE full runs{% if eligible_runs.more %} ({{ eligible_runs.more }} older not listed){% endif %}. Choosing runs resets the page to 1. If base is newer than other, the two are swapped.</p>
+  {% if swapped %}<p class="notice" id="swap-note">{{ swap_note }}.</p>{% endif %}
+  {% set latest = eligible_runs.runs %}
+  {% if latest | length >= 2 and (other_run.run_id != latest[0].run_id or base_run.run_id != latest[1].run_id) %}
+  <p class="notice" id="older-pair-note">This is not the latest pair. The two newest COMPLETE full runs are <code>{{ latest[1].run_id }}</code> and <code>{{ latest[0].run_id }}</code>.</p>
+  {% endif %}
+  <div class="tablewrap"><table id="run-details">
+    <thead><tr><th></th><th>Base (older)</th><th>Other (newer)</th></tr></thead>
+    <tbody>
+      <tr><td>Run</td><td><code>{{ base_run.run_id }}</code></td><td><code>{{ other_run.run_id }}</code></td></tr>
+      <tr><td>Started</td><td>{{ v(base_run.started_at) }}</td><td>{{ v(other_run.started_at) }}</td></tr>
+      <tr><td>Finished</td><td>{{ v(base_run.finished_at) }}</td><td>{{ v(other_run.finished_at) }}</td></tr>
+      <tr><td>Latest closed session</td><td>{{ v(base_run.latest_closed_session) }}</td><td>{{ v(other_run.latest_closed_session) }}</td></tr>
+      <tr><td>Universe version</td><td>{{ v(base_run.universe_version) }}</td><td>{{ v(other_run.universe_version) }}</td></tr>
+      <tr><td>Corporate-action review version</td><td>{{ v(base_run.corporate_action_review_version) }}</td><td>{{ v(other_run.corporate_action_review_version) }}</td></tr>
+      <tr><td>Scanner git commit</td><td>{{ v(base_run.git_commit) }}</td><td>{{ v(other_run.git_commit) }}</td></tr>
+    </tbody>
+  </table></div>
+  <h2>Comparability</h2>
+  <ul id="comparability-notes">
+    {% for note in comparability_notes %}<li>{{ note }}</li>{% endfor %}
+  </ul>
+  {% else %}
+  <p id="no-comparison">{{ message }}.</p>
+  {% if eligible_runs.runs %}
+  <p class="note">COMPLETE full run(s) found:
+    {% for r in eligible_runs.runs %}<code>{{ r.run_id }}</code> (started {{ r.started_at }}){% if not loop.last %}, {% endif %}{% endfor %}.</p>
+  {% endif %}
+  {% endif %}
+</div>
+
+{# 3. Runs not used #}
+<div class="card" id="ineligible-runs">
+  <h2>Runs not used for comparison {{ layer("ScanRun") }}</h2>
+  {% if ineligible_runs.runs %}
+  <div class="tablewrap"><table>
+    <thead><tr><th>Run</th><th>Started</th><th>Reason</th><th>Symbols requested</th><th>Symbols stored</th></tr></thead>
+    <tbody>
+    {% for r in ineligible_runs.runs %}
+      <tr><td><code>{{ r.run_id }}</code></td><td>{{ v(r.started_at) }}</td><td>{{ r.reason }}</td><td class="num">{{ v(r.requested_symbols) }}</td><td class="num">{{ r.stored_symbols }}</td></tr>
+    {% endfor %}
+    </tbody>
+  </table></div>
+  {% if ineligible_runs.more %}<p class="note" id="ineligible-more">and {{ ineligible_runs.more }} older run(s) not listed.</p>{% endif %}
+  {% else %}
+  <p id="no-ineligible">No ABORTED, RUNNING or smoke runs exist.</p>
+  {% endif %}
+  <p class="note">ABORTED, RUNNING and --symbols smoke runs cannot be compared. A symbol count shown as "{{ not_recorded }}" was not stored on that run.</p>
+</div>
+
+{% if comparison_available %}
+{# 4. Counts #}
+<div class="card" id="counts">
+  <h2>Counts {{ layer("ScanRun") }}</h2>
+  <ul id="counts-text">
+    <li>{{ counts_text.differing }}</li>
+    <li>{{ counts_text.symbols_with_differing }}</li>
+    <li>{{ counts_text.one_sided }}</li>
+    <li>{{ counts_text.not_comparable }}</li>
+    <li>{{ counts_text.added_removed }}</li>
+  </ul>
+</div>
+
+{# 5. View tabs #}
+<div class="card" id="views">
+  <h2>View</h2>
+  <p>
+    {% for name, label in (("revised", "Symbols with " ~ metric.name), ("added", "Added symbols"), ("removed", "Removed symbols")) %}
+      {% if name == view %}<b class="current-view">{{ label }} ({{ views[name] }})</b>{% else %}<a href="{{ links.views[name] }}">{{ label }} ({{ views[name] }})</a>{% endif %}{% if not loop.last %} &middot; {% endif %}
+    {% endfor %}
+  </p>
+</div>
+
+{# 6. Filters #}
+<div class="card" id="filters">
+  <h2>Filters</h2>
+  <form method="get" action="/equity/snapshot-audit">
+    <input type="hidden" name="base" value="{{ base_run.run_id }}">
+    <input type="hidden" name="other" value="{{ other_run.run_id }}">
+    {% if params.view != "revised" %}<input type="hidden" name="view" value="{{ params.view }}">{% endif %}
+    {% if params.sort != "symbol" %}<input type="hidden" name="sort" value="{{ params.sort }}">{% endif %}
+    {% if params.dir != "asc" %}<input type="hidden" name="dir" value="{{ params.dir }}">{% endif %}
+    {% if params.page_size != 25 %}<input type="hidden" name="page_size" value="{{ params.page_size }}">{% endif %}
+    <label>Symbol or name contains <input type="text" name="q" value="{{ params.q or '' }}" maxlength="100"></label>
+    <label>Sector <input type="text" name="sector" value="{{ params.sector or '' }}" maxlength="100"></label>
+    <input type="submit" value="Apply filters">
+    {% if params.q or params.sector %}<a href="{{ links.clear_filters }}" id="clear-filters">clear filters</a>{% endif %}
+  </form>
+  <p class="note">Sector UNKNOWN means no sector is stored. Sorting is limited to symbol, company and sector.</p>
+</div>
+
+{# 7. Results #}
+<div class="card" id="results">
+  <h2>{% if view == "revised" %}Symbols with {{ metric.name }}{% elif view == "added" %}Added symbols{% else %}Removed symbols{% endif %} <span class="note">{{ total }} symbol(s) &middot; page {{ page }} of {{ total_pages if total_pages else 1 }}</span> {{ layer("ScanRun") }}</h2>
+  {% if rows %}
+  <div class="tablewrap"><table>
+    <thead><tr>
+      {% for col, label in (("symbol", "Symbol"), ("company_name", "Company"), ("sector", "Sector")) %}
+        <th>{% set s = links.sort[col] %}<a href="{{ s.url }}">{{ label }}</a>{% if s.active %} {% if s.dir == "asc" %}&#9650;{% else %}&#9660;{% endif %}{% endif %}</th>
+      {% endfor %}
+      {% if view == "revised" %}
+      <th>Overlapping bars</th><th>{{ metric.name }}</th><th>First differing date</th><th>Last differing date</th>
+      {% else %}
+      <th>Status</th>
+      {% endif %}
+    </tr></thead>
+    <tbody>
+    {% for r in rows %}
+      <tr>
+        <td><a href="{{ r.stock_url }}">{{ r.symbol }}</a></td>
+        <td>{{ v(r.company_name) }}</td>
+        <td>{{ v(r.sector) }}</td>
+        {% if view == "revised" %}
+        <td class="num">{{ r.overlapping_bars }}</td>
+        <td class="num">{{ r.differing_bars }}</td>
+        <td>{{ v(r.first_differing_date) }}</td>
+        <td>{{ v(r.last_differing_date) }}</td>
+        {% else %}
+        <td><span class="badge b-{{ r.status }}">{{ r.status }}</span>{% if r.status_reason %}<div class="note">{{ r.status_reason }}</div>{% endif %}</td>
+        {% endif %}
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table></div>
+  <p>
+    {% if links.prev %}<a href="{{ links.prev }}" rel="prev">&larr; previous page</a>{% endif %}
+    {% if links.prev and links.next %} &middot; {% endif %}
+    {% if links.next %}<a href="{{ links.next }}" rel="next">next page &rarr;</a>{% endif %}
+  </p>
+  {% else %}
+  <p id="empty-state">{{ notice }}.</p>
+  {% endif %}
+  <p class="note">Bookmark this view (it keeps both run ids): <a href="{{ links.this_page }}">{{ links.this_page }}</a></p>
+</div>
+{% endif %}
+{% endblock %}

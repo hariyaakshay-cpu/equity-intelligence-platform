@@ -329,6 +329,29 @@ def create_app(demo: bool = False, db_path: Optional[Union[str, Path]] = None) -
             body["review_file"] = exceptions.review_panel(conn, body, app.config["DEMO_MODE"])
         return jsonify({"demo": app.config["DEMO_MODE"], **body})
 
+    @app.get("/equity/snapshot-audit")
+    def snapshot_audit_page():
+        """Snapshot Audit view, server-rendered from the same builder as the JSON route. GET only."""
+        try:
+            conn = _open_checked_connection(app.config["DB_PATH"])
+        except _DatabaseUnavailable:
+            return _message_page("No scans yet", _no_scans_body(app.config["DEMO_MODE"])["message"])
+        except _DatabaseVersionMismatch as exc:
+            return _message_page("Database version mismatch",
+                                 _version_mismatch_body(app.config["DEMO_MODE"], exc.found_version)["message"])
+        except _DatabaseError as exc:
+            return _message_page("Database error", _database_error_body(app.config["DEMO_MODE"], exc.detail)["message"])
+        try:
+            try:
+                params = snapshot_audit.parse_params(request.args)
+                body = snapshot_audit.build(conn, params)
+            except snapshot_audit.ParamError as exc:
+                return _message_page("Invalid parameter", str(exc), 400)
+        finally:
+            conn.close()
+        return render_template("snapshot_audit.html", demo=app.config["DEMO_MODE"], not_recorded=stock_detail.NOT_RECORDED,
+                               links=snapshot_audit.page_links(body), **body)
+
     @app.get("/api/equity/snapshot-audit")
     @_guarded
     def api_snapshot_audit(conn):
