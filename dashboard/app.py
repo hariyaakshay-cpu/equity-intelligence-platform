@@ -25,12 +25,14 @@ import functools
 import math
 import socket
 import sys
+from datetime import datetime
 from pathlib import Path
 from typing import Optional, Union
 
 from flask import Flask, jsonify, render_template, request
 
-from dashboard import aggregates, exceptions, queries, snapshot_audit, stock_detail
+from dashboard import aggregates, exceptions, health, queries, snapshot_audit, stock_detail
+from equity_intel.config import IST
 from equity_intel.indicators.trend import exponential_moving_average
 from equity_intel.persistence import connection, db_path_guard
 from equity_intel.persistence.schema import SCHEMA_VERSION
@@ -400,6 +402,15 @@ def create_app(demo: bool = False, db_path: Optional[Union[str, Path]] = None) -
         except snapshot_audit.ParamError as exc:
             return jsonify({"error": str(exc)}), 400
         return jsonify({"demo": app.config["DEMO_MODE"], **body})
+
+    @app.get("/api/equity/health")
+    @_guarded
+    def api_health(conn):
+        """Layer cards and the freshness rules F1-F9 (dashboard/health.py). GET only. The clock is
+        app.config["HEALTH_CLOCK"] (a callable returning a datetime) when a test sets it, else the current IST time."""
+        clock = app.config.get("HEALTH_CLOCK")
+        now = clock() if clock is not None else datetime.now(IST)
+        return jsonify({"demo": app.config["DEMO_MODE"], **health.build(conn, now, health.read_db_file_info(app.config["DB_PATH"]))})
 
     @app.get("/api/equity/summary")
     @_guarded

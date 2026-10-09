@@ -95,9 +95,9 @@ def test_the_link_href_is_url_quoted_and_the_page_it_points_to_works(db):
     assert res.status_code == 200 and "A&amp;B 50%" in drill and "<table" in drill
 
 
-def test_the_route_allowlist_is_unchanged_by_the_navigation_commit(client):
+def test_the_route_allowlist_is_the_known_list_and_navigation_added_no_route(client):
     rules = sorted(r.rule for r in client.application.url_map.iter_rules() if r.endpoint != "static")
-    assert rules == ["/api/equity/candidates", "/api/equity/exceptions", "/api/equity/scan-history",
+    assert rules == ["/api/equity/candidates", "/api/equity/exceptions", "/api/equity/health", "/api/equity/scan-history",
                      "/api/equity/sectors", "/api/equity/snapshot-audit", "/api/equity/snapshot-audit/symbol/<symbol>",
                      "/api/equity/stock/<symbol>", "/api/equity/summary", "/equity",
                      "/equity/exceptions", "/equity/snapshot-audit", "/equity/snapshot-audit/symbol/<symbol>",
