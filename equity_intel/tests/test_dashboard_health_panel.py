@@ -200,12 +200,12 @@ def test_no_merged_total_the_two_layers_are_separate_cards_with_their_own_denomi
     assert "never added together" in text
 
 
-def test_the_banner_note_about_the_older_banner_is_always_shown(db):
+def test_a_banner_appears_only_for_a_layer_that_is_not_current(db):
     _populate(db)
-    for now in (datetime(2026, 10, 8, 9, 30, 0), datetime(2026, 10, 12, 10, 0, 0)):          # no banner, then two banners
-        panel = _panel_html(_get(_client(db, now))[1])
-        assert "older OUTDATED banner" in _text(panel) and "different basis" in _text(panel)
-    assert _panel_html(_get(_client(db, datetime(2026, 10, 8, 9, 30, 0)))[1]).count("outdated-banner hp-banner") == 0
+    current = _panel_html(_get(_client(db, datetime(2026, 10, 8, 9, 30, 0)))[1])             # both layers equal the expected session
+    behind = _panel_html(_get(_client(db, datetime(2026, 10, 12, 10, 0, 0)))[1])             # both layers are behind it
+    assert current.count("outdated-banner hp-banner") == 0 and behind.count("outdated-banner hp-banner") == 2
+    assert "older OUTDATED banner" not in _text(current) + _text(behind)                     # the legacy banner and its note are gone
 
 
 def test_the_holiday_caveat_and_the_state_words_follow_the_clock(db):

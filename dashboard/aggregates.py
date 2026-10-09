@@ -15,6 +15,7 @@ from dashboard.queries import (
     E4_FEATURE_COLUMNS,
     _fetch_all_dicts,
     _has_table,
+    get_e4_status_counts,
     get_run,
 )
 
@@ -120,10 +121,54 @@ def get_sector_strength(rows: list[dict]) -> list[dict]:
     return result
 
 
+SCANRUN_LAYER, E4_LAYER = "ScanRun", "E4"
+
+
+def _break_ratio_text(q: dict) -> str:
+    return f" (close ratio {q['break_ratio']:.4f})" if q.get("break_date") and q.get("break_ratio") is not None else ""
+
+
+def _e4_warnings(q: dict, high_window, include_break: bool) -> list[dict]:
+    """The warnings the E4 quality row `q` records, each tagged layer "E4". The break warning is added only when
+    `include_break`: for a symbol whose ScanRun price-break flag is set, the E4 break is reported as a part of
+    that warning instead (see get_data_quality)."""
+    out = []
+    if q["status"] != "VALID":
+        out.append({"code": "e4_" + q["status"], "layer": E4_LAYER, "message": q["reason"] or "no reason recorded by the E4 scan"})
+    if not q["w52_complete"]:
+        out.append({"code": "e4_no_full_high_window", "layer": E4_LAYER,
+                    "message": f"fewer than {high_window or 'the required'} bars: the high-window distance is unavailable"})
+    if not q["volume_usable"]:
+        out.append({"code": "e4_volume_unusable", "layer": E4_LAYER, "message": "volume history not usable: relative volume unavailable"})
+    if include_break and q.get("break_date"):
+        out.append({"code": "e4_break", "layer": E4_LAYER,
+                    "message": f"E4 detected a break on {q['break_date']}{_break_ratio_text(q)}; indicators use later bars only"})
+    return out
+
+
+def _layer_summary(symbol_warnings: dict[str, list[str]], total: int) -> dict:
+    """{"symbols_total", "symbols_with_warnings", "symbols_without_warning", "warning_counts"} for ONE layer:
+    `symbol_warnings` maps each symbol with at least one warning in that layer to its warning codes."""
+    counts: dict[str, int] = {}
+    for codes in symbol_warnings.values():
+        for code in codes:
+            counts[code] = counts.get(code, 0) + 1
+    return {"symbols_total": total, "symbols_with_warnings": len(symbol_warnings),
+            "symbols_without_warning": total - len(symbol_warnings), "warning_counts": counts}
+
+
 def get_data_quality(conn, run_id: str, e4: Optional[dict], symbol: Optional[str] = None) -> dict:
     """Every symbol with at least one warning, each warning with its reason.
     Nothing is dropped: a symbol is listed whenever the scan or the E4 scan
-    recorded anything about it."""
+    recorded anything about it.
+
+    `symbols_*`, `warning_counts` and `issues` keep their meaning: they mix the two layers (a symbol counts as
+    "with a warning" when either layer recorded something). Each warning also carries `layer` ("ScanRun" or
+    "E4"), and `layers` counts each layer on its own, never added together:
+    `layers["scanrun"]` over the scan run's symbols, `layers["e4"]` over ALL of the E4 scan's quality rows
+    (None when there is no COMPLETE E4 scan), with `not_listed_with_warnings` = E4 symbols with a warning that
+    are not among the scan run's symbols (so absent from `issues`). The price-break warning of a symbol that
+    also has an E4 break keeps its full `message` and adds `parts`, one entry per layer."""
     where, params = "scan_run_id = ?", [run_id]
     if symbol:
         where += " AND symbol = ?"
@@ -146,34 +191,30 @@ def get_data_quality(conn, run_id: str, e4: Optional[dict], symbol: Optional[str
     for r in results:
         warnings = []
         if r["symbol_data_status"] != "VALID":
-            warnings.append({"code": r["symbol_data_status"], "message": r["status_reason"] or "no reason recorded by the scanner"})
+            warnings.append({"code": r["symbol_data_status"], "layer": SCANRUN_LAYER,
+                             "message": r["status_reason"] or "no reason recorded by the scanner"})
         if r["history_gaps_flag"]:
             warnings.append({
-                "code": "history_gaps",
+                "code": "history_gaps", "layer": SCANRUN_LAYER,
                 "message": f"{r['missing_session_count']} missing session(s); {r['available_session_count']} available",
             })
         if r["corporate_action_review_flag"]:
-            warnings.append({"code": "corporate_action_review",
+            warnings.append({"code": "corporate_action_review", "layer": SCANRUN_LAYER,
                              "message": f"listed in the corporate-action review file (version {review_version or 'unknown'})"})
         q = e4_quality.get(r["symbol"])
         has_break = bool(q and q.get("break_date"))
-        ratio = f" (close ratio {q['break_ratio']:.4f})" if has_break and q["break_ratio"] is not None else ""
         if r["price_break_detected_flag"]:
-            detail = f"; E4 break on {q['break_date']}{ratio}" if has_break else ""
-            warnings.append({"code": "price_break_detected",
-                             "message": "close-to-close jump consistent with an unadjusted split/bonus" + detail})
+            base = "close-to-close jump consistent with an unadjusted split/bonus"
+            warning = {"code": "price_break_detected", "layer": SCANRUN_LAYER, "message": base}
+            if has_break:
+                break_text = f"break on {q['break_date']}{_break_ratio_text(q)}"
+                warning["message"] = f"{base}; E4 {break_text}"      # unchanged text for existing readers
+                warning["parts"] = [{"layer": SCANRUN_LAYER, "text": base}, {"layer": E4_LAYER, "code": "e4_break", "text": break_text}]
+            warnings.append(warning)
         if r["non_eq_series_flag"]:
-            warnings.append({"code": "non_eq_series", "message": f"series {r['series'] or 'unknown'} is not EQ"})
+            warnings.append({"code": "non_eq_series", "layer": SCANRUN_LAYER, "message": f"series {r['series'] or 'unknown'} is not EQ"})
         if q:
-            if q["status"] != "VALID":
-                warnings.append({"code": "e4_" + q["status"], "message": q["reason"] or "no reason recorded by the E4 scan"})
-            if not q["w52_complete"]:
-                warnings.append({"code": "e4_no_full_high_window",
-                                 "message": f"fewer than {high_window or 'the required'} bars: the high-window distance is unavailable"})
-            if not q["volume_usable"]:
-                warnings.append({"code": "e4_volume_unusable", "message": "volume history not usable: relative volume unavailable"})
-            if has_break and not r["price_break_detected_flag"]:
-                warnings.append({"code": "e4_break", "message": f"E4 detected a break on {q['break_date']}{ratio}; indicators use later bars only"})
+            warnings.extend(_e4_warnings(q, high_window, include_break=not r["price_break_detected_flag"]))
         if warnings:
             issues.append({
                 "symbol": r["symbol"], "company_name": r["company_name"], "sector": r["sector"],
@@ -184,12 +225,26 @@ def get_data_quality(conn, run_id: str, e4: Optional[dict], symbol: Optional[str
     for issue in issues:
         for w in issue["warnings"]:
             counts[w["code"]] = counts.get(w["code"], 0) + 1
+    scanrun_codes = {i["symbol"]: [w["code"] for w in i["warnings"] if w["layer"] == SCANRUN_LAYER] for i in issues}
+    scanrun_layer = _layer_summary({s: c for s, c in scanrun_codes.items() if c}, len(results))
+    e4_layer = None
+    if e4 is not None:
+        e4_codes = {s: [w["code"] for w in _e4_warnings(q, high_window, include_break=True)] for s, q in e4_quality.items()}
+        e4_codes = {s: c for s, c in e4_codes.items() if c}
+        counted = get_e4_status_counts(conn, e4["scan_id"]) if not symbol else None
+        scanrun_symbols = {r["symbol"] for r in results}
+        e4_layer = {
+            "scan_id": e4["scan_id"],
+            **_layer_summary(e4_codes, counted["total"] if counted else len(e4_quality)),
+            "not_listed_with_warnings": len([s for s in e4_codes if s not in scanrun_symbols]),
+        }
     return {
         "symbols_total": len(results),
         "symbols_with_warnings": len(issues),
         "symbols_without_warning": len(results) - len(issues),
         "warning_counts": counts,
         "issues": issues,
+        "layers": {"scanrun": scanrun_layer, "e4": e4_layer},
     }
 
 

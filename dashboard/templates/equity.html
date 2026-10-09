@@ -303,8 +303,60 @@ function e4Columns(cfg) {
     ['atr_percent', 'ATR ' + cfg.atr_period + ' %', 2],
   ];
 }
+// does warning `w` carry `code`, either as its own code or in one of its layer parts (the E4 break of a price-break warning)?
+function warningHasCode(w, code) { return w.code === code || (w.parts || []).some(p => p.code === code); }
+function layerTag(layer) { return layer ? '<span class="hp-layer">' + esc(layer) + '</span> ' : ''; }
 function warningsHtml(warnings) {
-  return '<ul class="warnlist">' + warnings.map(w => '<li><code>' + esc(w.code) + '</code> ' + esc(w.message) + '</li>').join('') + '</ul>';
+  // a warning that carries `parts` (the price-break warning with an E4 break) shows each part with its own layer tag
+  return '<ul class="warnlist">' + warnings.map(w => '<li>' + layerTag(w.layer) + '<code>' + esc(w.code) + '</code> ' +
+    (w.parts ? w.parts.map(p => layerTag(p.layer) + esc(p.text)).join('; ') : esc(w.message)) + '</li>').join('') + '</ul>';
+}
+// ---------- Pure tile builders: plain data in, plain data out, no DOM access. Every label names its layer; no number spans both. ----------
+function tileHtml(t) { return kpi(t.value, t.label, t.sub); }
+function universeTiles(run, b, e4) {
+  return [
+    { value: run.requested_symbols, label: 'ScanRun: symbols requested', sub: 'run ' + run.run_id + ' (' + run.scan_label + ') · ' + (run.failed_symbols ?? '–') + ' failed' },
+    b ? { value: b.symbols_with_features, label: 'E4: symbols with indicator values', sub: 'E4 scan ' + (e4 ? e4.scan_id : '–') }
+      : { value: '–', label: 'E4: symbols with indicator values', sub: 'no COMPLETE E4 scan' },
+  ];
+}
+function warningTiles(dq) {
+  const s = dq.layers.scanrun, e = dq.layers.e4;
+  return [
+    { value: s.symbols_with_warnings, label: 'ScanRun: symbols with a recorded warning', sub: 'of ' + s.symbols_total + ' symbols evaluated by this scan run' },
+    e ? { value: e.symbols_with_warnings, label: 'E4: symbols with a recorded warning', sub: 'of ' + e.symbols_total + ' symbols with an E4 quality result' }
+      : { value: '–', label: 'E4: symbols with a recorded warning', sub: 'no COMPLETE E4 scan' },
+  ];
+}
+function qualityKpiTiles(dq) {
+  const s = dq.layers.scanrun, e = dq.layers.e4;
+  const scan = [
+    { value: s.symbols_total, label: 'ScanRun: symbols evaluated' },
+    { value: s.symbols_with_warnings, label: 'ScanRun: with a recorded warning' },
+    { value: s.symbols_without_warning, label: 'ScanRun: without a recorded warning' },
+  ];
+  return scan.concat(e ? [
+    { value: e.symbols_total, label: 'E4: symbols with a quality result' },
+    { value: e.symbols_with_warnings, label: 'E4: with a recorded warning' },
+    { value: e.symbols_without_warning, label: 'E4: without a recorded warning' },
+  ] : [{ value: '–', label: 'E4: symbols with a quality result', sub: 'no COMPLETE E4 scan' }]);
+}
+// the warning codes of each layer on its own: [{layer, title, absent, entries: [[code, count], ...]}]
+function warningGroups(dq) {
+  const s = dq.layers.scanrun, e = dq.layers.e4;
+  return [
+    { layer: 'ScanRun', title: 'ScanRun warnings by type', absent: false, entries: Object.entries(s.warning_counts) },
+    { layer: 'E4', title: 'E4 warnings by type', absent: !e, entries: e ? Object.entries(e.warning_counts) : [] },
+  ];
+}
+function warningChipsHtml(dq, chip) {
+  return warningGroups(dq).map(g => '<p class="note" style="margin-top:8px">' + esc(g.title) + ': ' +
+    (g.absent ? 'no COMPLETE E4 scan' : g.entries.length ? g.entries.map(([k, v]) => chip(k, v)).join('') : 'none') + '</p>').join('');
+}
+function layerCountNote(dq) {
+  const e = dq.layers.e4;
+  return 'The ScanRun and E4 layers are counted separately and never added together; a symbol with a recorded warning in both layers is in each count.' +
+    (e && e.not_listed_with_warnings ? ' ' + e.not_listed_with_warnings + ' E4 symbol(s) with a recorded warning are not in this scan run, so they are counted but not listed.' : '');
 }
 function goDetails(symbol) {
   document.getElementById('details-symbol').value = symbol;
@@ -323,18 +375,17 @@ async function loadOverview() {
   const run = data.run, sc = run.status_counts || {}, dq = data.data_quality, b = data.breadth;
   document.getElementById('hdr-run').textContent = 'run ' + run.run_id + ' · ' + (run.finished_at || run.started_at);
   let html = '';
-  if (data.outdated) html += '<div class="outdated-banner" style="border-radius:6px;margin-bottom:14px">OUTDATED (approximate: market holidays not known)</div>';
   const lg = b ? b.above_ema.long : null, hp = b ? b.high_proximity : null;
   html += '<div class="kpis">' +
-    kpi(b ? b.symbols_with_features : run.requested_symbols, 'universe', run.requested_symbols + ' requested · ' + (run.failed_symbols ?? '–') + ' failed') +
-    kpi(dq.symbols_without_warning + ' / ' + dq.symbols_total, 'data health', dq.symbols_with_warnings + ' with a warning') +
+    universeTiles(run, b, data.e4_scan).map(tileHtml).join('') +
+    warningTiles(dq).map(tileHtml).join('') +
     kpi(lg ? shareText(lg) : '–', lg ? 'above EMA ' + lg.period : 'above EMA (no E4 scan)', lg ? shareSub(lg) : '') +
     kpi(hp ? hp.buckets[0].count : '–', hp ? 'within ' + hp.buckets[0].hi + '% of the ' + hp.window + '-bar high' : '52-week high', hp ? 'of ' + hp.of + ' with a value; a histogram bucket, not a signal' : '') +
     kpi(run.latest_closed_session || '–', 'latest closed session', 'calendar: ' + (run.calendar_verification || '–')) +
     '</div>';
-  html += '<div class="grid2"><div class="card"><h3>Data health</h3>' + donut(sc) +
-    '<p class="note" style="margin-top:10px">Warnings by type: ' + (Object.keys(dq.warning_counts).length ?
-      Object.entries(dq.warning_counts).map(([k, v]) => '<a href="#" class="chip" data-dq="' + esc(k) + '">' + esc(k) + ' ' + v + '</a>').join('') : 'none') + '</p></div>';
+  html += '<div class="grid2"><div class="card"><h3>ScanRun status counts and recorded warnings</h3>' + donut(sc) +
+    warningChipsHtml(dq, (k, v) => '<a href="#" class="chip" data-dq="' + esc(k) + '">' + esc(k) + ' ' + v + '</a>') +
+    '<p class="note">' + esc(layerCountNote(dq)) + '</p></div>';
   if (b) {
     const a = b.above_ema;
     html += '<div class="card"><h3>E4 breadth &mdash; close above EMA</h3>' +
@@ -676,17 +727,18 @@ function renderQuality() {
   const box = document.getElementById('quality-content');
   if (!summaryData) return;
   const dq = summaryData.data_quality, run = summaryData.run;
-  const issues = dq.issues.filter(i => !qualityFilter || i.warnings.some(w => w.code === qualityFilter));
-  let html = '<div class="kpis">' + kpi(dq.symbols_total, 'symbols in run') + kpi(dq.symbols_with_warnings, 'with a warning') + kpi(dq.symbols_without_warning, 'no warning') + '</div>';
+  const issues = dq.issues.filter(i => !qualityFilter || i.warnings.some(w => warningHasCode(w, qualityFilter)));
+  let html = '<div class="kpis">' + qualityKpiTiles(dq).map(tileHtml).join('') + '</div>';
   html += '<div class="card"><h3>Source</h3><div class="kv"><div>price source</div><div>' + esc(run.price_source || '–') + '</div><div>benchmark</div><div>' + esc(run.benchmark || '–') +
     '</div><div>calendar</div><div>' + esc(run.calendar_source || '–') + ' (' + esc(run.calendar_verification || '–') + ')</div><div>universe</div><div>' + esc(run.universe_version || '–') +
     '</div><div>corporate-action review</div><div>' + esc(run.corporate_action_review_version || '–') + '</div><div>E4 scan</div><div>' + (summaryData.e4_scan ? esc(summaryData.e4_scan.scan_id) + ' as of ' + esc(summaryData.e4_scan.asof_date) : 'none') + '</div></div></div>';
-  html += '<div class="card"><h3>Warnings</h3><div><span class="chip' + (qualityFilter ? '' : ' on') + '" data-q="">all</span>' +
-    Object.entries(dq.warning_counts).map(([k, v]) => '<span class="chip' + (qualityFilter === k ? ' on' : '') + '" data-q="' + esc(k) + '">' + esc(k) + ' ' + v + '</span>').join('') + '</div>' +
-    '<div class="tablewrap"><table><thead><tr><th>symbol</th><th>company</th><th>sector</th><th>status</th><th>warnings and reasons</th></tr></thead><tbody>' +
+  html += '<div class="card"><h3>Recorded warnings</h3><div><span class="chip' + (qualityFilter ? '' : ' on') + '" data-q="">all</span></div>' +
+    warningChipsHtml(dq, (k, v) => '<span class="chip' + (qualityFilter === k ? ' on' : '') + '" data-q="' + esc(k) + '">' + esc(k) + ' ' + v + '</span>') +
+    '<p class="note">' + esc(layerCountNote(dq)) + '</p>' +
+    '<div class="tablewrap"><table><thead><tr><th>symbol</th><th>company</th><th>sector</th><th>ScanRun status</th><th>recorded warnings and reasons</th></tr></thead><tbody>' +
     (issues.length ? issues.map(i => '<tr class="click" data-sym="' + esc(i.symbol) + '"><td><b>' + esc(i.symbol) + '</b></td><td>' + esc(i.company_name || '') + '</td><td>' + esc(i.sector || '') +
       '</td><td><span class="pill ' + esc(i.status) + '">' + esc(i.status) + '</span></td><td>' + warningsHtml(i.warnings) + '</td></tr>').join('') : '<tr><td colspan="5">No symbols match.</td></tr>') +
-    '</tbody></table></div><p class="note">Every symbol the scan or the E4 scan recorded a problem for is listed; nothing is excluded from this view.</p></div>';
+    '</tbody></table></div><p class="note">Every symbol of this scan run for which the scan run or the E4 scan recorded a warning is listed; nothing is excluded from this list.</p></div>';
   box.innerHTML = html;
   box.querySelectorAll('[data-q]').forEach(c => c.addEventListener('click', () => { qualityFilter = c.dataset.q || null; renderQuality(); }));
   box.querySelectorAll('tr[data-sym]').forEach(t => t.addEventListener('click', () => goDetails(t.dataset.sym)));
