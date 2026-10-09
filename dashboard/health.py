@@ -264,6 +264,41 @@ def reason_fields(prefix: str, layer: str, text) -> dict:
     return {f"{prefix}_reason_code": reason_code(layer, text), f"{prefix}_reason_recorded": text is not None and text != ""}
 
 
+REASON_TEXT_NOTE = ("Only a short code is shown here, not the recorded text. "
+                    "The full recorded text is on this symbol's Stock Detail page.")
+ABORT_TEXT_NOTE = ("Only the leading code is shown here, not the rest of the recorded text. "
+                   "The full recorded text is in the Audit / Provenance section of the /equity page.")
+
+# scan_runs.abort_reason is written only by scan_run.mark_stale_running_as_interrupted (scan_run.py:79), abort_scan_run
+# (:141) and abort_scan_run_if_running (:160). The values passed in are these constants: scan_run.py:26 INTERRUPTED,
+# :31 UNEXPECTED_ERROR; scanner/acquisition.py:45 AUTH_FAILED, :51 AUTH_FAILURE; scanner/corporate_actions.py:33
+# CORPORATE_ACTION_REVIEW_CSV_INVALID; scanner/trading_calendar.py:29 CALENDAR_INVALID; scanner/instrument_master.py:44
+# INSTRUMENT_MASTER_UNAVAILABLE; scanner/instrument_mapping.py:56 INSTRUMENT_MAP_EMPTY (callers: scripts/equity_scan.py
+# :156, :216, :228, :230, :235, :242, :293). The column is free text (persistence/schema.py:72), so a value of the form
+# "CODE: ExceptionClass: message" is still handled: only the leading code is kept.
+ABORT_CODES = ("INTERRUPTED", "UNEXPECTED_ERROR", "AUTH_FAILED", "AUTH_FAILURE", "CORPORATE_ACTION_REVIEW_CSV_INVALID",
+               "CALENDAR_INVALID", "INSTRUMENT_MASTER_UNAVAILABLE", "INSTRUMENT_MAP_EMPTY")
+_ABORT_LEAD = re.compile(r"([A-Z][A-Z_]*)(?::|\Z)")
+
+
+def abort_code(text) -> Optional[str]:
+    """The leading allow-listed code of a stored abort_reason, None for NULL or empty, RECORDED_TEXT_NOT_SHOWN otherwise.
+    The code is taken from ABORT_CODES, never copied from the stored text, and everything after it is dropped."""
+    if text is None or text == "":
+        return None
+    if not isinstance(text, str):
+        return RECORDED_TEXT_NOT_SHOWN
+    lead = _ABORT_LEAD.match(text)
+    if lead and lead.group(1) in ABORT_CODES:
+        return ABORT_CODES[ABORT_CODES.index(lead.group(1))]
+    return RECORDED_TEXT_NOT_SHOWN
+
+
+def abort_fields(text) -> dict:
+    """{"abort_code", "abort_reason_recorded"}: the only form in which a stored abort_reason leaves this module."""
+    return {"abort_code": abort_code(text), "abort_reason_recorded": text is not None and text != ""}
+
+
 def safe_relative_name(name) -> Optional[str]:
     """`name` with forward slashes when it is a short, relative, drive-less path without '..', else None."""
     if not isinstance(name, str) or not name or len(name) > 200:
@@ -396,9 +431,13 @@ def _f5(conn, latest: Optional[dict], now: datetime) -> dict:
         detail.append(f"{len(aborted['unparseable'])} ABORTED run(s) have a start time that cannot be read and are not counted: "
                       + ", ".join(aborted["unparseable"][:10]))
     value = (f"full runs ABORTED since {aborted['cutoff']}: {full}; --symbols smoke runs ABORTED since {aborted['cutoff']}: {smoke}")
+    shown = {kind: {**aborted[kind], "runs": [  # rebuilt, not edited: the raw abort_reason is dropped and only abort_code leaves this module
+        {"run_id": run["run_id"], "started_at": run["started_at"], **abort_fields(run["abort_reason"]),
+         "abort_reason_note": ABORT_TEXT_NOTE if run["abort_reason"] not in (None, "") else None}
+        for run in aborted[kind]["runs"]]} for kind in ("full", "smoke")}
     return _row("F5", "ABORTED runs in the last 7 days", state, value, RULES["F5"], detail=detail, now=now_text(now),
-                extra={"since": aborted["cutoff"], "full": aborted["full"], "smoke": aborted["smoke"],
-                       "unparseable": aborted["unparseable"], "newest_run_aborted": flag})
+                extra={"since": aborted["cutoff"], "full": shown["full"], "smoke": shown["smoke"],
+                       "unparseable": aborted["unparseable"], "newest_run_aborted": flag, "abort_reason_note": ABORT_TEXT_NOTE})
 
 
 def _f6(conn, now: datetime) -> dict:
@@ -526,10 +565,12 @@ def build(conn, now: datetime, db_file_info: Optional[dict] = None) -> dict:
             found["sentence"] = (f"{found['different']} of {found['in_both']} symbols present in both layers have a different status "
                                  f"in the two layers. {DISAGREEMENT_NOTE}")
             found["note"] = DISAGREEMENT_NOTE
+            found["reason_note"] = REASON_TEXT_NOTE
             found["rows"] = [  # rebuilt, not edited: the raw *_reason texts are dropped here and only their short codes leave this module
                 {"symbol": row["symbol"], "company_name": row["company_name"],
                  "scanrun_status": row["scanrun_status"], **reason_fields("scanrun", "ScanRun", row["scanrun_reason"]),
                  "e4_status": row["e4_status"], **reason_fields("e4", "E4", row["e4_reason"]),
+                 "reason_note": REASON_TEXT_NOTE if row["scanrun_reason"] not in (None, "") or row["e4_reason"] not in (None, "") else None,
                  "stock_url": f"/equity/stock/{quote(row['symbol'], safe='')}"}
                 for row in found["rows"]
             ]

@@ -350,7 +350,7 @@ def test_an_aborted_run_is_never_the_latest_complete_run_and_a_newer_one_is_flag
     assert panel["layers"]["scanrun"]["run_id"] == "r-complete" and "run r-complete" in _rows(panel)["F1"]["value"]
     assert row["state"] == "WARN" and row["newest_run_aborted"]["state"] == "flag" and row["newest_run_aborted"]["run_id"] == "r-abort"
     assert "ABORTED and started after the latest COMPLETE full run r-complete" in row["detail"][0]
-    assert (row["full"]["count"], row["smoke"]["count"]) == (1, 0) and row["full"]["runs"][0]["abort_reason"] == "AUTH_FAILED"
+    assert (row["full"]["count"], row["smoke"]["count"]) == (1, 0) and row["full"]["runs"][0]["abort_code"] == "AUTH_FAILED"
     assert queries.get_latest_complete_run(_ro(db))["run_id"] == "r-complete"
 
 
@@ -806,7 +806,7 @@ def test_the_disagreement_rows_carry_codes_not_raw_reasons_and_keep_working(db):
     rows = panel["layer_disagreements"]["rows"]
     assert [r["symbol"] for r in rows] == ["S0", "S1", "S2", "S3", "S4"]
     expected_keys = {"symbol", "company_name", "scanrun_status", "scanrun_reason_code", "scanrun_reason_recorded", "e4_status",
-                     "e4_reason_code", "e4_reason_recorded", "stock_url"}
+                     "e4_reason_code", "e4_reason_recorded", "reason_note", "stock_url"}
     assert all(set(r) == expected_keys for r in rows)
     assert [(r["scanrun_reason_code"], r["scanrun_reason_recorded"]) for r in rows] == [
         ("AUTH_FAILURE", True), (None, False), (None, False), ("RECORDED_TEXT_NOT_SHOWN", True), ("RECORDED_TEXT_NOT_SHOWN", True)]
@@ -828,3 +828,100 @@ def test_the_query_layer_is_unchanged_and_still_returns_the_raw_reasons(db):
     _two_layer_db_with_reasons(db, ["auth failure (401)"], ["acquisition SUCCESS"])
     row = queries.get_layer_status_disagreements(_ro(db), "r1", "e4-1")["rows"][0]
     assert (row["scanrun_reason"], row["e4_reason"]) == ("auth failure (401)", "acquisition SUCCESS")           # only health.py maps them
+
+
+# ---------------------------------------------------------------- scan_runs.abort_reason: the leading code only
+
+ABORT_HOSTILE_TAILS = [
+    "INTERRUPTED: KeyboardInterrupt:",
+    "INTERRUPTED: KeyboardInterrupt: https://api.upstox.com/v2/x?access_token=SECRET123",
+    "UNEXPECTED_ERROR: ProviderError: Bearer eyJhbGciOiJIUzI1NiJ9.SECRET123.sig",
+    "AUTH_FAILURE: 3 consecutive auth failures (last symbol AAA); C:\\Users\\Akshay\\Equity - intraday\\.env",
+    "CALENDAR_INVALID:", "CALENDAR_INVALID:\nTraceback (most recent call last): SECRET123",
+]
+
+
+@pytest.mark.parametrize("text", ABORT_HOSTILE_TAILS)
+def test_an_abort_reason_with_a_tail_keeps_only_its_leading_code(text):
+    out = health.abort_fields(text)
+    assert out == {"abort_code": text.split(":")[0], "abort_reason_recorded": True}
+    assert "SECRET123" not in json.dumps(out) and out["abort_code"] in health.ABORT_CODES
+
+
+@pytest.mark.parametrize("code", health.ABORT_CODES)
+def test_every_allow_listed_code_maps_to_itself_alone_or_followed_by_a_colon(code):
+    assert health.abort_code(code) == code and health.abort_code(f"{code}: X: y") == code and health.abort_code(f"{code}:") == code
+
+
+@pytest.mark.parametrize("text", [
+    "SECRET123", "SECRET123: INTERRUPTED", "Bearer SECRET123", "https://x.example/?access_token=SECRET123", "C:\\Users\\Akshay\\.env",
+    "interrupted", "interrupted: KeyboardInterrupt", "INTERRUPTED KeyboardInterrupt", "INTERRUPTEDX", "INTERRUPTED_X: y", "XINTERRUPTED",
+    " INTERRUPTED", "\nINTERRUPTED", "INTERRUPTED\n", "INTERRUPTED\nBearer SECRET123", "INTERRUPTED :", "INTERRUPTED; Bearer SECRET123",
+    ":INTERRUPTED", "UNKNOWN_CODE", "UNKNOWN_CODE: whatever", " ", "\t", 0, b"INTERRUPTED", ["INTERRUPTED"],
+])
+def test_an_unknown_or_malformed_abort_reason_is_recorded_but_not_shown(text):
+    assert health.abort_fields(text) == {"abort_code": "RECORDED_TEXT_NOT_SHOWN", "abort_reason_recorded": True}
+
+
+def test_a_very_long_abort_reason_is_recorded_but_not_shown_and_a_long_tail_is_dropped():
+    assert health.abort_fields("x" * 50000) == {"abort_code": "RECORDED_TEXT_NOT_SHOWN", "abort_reason_recorded": True}
+    assert health.abort_fields("INTERRUPTED: " + "x" * 50000) == {"abort_code": "INTERRUPTED", "abort_reason_recorded": True}
+
+
+@pytest.mark.parametrize("text", [None, ""])
+def test_a_null_or_empty_abort_reason_has_no_code_and_recorded_false(text):
+    assert health.abort_fields(text) == {"abort_code": None, "abort_reason_recorded": False}
+
+
+def test_the_abort_allow_list_is_exactly_the_set_of_codes_the_scanner_writes():
+    from pathlib import Path
+    repo = Path(health.__file__).resolve().parents[1]
+    scanner = repo / "equity_intel" / "scanner"
+    constants = {}
+    for name in ("scan_run.py", "acquisition.py", "corporate_actions.py", "trading_calendar.py", "instrument_master.py", "instrument_mapping.py"):
+        for const, value in re.findall(r'^([A-Z_]+) = "([A-Z_]+)"$', (scanner / name).read_text(encoding="utf-8"), re.M):
+            constants[const] = value
+    script = (repo / "scripts" / "equity_scan.py").read_text(encoding="utf-8")
+    passed = set(re.findall(r"return abort\(\s*([A-Z_]+)", script)) | set(re.findall(r"scan_run\.(UNEXPECTED_ERROR|INTERRUPTED)", script))
+    assert passed == {"AUTH_FAILED", "AUTH_FAILURE", "CALENDAR_INVALID", "INSTRUMENT_MASTER_UNAVAILABLE", "INSTRUMENT_MAP_EMPTY",
+                      "CORPORATE_ACTION_REVIEW_CSV_INVALID", "UNEXPECTED_ERROR", "INTERRUPTED"}
+    assert all(constants[name] == name for name in passed)                          # each constant's value is its own name
+    assert set(health.ABORT_CODES) == {constants[name] for name in passed}
+    # the only statements that write the column: two take the value as an argument, the stale-run one writes INTERRUPTED
+    scan_run_source = (scanner / "scan_run.py").read_text(encoding="utf-8")
+    assert scan_run_source.count("abort_reason = ?") == 3 and "(ABORTED, INTERRUPTED, finished_at, run_id)" in scan_run_source
+
+
+def test_the_abort_lists_carry_abort_code_and_never_a_raw_abort_reason(db):
+    hostile = "INTERRUPTED: KeyboardInterrupt: Bearer SECRET123 https://x.example/?access_token=SECRET123 C:\\Users\\Akshay\\.env"
+    _complete(db, "r-complete", "2026-10-06T19:00:00", session="2026-10-06", symbols=[("AAA", "VALID", [])])
+    _make_run(db, "a-full-1", "2026-10-07T09:00:00", end="ABORTED", abort_reason=hostile)
+    _make_run(db, "a-full-2", "2026-10-07T10:00:00", end="ABORTED", abort_reason="SECRET123 unknown")
+    _make_run(db, "a-full-3", "2026-10-07T11:00:00", end="ABORTED", abort_reason=None)
+    _make_run(db, "a-full-4", "2026-10-07T12:00:00", end="ABORTED", abort_reason="")
+    _make_run(db, "a-smoke", "2026-10-07T13:00:00", [("AAA", "VALID", [])], end="ABORTED", smoke=json.dumps(["AAA"]),
+              abort_reason="UNEXPECTED_ERROR: ValueError: SECRET123")
+    panel = _panel(db)
+    row = _rows(panel)["F5"]
+    got = {r["run_id"]: r for r in row["full"]["runs"] + row["smoke"]["runs"]}
+    assert {k: (v["abort_code"], v["abort_reason_recorded"]) for k, v in got.items()} == {
+        "a-full-1": ("INTERRUPTED", True), "a-full-2": ("RECORDED_TEXT_NOT_SHOWN", True), "a-full-3": (None, False),
+        "a-full-4": (None, False), "a-smoke": ("UNEXPECTED_ERROR", True)}
+    assert all(set(r) == {"run_id", "started_at", "abort_code", "abort_reason_recorded", "abort_reason_note"} for r in got.values())
+    assert [got[k]["abort_reason_note"] is not None for k in ("a-full-1", "a-full-2", "a-full-3", "a-full-4", "a-smoke")] == [True, True, False, False, True]
+    assert (row["full"]["count"], row["smoke"]["count"]) == (4, 1)
+    text = json.dumps(panel)
+    for secret in ("SECRET123", "Bearer", "https://", "access_token", "C:\\\\Users", ".env", "KeyboardInterrupt", "ValueError"):
+        assert secret not in text, secret
+    keys = set(_keys(panel))
+    assert "abort_reason" not in keys and {"abort_code", "abort_reason_recorded"} <= keys
+    assert "abort_reason" not in set(_keys(row["newest_run_aborted"]))
+
+
+def test_the_panel_says_where_the_full_recorded_text_is(db):
+    assert "Stock Detail page" in health.REASON_TEXT_NOTE and "not the recorded text" in health.REASON_TEXT_NOTE
+    assert "Audit / Provenance" in health.ABORT_TEXT_NOTE and "full recorded text" in health.ABORT_TEXT_NOTE
+    _two_layer_db_with_reasons(db, ["auth failure (401)", None], [None, None])
+    found = _panel(db)["layer_disagreements"]
+    assert found["reason_note"] == health.REASON_TEXT_NOTE
+    assert [r["reason_note"] for r in found["rows"]] == [health.REASON_TEXT_NOTE, None]      # the note appears only where something is recorded
