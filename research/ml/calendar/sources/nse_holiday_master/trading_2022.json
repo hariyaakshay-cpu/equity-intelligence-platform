@@ -1,0 +1,1515 @@
+{
+ "CBM": [
+  {
+   "tradingDate": "26-Jan-2022",
+   "weekDay": "Wednesday",
+   "description": "Republic Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "19-Feb-2022",
+   "weekDay": "Saturday",
+   "description": "Chatrapati Shivaji Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-Mar-2022",
+   "weekDay": "Tuesday",
+   "description": "Mahashivratri",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "18-Mar-2022",
+   "weekDay": "Friday",
+   "description": "Holi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-Apr-2022",
+   "weekDay": "Friday",
+   "description": "Annual Bank Closing",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "02-Apr-2022",
+   "weekDay": "Saturday",
+   "description": "Gudi Padwa",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "10-Apr-2022",
+   "weekDay": "Sunday",
+   "description": "Ram Navami",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "14-Apr-2022",
+   "weekDay": "Thursday",
+   "description": "Dr.Baba Saheb Ambedkar Jayanti/Mahavir Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "15-Apr-2022",
+   "weekDay": "Friday",
+   "description": "Good Friday",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-May-2022",
+   "weekDay": "Sunday",
+   "description": "Maharashtra Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "03-May-2022",
+   "weekDay": "Tuesday",
+   "description": "Id-Ul-Fitr (Ramzan ID)",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "16-May-2022",
+   "weekDay": "Monday",
+   "description": "Buddha Pournima",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "10-Jul-2022",
+   "weekDay": "Sunday",
+   "description": "Bakri Id",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "09-Aug-2022",
+   "weekDay": "Tuesday",
+   "description": "Moharram",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "15-Aug-2022",
+   "weekDay": "Monday",
+   "description": "Independence Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "16-Aug-2022",
+   "weekDay": "Tuesday",
+   "description": "Parsi New Year",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "31-Aug-2022",
+   "weekDay": "Wednesday",
+   "description": "Ganesh Chaturthi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "02-Oct-2022",
+   "weekDay": "Sunday",
+   "description": "Mahatma Gandhi Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "05-Oct-2022",
+   "weekDay": "Wednesday",
+   "description": "Dussehra",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "09-Oct-2022",
+   "weekDay": "Sunday",
+   "description": "Id-E-Milad",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "24-Oct-2022",
+   "weekDay": "Monday",
+   "description": "Diwali * Laxmi Pujan",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "26-Oct-2022",
+   "weekDay": "Wednesday",
+   "description": "Diwali-Balipratipada",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "08-Nov-2022",
+   "weekDay": "Tuesday",
+   "description": "Gurunanak Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "25-Dec-2022",
+   "weekDay": "Sunday",
+   "description": "Christmas",
+   "morning_session": null,
+   "evening_session": null
+  }
+ ],
+ "CD": [
+  {
+   "tradingDate": "26-Jan-2022",
+   "weekDay": "Wednesday",
+   "description": "Republic Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "19-Feb-2022",
+   "weekDay": "Saturday",
+   "description": "Chatrapati Shivaji Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-Mar-2022",
+   "weekDay": "Tuesday",
+   "description": "Mahashivratri",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "18-Mar-2022",
+   "weekDay": "Friday",
+   "description": "Holi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-Apr-2022",
+   "weekDay": "Friday",
+   "description": "Annual Bank Closing",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "02-Apr-2022",
+   "weekDay": "Saturday",
+   "description": "Gudi Padwa",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "10-Apr-2022",
+   "weekDay": "Sunday",
+   "description": "Ram Navami",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "14-Apr-2022",
+   "weekDay": "Thursday",
+   "description": "Dr.Baba Saheb Ambedkar Jayanti/Mahavir Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "15-Apr-2022",
+   "weekDay": "Friday",
+   "description": "Good Friday",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-May-2022",
+   "weekDay": "Sunday",
+   "description": "Maharashtra Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "03-May-2022",
+   "weekDay": "Tuesday",
+   "description": "Id-Ul-Fitr (Ramzan ID)",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "16-May-2022",
+   "weekDay": "Monday",
+   "description": "Buddha Pournima",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "10-Jul-2022",
+   "weekDay": "Sunday",
+   "description": "Bakri Id",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "09-Aug-2022",
+   "weekDay": "Tuesday",
+   "description": "Moharram",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "15-Aug-2022",
+   "weekDay": "Monday",
+   "description": "Independence Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "16-Aug-2022",
+   "weekDay": "Tuesday",
+   "description": "Parsi New Year",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "31-Aug-2022",
+   "weekDay": "Wednesday",
+   "description": "Ganesh Chaturthi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "02-Oct-2022",
+   "weekDay": "Sunday",
+   "description": "Mahatma Gandhi Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "05-Oct-2022",
+   "weekDay": "Wednesday",
+   "description": "Dussehra",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "09-Oct-2022",
+   "weekDay": "Sunday",
+   "description": "Id-E-Milad",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "26-Oct-2022",
+   "weekDay": "Wednesday",
+   "description": "Diwali-Balipratipada",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "08-Nov-2022",
+   "weekDay": "Tuesday",
+   "description": "Gurunanak Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "25-Dec-2022",
+   "weekDay": "Sunday",
+   "description": "Christmas",
+   "morning_session": null,
+   "evening_session": null
+  }
+ ],
+ "CM": [
+  {
+   "tradingDate": "26-Jan-2022",
+   "weekDay": "Wednesday",
+   "description": "Republic Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-Mar-2022",
+   "weekDay": "Tuesday",
+   "description": "Mahashivratri",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "18-Mar-2022",
+   "weekDay": "Friday",
+   "description": "Holi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "10-Apr-2022",
+   "weekDay": "Sunday",
+   "description": "Ram Navami",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "14-Apr-2022",
+   "weekDay": "Thursday",
+   "description": "Dr.Baba Saheb Ambedkar Jayanti/Mahavir Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "15-Apr-2022",
+   "weekDay": "Friday",
+   "description": "Good Friday",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-May-2022",
+   "weekDay": "Sunday",
+   "description": "Maharashtra Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "03-May-2022",
+   "weekDay": "Tuesday",
+   "description": "Id-Ul-Fitr (Ramzan ID)",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "10-Jul-2022",
+   "weekDay": "Sunday",
+   "description": "Bakri Id",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "09-Aug-2022",
+   "weekDay": "Tuesday",
+   "description": "Moharram",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "15-Aug-2022",
+   "weekDay": "Monday",
+   "description": "Independence Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "31-Aug-2022",
+   "weekDay": "Wednesday",
+   "description": "Ganesh Chaturthi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "02-Oct-2022",
+   "weekDay": "Sunday",
+   "description": "Mahatma Gandhi Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "05-Oct-2022",
+   "weekDay": "Wednesday",
+   "description": "Dussehra",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "26-Oct-2022",
+   "weekDay": "Wednesday",
+   "description": "Diwali-Balipratipada",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "08-Nov-2022",
+   "weekDay": "Tuesday",
+   "description": "Gurunanak Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "25-Dec-2022",
+   "weekDay": "Sunday",
+   "description": "Christmas",
+   "morning_session": null,
+   "evening_session": null
+  }
+ ],
+ "CMOT": [
+  {
+   "tradingDate": "26-Jan-2022",
+   "weekDay": "Wednesday",
+   "description": "Republic Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-Mar-2022",
+   "weekDay": "Tuesday",
+   "description": "Mahashivratri",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "18-Mar-2022",
+   "weekDay": "Friday",
+   "description": "Holi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "10-Apr-2022",
+   "weekDay": "Sunday",
+   "description": "Ram Navami",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "14-Apr-2022",
+   "weekDay": "Thursday",
+   "description": "Dr.Baba Saheb Ambedkar Jayanti/Mahavir Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "15-Apr-2022",
+   "weekDay": "Friday",
+   "description": "Good Friday",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-May-2022",
+   "weekDay": "Sunday",
+   "description": "Maharashtra Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "03-May-2022",
+   "weekDay": "Tuesday",
+   "description": "Id-Ul-Fitr (Ramzan ID)",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "10-Jul-2022",
+   "weekDay": "Sunday",
+   "description": "Bakri Id",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "09-Aug-2022",
+   "weekDay": "Tuesday",
+   "description": "Moharram",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "15-Aug-2022",
+   "weekDay": "Monday",
+   "description": "Independence Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "31-Aug-2022",
+   "weekDay": "Wednesday",
+   "description": "Ganesh Chaturthi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "02-Oct-2022",
+   "weekDay": "Sunday",
+   "description": "Mahatma Gandhi Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "05-Oct-2022",
+   "weekDay": "Wednesday",
+   "description": "Dussehra",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "26-Oct-2022",
+   "weekDay": "Wednesday",
+   "description": "Diwali-Balipratipada",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "08-Nov-2022",
+   "weekDay": "Tuesday",
+   "description": "Gurunanak Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "25-Dec-2022",
+   "weekDay": "Sunday",
+   "description": "Christmas",
+   "morning_session": null,
+   "evening_session": null
+  }
+ ],
+ "COM": [
+  {
+   "tradingDate": "01-Jan-2022",
+   "weekDay": "Saturday",
+   "description": "New Year Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "26-Jan-2022",
+   "weekDay": "Wednesday",
+   "description": "Republic Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "10-Apr-2022",
+   "weekDay": "Sunday",
+   "description": "Ram Navami",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "15-Apr-2022",
+   "weekDay": "Friday",
+   "description": "Good Friday",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-May-2022",
+   "weekDay": "Sunday",
+   "description": "Maharashtra Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "10-Jul-2022",
+   "weekDay": "Sunday",
+   "description": "Bakri Id",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "15-Aug-2022",
+   "weekDay": "Monday",
+   "description": "Independence Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "02-Oct-2022",
+   "weekDay": "Sunday",
+   "description": "Mahatma Gandhi Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "25-Dec-2022",
+   "weekDay": "Sunday",
+   "description": "Christmas",
+   "morning_session": null,
+   "evening_session": null
+  }
+ ],
+ "FO": [
+  {
+   "tradingDate": "26-Jan-2022",
+   "weekDay": "Wednesday",
+   "description": "Republic Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-Mar-2022",
+   "weekDay": "Tuesday",
+   "description": "Mahashivratri",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "18-Mar-2022",
+   "weekDay": "Friday",
+   "description": "Holi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "10-Apr-2022",
+   "weekDay": "Sunday",
+   "description": "Ram Navami",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "14-Apr-2022",
+   "weekDay": "Thursday",
+   "description": "Dr.Baba Saheb Ambedkar Jayanti/Mahavir Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "15-Apr-2022",
+   "weekDay": "Friday",
+   "description": "Good Friday",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-May-2022",
+   "weekDay": "Sunday",
+   "description": "Maharashtra Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "03-May-2022",
+   "weekDay": "Tuesday",
+   "description": "Id-Ul-Fitr (Ramzan ID)",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "10-Jul-2022",
+   "weekDay": "Sunday",
+   "description": "Bakri Id",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "09-Aug-2022",
+   "weekDay": "Tuesday",
+   "description": "Moharram",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "15-Aug-2022",
+   "weekDay": "Monday",
+   "description": "Independence Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "31-Aug-2022",
+   "weekDay": "Wednesday",
+   "description": "Ganesh Chaturthi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "02-Oct-2022",
+   "weekDay": "Sunday",
+   "description": "Mahatma Gandhi Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "05-Oct-2022",
+   "weekDay": "Wednesday",
+   "description": "Dussehra",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "26-Oct-2022",
+   "weekDay": "Wednesday",
+   "description": "Diwali-Balipratipada",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "08-Nov-2022",
+   "weekDay": "Tuesday",
+   "description": "Gurunanak Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "25-Dec-2022",
+   "weekDay": "Sunday",
+   "description": "Christmas",
+   "morning_session": null,
+   "evening_session": null
+  }
+ ],
+ "IRD": [
+  {
+   "tradingDate": "26-Jan-2022",
+   "weekDay": "Wednesday",
+   "description": "Republic Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "19-Feb-2022",
+   "weekDay": "Saturday",
+   "description": "Chatrapati Shivaji Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-Mar-2022",
+   "weekDay": "Tuesday",
+   "description": "Mahashivratri",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "18-Mar-2022",
+   "weekDay": "Friday",
+   "description": "Holi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-Apr-2022",
+   "weekDay": "Friday",
+   "description": "Annual Bank Closing",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "02-Apr-2022",
+   "weekDay": "Saturday",
+   "description": "Gudi Padwa",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "10-Apr-2022",
+   "weekDay": "Sunday",
+   "description": "Ram Navami",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "14-Apr-2022",
+   "weekDay": "Thursday",
+   "description": "Dr.Baba Saheb Ambedkar Jayanti/Mahavir Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "15-Apr-2022",
+   "weekDay": "Friday",
+   "description": "Good Friday",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-May-2022",
+   "weekDay": "Sunday",
+   "description": "Maharashtra Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "03-May-2022",
+   "weekDay": "Tuesday",
+   "description": "Id-Ul-Fitr (Ramzan ID)",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "16-May-2022",
+   "weekDay": "Monday",
+   "description": "Buddha Pournima",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "10-Jul-2022",
+   "weekDay": "Sunday",
+   "description": "Bakri Id",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "09-Aug-2022",
+   "weekDay": "Tuesday",
+   "description": "Moharram",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "15-Aug-2022",
+   "weekDay": "Monday",
+   "description": "Independence Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "16-Aug-2022",
+   "weekDay": "Tuesday",
+   "description": "Parsi New Year",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "31-Aug-2022",
+   "weekDay": "Wednesday",
+   "description": "Ganesh Chaturthi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "02-Oct-2022",
+   "weekDay": "Sunday",
+   "description": "Mahatma Gandhi Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "05-Oct-2022",
+   "weekDay": "Wednesday",
+   "description": "Dussehra",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "09-Oct-2022",
+   "weekDay": "Sunday",
+   "description": "Id-E-Milad",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "26-Oct-2022",
+   "weekDay": "Wednesday",
+   "description": "Diwali-Balipratipada",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "08-Nov-2022",
+   "weekDay": "Tuesday",
+   "description": "Gurunanak Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "25-Dec-2022",
+   "weekDay": "Sunday",
+   "description": "Christmas",
+   "morning_session": null,
+   "evening_session": null
+  }
+ ],
+ "MF": [
+  {
+   "tradingDate": "26-Jan-2022",
+   "weekDay": "Wednesday",
+   "description": "Republic Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-Mar-2022",
+   "weekDay": "Tuesday",
+   "description": "Mahashivratri",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "18-Mar-2022",
+   "weekDay": "Friday",
+   "description": "Holi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "10-Apr-2022",
+   "weekDay": "Sunday",
+   "description": "Ram Navami",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "14-Apr-2022",
+   "weekDay": "Thursday",
+   "description": "Dr.Baba Saheb Ambedkar Jayanti/Mahavir Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "15-Apr-2022",
+   "weekDay": "Friday",
+   "description": "Good Friday",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-May-2022",
+   "weekDay": "Sunday",
+   "description": "Maharashtra Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "03-May-2022",
+   "weekDay": "Tuesday",
+   "description": "Id-Ul-Fitr (Ramzan ID)",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "10-Jul-2022",
+   "weekDay": "Sunday",
+   "description": "Bakri Id",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "09-Aug-2022",
+   "weekDay": "Tuesday",
+   "description": "Moharram",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "15-Aug-2022",
+   "weekDay": "Monday",
+   "description": "Independence Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "31-Aug-2022",
+   "weekDay": "Wednesday",
+   "description": "Ganesh Chaturthi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "02-Oct-2022",
+   "weekDay": "Sunday",
+   "description": "Mahatma Gandhi Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "05-Oct-2022",
+   "weekDay": "Wednesday",
+   "description": "Dussehra",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "24-Oct-2022",
+   "weekDay": "Monday",
+   "description": "Diwali * Laxmi Pujan",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "26-Oct-2022",
+   "weekDay": "Wednesday",
+   "description": "Diwali-Balipratipada",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "08-Nov-2022",
+   "weekDay": "Tuesday",
+   "description": "Gurunanak Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "25-Dec-2022",
+   "weekDay": "Sunday",
+   "description": "Christmas",
+   "morning_session": null,
+   "evening_session": null
+  }
+ ],
+ "NDM": [
+  {
+   "tradingDate": "26-Jan-2022",
+   "weekDay": "Wednesday",
+   "description": "Republic Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "19-Feb-2022",
+   "weekDay": "Saturday",
+   "description": "Chatrapati Shivaji Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-Mar-2022",
+   "weekDay": "Tuesday",
+   "description": "Mahashivratri",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "18-Mar-2022",
+   "weekDay": "Friday",
+   "description": "Holi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-Apr-2022",
+   "weekDay": "Friday",
+   "description": "Annual Bank Closing",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "02-Apr-2022",
+   "weekDay": "Saturday",
+   "description": "Gudi Padwa",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "10-Apr-2022",
+   "weekDay": "Sunday",
+   "description": "Ram Navami",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "14-Apr-2022",
+   "weekDay": "Thursday",
+   "description": "Dr.Baba Saheb Ambedkar Jayanti/Mahavir Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "15-Apr-2022",
+   "weekDay": "Friday",
+   "description": "Good Friday",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-May-2022",
+   "weekDay": "Sunday",
+   "description": "Maharashtra Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "03-May-2022",
+   "weekDay": "Tuesday",
+   "description": "Id-Ul-Fitr (Ramzan ID)",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "16-May-2022",
+   "weekDay": "Monday",
+   "description": "Buddha Pournima",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "10-Jul-2022",
+   "weekDay": "Sunday",
+   "description": "Bakri Id",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "09-Aug-2022",
+   "weekDay": "Tuesday",
+   "description": "Moharram",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "15-Aug-2022",
+   "weekDay": "Monday",
+   "description": "Independence Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "16-Aug-2022",
+   "weekDay": "Tuesday",
+   "description": "Parsi New Year",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "31-Aug-2022",
+   "weekDay": "Wednesday",
+   "description": "Ganesh Chaturthi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "02-Oct-2022",
+   "weekDay": "Sunday",
+   "description": "Mahatma Gandhi Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "05-Oct-2022",
+   "weekDay": "Wednesday",
+   "description": "Dussehra",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "09-Oct-2022",
+   "weekDay": "Sunday",
+   "description": "Id-E-Milad",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "24-Oct-2022",
+   "weekDay": "Monday",
+   "description": "Diwali * Laxmi Pujan",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "26-Oct-2022",
+   "weekDay": "Wednesday",
+   "description": "Diwali-Balipratipada",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "08-Nov-2022",
+   "weekDay": "Tuesday",
+   "description": "Gurunanak Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "25-Dec-2022",
+   "weekDay": "Sunday",
+   "description": "Christmas",
+   "morning_session": null,
+   "evening_session": null
+  }
+ ],
+ "NTRP": [
+  {
+   "tradingDate": "26-Jan-2022",
+   "weekDay": "Wednesday",
+   "description": "Republic Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "19-Feb-2022",
+   "weekDay": "Saturday",
+   "description": "Chatrapati Shivaji Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-Mar-2022",
+   "weekDay": "Tuesday",
+   "description": "Mahashivratri",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "18-Mar-2022",
+   "weekDay": "Friday",
+   "description": "Holi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-Apr-2022",
+   "weekDay": "Friday",
+   "description": "Annual Bank Closing",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "02-Apr-2022",
+   "weekDay": "Saturday",
+   "description": "Gudi Padwa",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "10-Apr-2022",
+   "weekDay": "Sunday",
+   "description": "Ram Navami",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "14-Apr-2022",
+   "weekDay": "Thursday",
+   "description": "Dr.Baba Saheb Ambedkar Jayanti/Mahavir Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "15-Apr-2022",
+   "weekDay": "Friday",
+   "description": "Good Friday",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-May-2022",
+   "weekDay": "Sunday",
+   "description": "Maharashtra Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "03-May-2022",
+   "weekDay": "Tuesday",
+   "description": "Id-Ul-Fitr (Ramzan ID)",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "16-May-2022",
+   "weekDay": "Monday",
+   "description": "Buddha Pournima",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "10-Jul-2022",
+   "weekDay": "Sunday",
+   "description": "Bakri Id",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "09-Aug-2022",
+   "weekDay": "Tuesday",
+   "description": "Moharram",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "15-Aug-2022",
+   "weekDay": "Monday",
+   "description": "Independence Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "16-Aug-2022",
+   "weekDay": "Tuesday",
+   "description": "Parsi New Year",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "31-Aug-2022",
+   "weekDay": "Wednesday",
+   "description": "Ganesh Chaturthi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "02-Oct-2022",
+   "weekDay": "Sunday",
+   "description": "Mahatma Gandhi Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "05-Oct-2022",
+   "weekDay": "Wednesday",
+   "description": "Dussehra",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "09-Oct-2022",
+   "weekDay": "Sunday",
+   "description": "Id-E-Milad",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "24-Oct-2022",
+   "weekDay": "Monday",
+   "description": "Diwali * Laxmi Pujan",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "26-Oct-2022",
+   "weekDay": "Wednesday",
+   "description": "Diwali-Balipratipada",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "08-Nov-2022",
+   "weekDay": "Tuesday",
+   "description": "Gurunanak Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "25-Dec-2022",
+   "weekDay": "Sunday",
+   "description": "Christmas",
+   "morning_session": null,
+   "evening_session": null
+  }
+ ],
+ "SLBS": [
+  {
+   "tradingDate": "26-Jan-2022",
+   "weekDay": "Wednesday",
+   "description": "Republic Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-Mar-2022",
+   "weekDay": "Tuesday",
+   "description": "Mahashivratri",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "18-Mar-2022",
+   "weekDay": "Friday",
+   "description": "Holi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "10-Apr-2022",
+   "weekDay": "Sunday",
+   "description": "Ram Navami",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "14-Apr-2022",
+   "weekDay": "Thursday",
+   "description": "Dr.Baba Saheb Ambedkar Jayanti/Mahavir Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "15-Apr-2022",
+   "weekDay": "Friday",
+   "description": "Good Friday",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-May-2022",
+   "weekDay": "Sunday",
+   "description": "Maharashtra Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "03-May-2022",
+   "weekDay": "Tuesday",
+   "description": "Id-Ul-Fitr (Ramzan ID)",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "10-Jul-2022",
+   "weekDay": "Sunday",
+   "description": "Bakri Id",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "09-Aug-2022",
+   "weekDay": "Tuesday",
+   "description": "Moharram",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "15-Aug-2022",
+   "weekDay": "Monday",
+   "description": "Independence Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "31-Aug-2022",
+   "weekDay": "Wednesday",
+   "description": "Ganesh Chaturthi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "02-Oct-2022",
+   "weekDay": "Sunday",
+   "description": "Mahatma Gandhi Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "05-Oct-2022",
+   "weekDay": "Wednesday",
+   "description": "Dussehra",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "26-Oct-2022",
+   "weekDay": "Wednesday",
+   "description": "Diwali-Balipratipada",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "08-Nov-2022",
+   "weekDay": "Tuesday",
+   "description": "Gurunanak Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "25-Dec-2022",
+   "weekDay": "Sunday",
+   "description": "Christmas",
+   "morning_session": null,
+   "evening_session": null
+  }
+ ]
+}

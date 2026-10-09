@@ -1,0 +1,2 @@
+date,instrument,finding,evidence
+2020-01-07,nifty500,session without vendor bar,"Regular Tuesday: not in the NSE holiday master, no holiday circular, and Nifty 50 and RELIANCE both have bars. The Upstox Nifty 500 series is missing this day; the calendar is unchanged and the gap is carried to the data-quality audit."

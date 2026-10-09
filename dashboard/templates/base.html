@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}equity_intel{% endblock %} · equity_intel data trust</title>
+<style>
+  :root { --bg:#0f1115; --card:#171a21; --line:#2a2f3a; --txt:#e6e8ee; --mut:#9aa3b2; --ok:#2f9e61; --warn:#d49a1f; --bad:#d9534f; --info:#4c8dff; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--txt); font:14px/1.45 system-ui,Segoe UI,Roboto,sans-serif; }
+  .banner { background:#3b1d1d; color:#ffd9d6; text-align:center; font-weight:700; padding:8px 12px; letter-spacing:.4px; font-size:13px; }
+  .demo-banner { background:#b91c1c; color:#fff; text-align:center; font-weight:700; padding:8px; }
+  .notice { padding:8px 16px; font-size:13px; background:#3a2c0b; color:#ffe6a8; }
+  main { max-width:960px; margin:0 auto; padding:16px; }
+  h1 { font-size:22px; margin:8px 0 2px; } h2 { font-size:15px; margin:0 0 8px; text-transform:uppercase; letter-spacing:.5px; color:var(--mut); }
+  .sub, .note { color:var(--mut); font-size:12px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:8px; padding:14px; margin:14px 0; }
+  .tablewrap { overflow-x:auto; }
+  table { border-collapse:collapse; width:100%; }
+  th, td { text-align:left; padding:6px 8px; border-bottom:1px solid var(--line); vertical-align:top; }
+  th { color:var(--mut); font-weight:600; font-size:12px; }
+  td.num { text-align:right; font-variant-numeric:tabular-nums; }
+  .badge { display:inline-block; padding:2px 9px; border-radius:10px; font-size:12px; font-weight:700; }
+  .b-VALID { background:#173d2a; color:#7fe0a8; } .b-INSUFFICIENT_HISTORY { background:#40320f; color:#f0c765; }
+  .b-STALE { background:#40320f; color:#f0c765; } .b-FAILED { background:#4a1c1c; color:#ff9d99; }
+  .layer { display:inline-block; font-size:11px; padding:1px 6px; border-radius:4px; border:1px solid var(--line); color:var(--mut); }
+  .layer-E4 { color:#9cc0ff; border-color:#2b4a80; } .layer-ScanRun { color:#a8e0b8; border-color:#2d5a3c; }
+  .nr { color:var(--mut); font-style:italic; }
+  .prov { color:#f0c765; font-size:11px; }
+  .ok { color:var(--ok); } .bad { color:var(--bad); }
+  code { font-size:12px; word-break:break-all; }
+  a { color:var(--info); }
+  @media (max-width:600px) { main { padding:10px; } th, td { padding:5px 6px; font-size:13px; } }
+</style>
+</head>
+<body>
+{% if demo %}<div class="demo-banner">DEMO DATA - NOT REAL<div style="font-weight:400;font-size:12px">{{ demo_dates_note }}</div></div>{% endif %}
+<div class="banner" id="stage-banner">{{ banner_text }}</div>
+<main>
+<p class="sub"><a href="/equity">&larr; equity_intel dashboard</a> &middot; <a href="/equity/exceptions" id="nav-exceptions">Exceptions</a> &middot; <a href="/equity/snapshot-audit" id="nav-snapshot-audit">Snapshot Audit</a> &middot; Stage 1: can I trust the data? (read-only)</p>
+{% block body %}{% endblock %}
+</main>
+</body>
+</html>

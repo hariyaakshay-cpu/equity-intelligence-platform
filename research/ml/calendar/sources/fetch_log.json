@@ -1,0 +1,1020 @@
+[
+ {
+  "fetched_at": "2026-10-03T00:34:50.293685+00:00",
+  "entries": [
+   {
+    "url": "https://www.nseindia.com/api/holiday-master?type=trading&year=2011",
+    "file": "sources/nse_holiday_master/trading_2011.json",
+    "sha256": "d4141b3cec1ba2ad3b929e027e3a7703be0ea1b8b7570e6d4e6c3a8d7ab03533"
+   },
+   {
+    "url": "https://www.nseindia.com/api/holiday-master?type=trading&year=2012",
+    "file": "sources/nse_holiday_master/trading_2012.json",
+    "sha256": "501f9ed13644db90c6a897998e87b5a6373882deed368ec52f2b85af895a8b4c"
+   },
+   {
+    "url": "https://www.nseindia.com/api/holiday-master?type=trading&year=2013",
+    "file": "sources/nse_holiday_master/trading_2013.json",
+    "sha256": "0df616782b2e16b2b172f26a973a8c8d41578e02d45348026cbd32559d0254b5"
+   },
+   {
+    "url": "https://www.nseindia.com/api/holiday-master?type=trading&year=2014",
+    "file": "sources/nse_holiday_master/trading_2014.json",
+    "sha256": "da2672b225cfe407ec2dba64b4b4f672c79c0f02203a0fab2c50568698b4e515"
+   },
+   {
+    "url": "https://www.nseindia.com/api/holiday-master?type=trading&year=2015",
+    "file": "sources/nse_holiday_master/trading_2015.json",
+    "sha256": "85a5a89231630fe3ee14973d88a8b099879e2fb26e1fc9f9f8acbac0f82cb335"
+   },
+   {
+    "url": "https://www.nseindia.com/api/holiday-master?type=trading&year=2016",
+    "file": "sources/nse_holiday_master/trading_2016.json",
+    "sha256": "019985b199835706e655930dccadb870bf2d707eb7e218776f3f44edcb602488"
+   },
+   {
+    "url": "https://www.nseindia.com/api/holiday-master?type=trading&year=2017",
+    "file": "sources/nse_holiday_master/trading_2017.json",
+    "sha256": "30d8718de1530ec225100cbcbb17e36164e6f50d40ca05b8662d1f3b62db8ff8"
+   },
+   {
+    "url": "https://www.nseindia.com/api/holiday-master?type=trading&year=2018",
+    "file": "sources/nse_holiday_master/trading_2018.json",
+    "sha256": "2f21c627ad4dfd1e673bd6a95242c0c2564098422b96c8a871be3de82843596c"
+   },
+   {
+    "url": "https://www.nseindia.com/api/holiday-master?type=trading&year=2019",
+    "file": "sources/nse_holiday_master/trading_2019.json",
+    "sha256": "988d61ed811562cb44093ab17464dc119a974a1950efe39d6093533de6efd7bb"
+   },
+   {
+    "url": "https://www.nseindia.com/api/holiday-master?type=trading&year=2020",
+    "file": "sources/nse_holiday_master/trading_2020.json",
+    "sha256": "b96c9add534c9ee36a465c826968e183bf45232aaffe829c50ed3ffa40ae63e5"
+   },
+   {
+    "url": "https://www.nseindia.com/api/holiday-master?type=trading&year=2021",
+    "file": "sources/nse_holiday_master/trading_2021.json",
+    "sha256": "d0be85d6c58863e959d8a3e19c3d95a041ea95f15ce6cf970929897b37c95e3f"
+   },
+   {
+    "url": "https://www.nseindia.com/api/holiday-master?type=trading&year=2022",
+    "file": "sources/nse_holiday_master/trading_2022.json",
+    "sha256": "f5961755497213f0cddef0c7ebf5bf8fd944dbf34f5f7899bf98170a04183dd9"
+   },
+   {
+    "url": "https://www.nseindia.com/api/holiday-master?type=trading&year=2023",
+    "file": "sources/nse_holiday_master/trading_2023.json",
+    "sha256": "d8004fa831be3d5b36a9c435ba9764496b05c3d3ae7293fb017c72727f5411a9"
+   },
+   {
+    "url": "https://www.nseindia.com/api/holiday-master?type=trading&year=2024",
+    "file": "sources/nse_holiday_master/trading_2024.json",
+    "sha256": "c4ba325c655f5701a9f7e40819bbfeaea59be75d73ef74145656603684210742"
+   },
+   {
+    "url": "https://www.nseindia.com/api/holiday-master?type=trading&year=2025",
+    "file": "sources/nse_holiday_master/trading_2025.json",
+    "sha256": "0ab0dda6136737c8dba9fd08a5b17f34a9bed8eacb637fe3de48c38f111a87a8"
+   },
+   {
+    "url": "https://www.nseindia.com/api/holiday-master?type=trading&year=2026",
+    "file": "sources/nse_holiday_master/trading_2026.json",
+    "sha256": "557b9abf5384cf85471f7da85d40c25aaa922266e01957c89aa10184c3851486"
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-01-2011&toDate=31-01-2011",
+    "rows": 209
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-02-2011&toDate=28-02-2011",
+    "rows": 230
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-03-2011&toDate=31-03-2011",
+    "rows": 288
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-04-2011&toDate=30-04-2011",
+    "rows": 230
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-05-2011&toDate=31-05-2011",
+    "rows": 295
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-06-2011&toDate=30-06-2011",
+    "rows": 315
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-07-2011&toDate=31-07-2011",
+    "rows": 240
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-08-2011&toDate=31-08-2011",
+    "rows": 278
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-09-2011&toDate=30-09-2011",
+    "rows": 278
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-10-2011&toDate=31-10-2011",
+    "rows": 234
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-11-2011&toDate=30-11-2011",
+    "rows": 201
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-12-2011&toDate=31-12-2011",
+    "rows": 238
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-01-2012&toDate=31-01-2012",
+    "rows": 214
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-02-2012&toDate=29-02-2012",
+    "rows": 247
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-03-2012&toDate=31-03-2012",
+    "rows": 285
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-04-2012&toDate=30-04-2012",
+    "rows": 206
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-05-2012&toDate=31-05-2012",
+    "rows": 237
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-06-2012&toDate=30-06-2012",
+    "rows": 261
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-07-2012&toDate=31-07-2012",
+    "rows": 229
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-08-2012&toDate=31-08-2012",
+    "rows": 211
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-09-2012&toDate=30-09-2012",
+    "rows": 214
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-10-2012&toDate=31-10-2012",
+    "rows": 232
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-11-2012&toDate=30-11-2012",
+    "rows": 179
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-12-2012&toDate=31-12-2012",
+    "rows": 231
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-01-2013&toDate=31-01-2013",
+    "rows": 208
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-02-2013&toDate=28-02-2013",
+    "rows": 199
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-03-2013&toDate=31-03-2013",
+    "rows": 226
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-04-2013&toDate=30-04-2013",
+    "rows": 230
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-05-2013&toDate=31-05-2013",
+    "rows": 276
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-06-2013&toDate=30-06-2013",
+    "rows": 200
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-07-2013&toDate=31-07-2013",
+    "rows": 263
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-08-2013&toDate=31-08-2013",
+    "rows": 275
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-09-2013&toDate=30-09-2013",
+    "rows": 283
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-10-2013&toDate=31-10-2013",
+    "rows": 284
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-11-2013&toDate=30-11-2013",
+    "rows": 254
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-12-2013&toDate=31-12-2013",
+    "rows": 315
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-01-2014&toDate=31-01-2014",
+    "rows": 305
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-02-2014&toDate=28-02-2014",
+    "rows": 298
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-03-2014&toDate=31-03-2014",
+    "rows": 324
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-04-2014&toDate=30-04-2014",
+    "rows": 259
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-05-2014&toDate=31-05-2014",
+    "rows": 258
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-06-2014&toDate=30-06-2014",
+    "rows": 215
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-07-2014&toDate=31-07-2014",
+    "rows": 224
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-08-2014&toDate=31-08-2014",
+    "rows": 224
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-09-2014&toDate=30-09-2014",
+    "rows": 265
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-10-2014&toDate=31-10-2014",
+    "rows": 232
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-11-2014&toDate=30-11-2014",
+    "rows": 264
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-12-2014&toDate=31-12-2014",
+    "rows": 310
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-01-2015&toDate=31-01-2015",
+    "rows": 230
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-02-2015&toDate=28-02-2015",
+    "rows": 264
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-03-2015&toDate=31-03-2015",
+    "rows": 347
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-04-2015&toDate=30-04-2015",
+    "rows": 276
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-05-2015&toDate=31-05-2015",
+    "rows": 245
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-06-2015&toDate=30-06-2015",
+    "rows": 291
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-07-2015&toDate=31-07-2015",
+    "rows": 271
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-08-2015&toDate=31-08-2015",
+    "rows": 250
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-09-2015&toDate=30-09-2015",
+    "rows": 217
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-10-2015&toDate=31-10-2015",
+    "rows": 199
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-11-2015&toDate=30-11-2015",
+    "rows": 199
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-12-2015&toDate=31-12-2015",
+    "rows": 240
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-01-2016&toDate=31-01-2016",
+    "rows": 170
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-02-2016&toDate=29-02-2016",
+    "rows": 200
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-03-2016&toDate=31-03-2016",
+    "rows": 286
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-04-2016&toDate=30-04-2016",
+    "rows": 161
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-05-2016&toDate=31-05-2016",
+    "rows": 195
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-06-2016&toDate=30-06-2016",
+    "rows": 225
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-07-2016&toDate=31-07-2016",
+    "rows": 196
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-08-2016&toDate=31-08-2016",
+    "rows": 224
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-09-2016&toDate=30-09-2016",
+    "rows": 213
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-10-2016&toDate=31-10-2016",
+    "rows": 222
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-11-2016&toDate=30-11-2016",
+    "rows": 196
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-12-2016&toDate=31-12-2016",
+    "rows": 205
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-01-2017&toDate=31-01-2017",
+    "rows": 166
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-02-2017&toDate=28-02-2017",
+    "rows": 199
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-03-2017&toDate=31-03-2017",
+    "rows": 271
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-04-2017&toDate=30-04-2017",
+    "rows": 232
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-05-2017&toDate=31-05-2017",
+    "rows": 247
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-06-2017&toDate=30-06-2017",
+    "rows": 261
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-07-2017&toDate=31-07-2017",
+    "rows": 242
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-08-2017&toDate=31-08-2017",
+    "rows": 213
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-09-2017&toDate=30-09-2017",
+    "rows": 285
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-10-2017&toDate=31-10-2017",
+    "rows": 236
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-11-2017&toDate=30-11-2017",
+    "rows": 221
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-12-2017&toDate=31-12-2017",
+    "rows": 237
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-01-2018&toDate=31-01-2018",
+    "rows": 245
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-02-2018&toDate=28-02-2018",
+    "rows": 218
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-03-2018&toDate=31-03-2018",
+    "rows": 325
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-04-2018&toDate=30-04-2018",
+    "rows": 313
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-05-2018&toDate=31-05-2018",
+    "rows": 237
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-06-2018&toDate=30-06-2018",
+    "rows": 330
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-07-2018&toDate=31-07-2018",
+    "rows": 294
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-08-2018&toDate=31-08-2018",
+    "rows": 319
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-09-2018&toDate=30-09-2018",
+    "rows": 265
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-10-2018&toDate=31-10-2018",
+    "rows": 321
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-11-2018&toDate=30-11-2018",
+    "rows": 259
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-12-2018&toDate=31-12-2018",
+    "rows": 266
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-01-2019&toDate=31-01-2019",
+    "rows": 280
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-02-2019&toDate=28-02-2019",
+    "rows": 250
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-03-2019&toDate=31-03-2019",
+    "rows": 281
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-04-2019&toDate=30-04-2019",
+    "rows": 290
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-05-2019&toDate=31-05-2019",
+    "rows": 327
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-06-2019&toDate=30-06-2019",
+    "rows": 307
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-07-2019&toDate=31-07-2019",
+    "rows": 331
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-08-2019&toDate=31-08-2019",
+    "rows": 320
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-09-2019&toDate=30-09-2019",
+    "rows": 276
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-10-2019&toDate=31-10-2019",
+    "rows": 324
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-11-2019&toDate=30-11-2019",
+    "rows": 257
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-12-2019&toDate=31-12-2019",
+    "rows": 328
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-01-2020&toDate=31-01-2020",
+    "rows": 380
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-02-2020&toDate=29-02-2020",
+    "rows": 352
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-03-2020&toDate=31-03-2020",
+    "rows": 366
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-04-2020&toDate=30-04-2020",
+    "rows": 264
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-05-2020&toDate=31-05-2020",
+    "rows": 268
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-06-2020&toDate=30-06-2020",
+    "rows": 358
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-07-2020&toDate=31-07-2020",
+    "rows": 403
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-08-2020&toDate=31-08-2020",
+    "rows": 348
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-09-2020&toDate=30-09-2020",
+    "rows": 410
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-10-2020&toDate=31-10-2020",
+    "rows": 376
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-11-2020&toDate=30-11-2020",
+    "rows": 312
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-12-2020&toDate=31-12-2020",
+    "rows": 400
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-01-2021&toDate=31-01-2021",
+    "rows": 330
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-02-2021&toDate=28-02-2021",
+    "rows": 356
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-03-2021&toDate=31-03-2021",
+    "rows": 419
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-04-2021&toDate=30-04-2021",
+    "rows": 325
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-05-2021&toDate=31-05-2021",
+    "rows": 330
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-06-2021&toDate=30-06-2021",
+    "rows": 389
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-07-2021&toDate=31-07-2021",
+    "rows": 363
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-08-2021&toDate=31-08-2021",
+    "rows": 365
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-09-2021&toDate=30-09-2021",
+    "rows": 383
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-10-2021&toDate=31-10-2021",
+    "rows": 419
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-11-2021&toDate=30-11-2021",
+    "rows": 332
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-12-2021&toDate=31-12-2021",
+    "rows": 457
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-01-2022&toDate=31-01-2022",
+    "rows": 370
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-02-2022&toDate=28-02-2022",
+    "rows": 311
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-03-2022&toDate=31-03-2022",
+    "rows": 430
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-04-2022&toDate=30-04-2022",
+    "rows": 339
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-05-2022&toDate=31-05-2022",
+    "rows": 348
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-06-2022&toDate=30-06-2022",
+    "rows": 418
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-07-2022&toDate=31-07-2022",
+    "rows": 368
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-08-2022&toDate=31-08-2022",
+    "rows": 407
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-09-2022&toDate=30-09-2022",
+    "rows": 528
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-10-2022&toDate=31-10-2022",
+    "rows": 389
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-11-2022&toDate=30-11-2022",
+    "rows": 470
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-12-2022&toDate=31-12-2022",
+    "rows": 499
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-01-2023&toDate=31-01-2023",
+    "rows": 429
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-02-2023&toDate=28-02-2023",
+    "rows": 433
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-03-2023&toDate=31-03-2023",
+    "rows": 497
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-04-2023&toDate=30-04-2023",
+    "rows": 360
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-05-2023&toDate=31-05-2023",
+    "rows": 414
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-06-2023&toDate=30-06-2023",
+    "rows": 550
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-07-2023&toDate=31-07-2023",
+    "rows": 447
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-08-2023&toDate=31-08-2023",
+    "rows": 475
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-09-2023&toDate=30-09-2023",
+    "rows": 607
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-10-2023&toDate=31-10-2023",
+    "rows": 559
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-11-2023&toDate=30-11-2023",
+    "rows": 488
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-12-2023&toDate=31-12-2023",
+    "rows": 563
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-01-2024&toDate=31-01-2024",
+    "rows": 505
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-02-2024&toDate=29-02-2024",
+    "rows": 558
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-03-2024&toDate=31-03-2024",
+    "rows": 533
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-04-2024&toDate=30-04-2024",
+    "rows": 557
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-05-2024&toDate=31-05-2024",
+    "rows": 542
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-06-2024&toDate=30-06-2024",
+    "rows": 457
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-07-2024&toDate=31-07-2024",
+    "rows": 580
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-08-2024&toDate=31-08-2024",
+    "rows": 582
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-09-2024&toDate=30-09-2024",
+    "rows": 698
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-10-2024&toDate=31-10-2024",
+    "rows": 665
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-11-2024&toDate=30-11-2024",
+    "rows": 498
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-12-2024&toDate=31-12-2024",
+    "rows": 642
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-01-2025&toDate=31-01-2025",
+    "rows": 543
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-02-2025&toDate=28-02-2025",
+    "rows": 500
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-03-2025&toDate=31-03-2025",
+    "rows": 505
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-04-2025&toDate=30-04-2025",
+    "rows": 513
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-05-2025&toDate=31-05-2025",
+    "rows": 550
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-06-2025&toDate=30-06-2025",
+    "rows": 631
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-07-2025&toDate=31-07-2025",
+    "rows": 687
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-08-2025&toDate=31-08-2025",
+    "rows": 568
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-09-2025&toDate=30-09-2025",
+    "rows": 714
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-10-2025&toDate=31-10-2025",
+    "rows": 589
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-11-2025&toDate=30-11-2025",
+    "rows": 522
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-12-2025&toDate=31-12-2025",
+    "rows": 645
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-01-2026&toDate=31-01-2026",
+    "rows": 502
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-02-2026&toDate=28-02-2026",
+    "rows": 584
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-03-2026&toDate=31-03-2026",
+    "rows": 558
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-04-2026&toDate=30-04-2026",
+    "rows": 578
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-05-2026&toDate=31-05-2026",
+    "rows": 530
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-06-2026&toDate=30-06-2026",
+    "rows": 555
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-07-2026&toDate=31-07-2026",
+    "rows": 651
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-08-2026&toDate=31-08-2026",
+    "rows": 638
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-09-2026&toDate=30-09-2026",
+    "rows": 700
+   },
+   {
+    "url": "https://www.nseindia.com/api/circulars?fromDate=01-10-2026&toDate=02-10-2026",
+    "rows": 50
+   },
+   {
+    "file": "sources/nse_circulars/session_circulars.json",
+    "sha256": "b5ab4f6e36a942619ed502ce74c6c7cd7c9f7de5975d7b0945a77c92be40019d",
+    "kept": 1527
+   },
+   {
+    "url": "https://nsearchives.nseindia.com/content/circulars/CMTR19187.pdf",
+    "file": "sources/nse_circulars/pdf/CMTR19187.pdf",
+    "sha256": "b5639b0f3af5c7597f78bfe29546cc4c7ff56b2962dcd79eb54f4cd4e11904d5"
+   },
+   {
+    "url": "https://nsearchives.nseindia.com/content/circulars/CMTR19734.pdf",
+    "file": "sources/nse_circulars/pdf/CMTR19734.pdf",
+    "sha256": "a8161ca8cb3c350de045b4ee234ebaec09573aa2232630a54792354184cd14a2"
+   },
+   {
+    "url": "https://nsearchives.nseindia.com/content/circulars/CMTR20063.pdf",
+    "file": "sources/nse_circulars/pdf/CMTR20063.pdf",
+    "sha256": "c7e20a561de073efb56f0dfd7a2274460e02f5d4ca424540a41b2bcc93921f2a"
+   },
+   {
+    "url": "https://nsearchives.nseindia.com/content/circulars/CMTR20561.pdf",
+    "file": "sources/nse_circulars/pdf/CMTR20561.pdf",
+    "sha256": "acd086a1d5eeecb7b3061d03b363b1cbbcdc316a2f70851e0d34bb9a6b710641"
+   },
+   {
+    "url": "https://nsearchives.nseindia.com/content/circulars/CMTR21547.pdf",
+    "file": "sources/nse_circulars/pdf/CMTR21547.pdf",
+    "sha256": "acf95b5943bb5ad99dbad95df40bbd0df25a52edf6789baed6a5f7b95f38a25d"
+   },
+   {
+    "url": "https://nsearchives.nseindia.com/content/circulars/CMTR22027.pdf",
+    "file": "sources/nse_circulars/pdf/CMTR22027.pdf",
+    "sha256": "cecbadc1bb0904efe41025d5fe573115d1b8ccf495de0206a67828f35efeb050"
+   },
+   {
+    "url": "https://nsearchives.nseindia.com/content/circulars/CMTR22063.pdf",
+    "file": "sources/nse_circulars/pdf/CMTR22063.pdf",
+    "sha256": "1664b538e1ef6e058888da08858364ccfe2b6f22bfef38ae1f36a3f60681149f"
+   },
+   {
+    "url": "https://nsearchives.nseindia.com/content/circulars/CMTR23302.pdf",
+    "file": "sources/nse_circulars/pdf/CMTR23302.pdf",
+    "sha256": "71445678dd4452b8ef468b4585ae6e82aeb69f5fa81a2617059e0470264733f0"
+   },
+   {
+    "url": "https://nsearchives.nseindia.com/content/circulars/CMTR24773.pdf",
+    "file": "sources/nse_circulars/pdf/CMTR24773.pdf",
+    "sha256": "6292ce71f08cff22b7478de7917fe49de4422adba3a09e89f78b38c7d20afaf3"
+   },
+   {
+    "url": "https://nsearchives.nseindia.com/content/circulars/CMTR26045.pdf",
+    "file": "sources/nse_circulars/pdf/CMTR26045.pdf",
+    "sha256": "29c0eb8dad67a30944b8df6d6124f679811d9864ca30dd468b3742bf1fa28ca4"
+   },
+   {
+    "url": "https://nsearchives.nseindia.com/content/circulars/CMTR27779.pdf",
+    "file": "sources/nse_circulars/pdf/CMTR27779.pdf",
+    "sha256": "1e77a9a4e2730c78c22ca5e1a8698d0e4fb46d6412749df86b90ce4eb9123430"
+   },
+   {
+    "url": "https://nsearchives.nseindia.com/content/circulars/CMTR28939.pdf",
+    "file": "sources/nse_circulars/pdf/CMTR28939.pdf",
+    "sha256": "0ac90d2a3898d3df90160e5f0adf2413088a06aaeef2ebc627c4228fe8407d2c"
+   },
+   {
+    "url": "https://nsearchives.nseindia.com/content/circulars/CMTR31047.pdf",
+    "file": "sources/nse_circulars/pdf/CMTR31047.pdf",
+    "sha256": "060afe66d01e7d03098254bbd6fe772f485184684c3453e411dceb3339bd169d"
+   },
+   {
+    "url": "https://nsearchives.nseindia.com/content/circulars/CMTR33424.pdf",
+    "file": "sources/nse_circulars/pdf/CMTR33424.pdf",
+    "sha256": "9e11622e7acd164c68ef56d0eae60014617b47747c9c4de7545399fd98ad4dfc"
+   },
+   {
+    "url": "https://nsearchives.nseindia.com/content/circulars/CMTR35993.pdf",
+    "file": "sources/nse_circulars/pdf/CMTR35993.pdf",
+    "sha256": "1419ab5d8070a2cd9896859d7ad8bebee69fedc2bb0200b1260a0eb41db5804c"
+   },
+   {
+    "url": "https://nsearchives.nseindia.com/content/circulars/CMTR39216.pdf",
+    "file": "sources/nse_circulars/pdf/CMTR39216.pdf",
+    "sha256": "d68c2e0d4c6160c5ed75533dceb48a4084ecd8d2dea71b6dadee73a07ccb6438"
+   },
+   {
+    "url": "https://nsearchives.nseindia.com/content/circulars/CMTR42403.pdf",
+    "file": "sources/nse_circulars/pdf/CMTR42403.pdf",
+    "sha256": "9a4e8e80a4342560d52491e889fdae4d8384fa8e19f910fa59395269aabe4097"
+   },
+   {
+    "url": "https://nsearchives.nseindia.com/content/circulars/CMTR43290.pdf",
+    "file": "sources/nse_circulars/pdf/CMTR43290.pdf",
+    "sha256": "2f667503047c3399bc7c013271dd64b3119bc532b0cbb6d988d4d9a6998da4a9"
+   },
+   {
+    "url": "https://nsearchives.nseindia.com/content/circulars/CMTR46230.pdf",
+    "file": "sources/nse_circulars/pdf/CMTR46230.pdf",
+    "sha256": "dc545416272a0da2d7465e66b879f884fa6c49bdead5b9e0cc5ae15d1e5672be"
+   },
+   {
+    "url": "https://nsearchives.nseindia.com/content/circulars/CMTR50050.pdf",
+    "file": "sources/nse_circulars/pdf/CMTR50050.pdf",
+    "sha256": "5ac9d2034e5dc3bb22632fd1b0e46a2acfae49f71e1126897e7e13bcd52d6803"
+   },
+   {
+    "url": "https://nsearchives.nseindia.com/content/circulars/CMTR54023.pdf",
+    "file": "sources/nse_circulars/pdf/CMTR54023.pdf",
+    "sha256": "01e579eac8e2dd4a870a9ebc9f08d60bc26fae28d0d35cf58891bf2a2964e0c7"
+   },
+   {
+    "url": "https://nsearchives.nseindia.com/content/circulars/CMTR59124.pdf",
+    "file": "sources/nse_circulars/pdf/CMTR59124.pdf",
+    "sha256": "09f80430f3ec95aeaeeb98938124273892abccc38a7aaa440b38a6426b428c21"
+   },
+   {
+    "url": "https://nsearchives.nseindia.com/content/circulars/CMTR64628.pdf",
+    "file": "sources/nse_circulars/pdf/CMTR64628.pdf",
+    "sha256": "dd1b8bc34a4b3c2900002341c41e4b8f165af862a74fd2a5bfb1355b0afec4a8"
+   },
+   {
+    "url": "https://nsearchives.nseindia.com/content/circulars/CMTR65729.pdf",
+    "file": "sources/nse_circulars/pdf/CMTR65729.pdf",
+    "sha256": "84d12e29654e75f77baa0b9064a26f6d0e4c3ff58e64df14e01247a0c15a91be"
+   },
+   {
+    "url": "https://nsearchives.nseindia.com/content/circulars/CMTR70319.pdf",
+    "file": "sources/nse_circulars/pdf/CMTR70319.pdf",
+    "sha256": "19b7d88003cb05eb8c6abdc8d1bfad5df821a17e4f9ae36f75e327a68a48d258"
+   },
+   {
+    "url": "https://nsearchives.nseindia.com/content/circulars/CMTR72349.pdf",
+    "file": "sources/nse_circulars/pdf/CMTR72349.pdf",
+    "sha256": "70458f7b8126f47584d4bc402a78dde357e42dbebaa5d53cfce0c70c82dabfc3"
+   },
+   {
+    "url": "https://nsearchives.nseindia.com/content/circulars/MSD59999.pdf",
+    "file": "sources/nse_circulars/pdf/MSD59999.pdf",
+    "sha256": "614b965d1152ed636052e983a01206117ff6af224365348fa00b7165a6baa243"
+   },
+   {
+    "url": "https://nsearchives.nseindia.com/content/circulars/MSD60340.pdf",
+    "file": "sources/nse_circulars/pdf/MSD60340.pdf",
+    "sha256": "6d165b8d132b7b430ae79032356ea331fab3d852192b74df4bc9e56722f54cdd"
+   },
+   {
+    "url": "https://nsearchives.nseindia.com/content/circulars/MSD60677.pdf",
+    "file": "sources/nse_circulars/pdf/MSD60677.pdf",
+    "sha256": "04b67f39314bae95672d86497c28cbed6cea698ad6f029ba47ef74feb9f6da91"
+   },
+   {
+    "url": "https://nsearchives.nseindia.com/content/circulars/MSD61893.pdf",
+    "file": "sources/nse_circulars/pdf/MSD61893.pdf",
+    "sha256": "2483f60d67c34231d6fd25024cf5767c031b234196a7a475535d434cd4e758c8"
+   },
+   {
+    "vendor": "NSE_INDEX|Nifty 500",
+    "file": "sources/vendor_bars/nifty500.json",
+    "sha256": "28e18ecd7225ab2c2aa9ac484f14139c03366e0463266e5decebef8532504a30",
+    "bars": 3903
+   },
+   {
+    "vendor": "NSE_INDEX|Nifty 50",
+    "file": "sources/vendor_bars/nifty50.json",
+    "sha256": "d31638d8f17b324c37bf0996aa526897a92dde32871dfd5b3957654fa5255ee4",
+    "bars": 3904
+   },
+   {
+    "vendor": "NSE_EQ|INE002A01018",
+    "file": "sources/vendor_bars/reliance.json",
+    "sha256": "dde2b7ebde7953f46e9c2f20a7d99fb6c18dea550230047f0470d489688dbac5",
+    "bars": 3904
+   }
+  ]
+ }
+]

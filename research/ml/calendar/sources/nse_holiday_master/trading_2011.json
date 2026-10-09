@@ -1,0 +1,1056 @@
+{
+ "CBM": [
+  {
+   "tradingDate": "26-Jan-2011",
+   "weekDay": "Wednesday",
+   "description": "Republic Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "16-Feb-2011",
+   "weekDay": "Wednesday",
+   "description": "Id-E-Milad",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "02-Mar-2011",
+   "weekDay": "Wednesday",
+   "description": "Mahashivratri",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-Apr-2011",
+   "weekDay": "Friday",
+   "description": "Annual Closing of Banks",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "04-Apr-2011",
+   "weekDay": "Monday",
+   "description": "Gudi Padwa",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "12-Apr-2011",
+   "weekDay": "Tuesday",
+   "description": "Ram Navmi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "14-Apr-2011",
+   "weekDay": "Thursday",
+   "description": "Dr. Babasaheb Ambedkar Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "22-Apr-2011",
+   "weekDay": "Friday",
+   "description": "Good Friday",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "17-May-2011",
+   "weekDay": "Tuesday",
+   "description": "Buddha Pournima",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "15-Aug-2011",
+   "weekDay": "Monday",
+   "description": "Independence Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "19-Aug-2011",
+   "weekDay": "Friday",
+   "description": "Parsi New Year",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "31-Aug-2011",
+   "weekDay": "Wednesday",
+   "description": "Ramzan ID",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-Sep-2011",
+   "weekDay": "Thursday",
+   "description": "Ganesh Chaturthi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "06-Oct-2011",
+   "weekDay": "Thursday",
+   "description": "Dussera",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "26-Oct-2011",
+   "weekDay": "Wednesday",
+   "description": "Diwali (Laxmi Pujan)",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "27-Oct-2011",
+   "weekDay": "Thursday",
+   "description": "Diwali (Balipratipada)",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "07-Nov-2011",
+   "weekDay": "Monday",
+   "description": "Bakri Id",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "10-Nov-2011",
+   "weekDay": "Thursday",
+   "description": "Gurunanak Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "06-Dec-2011",
+   "weekDay": "Tuesday",
+   "description": "Moharram",
+   "morning_session": null,
+   "evening_session": null
+  }
+ ],
+ "CD": [
+  {
+   "tradingDate": "26-Jan-2011",
+   "weekDay": "Wednesday",
+   "description": "Republic Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "16-Feb-2011",
+   "weekDay": "Wednesday",
+   "description": "Id-E-Milad",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "02-Mar-2011",
+   "weekDay": "Wednesday",
+   "description": "Mahashivratri",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-Apr-2011",
+   "weekDay": "Friday",
+   "description": "Annual Closing of Banks",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "04-Apr-2011",
+   "weekDay": "Monday",
+   "description": "Gudi Padwa",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "12-Apr-2011",
+   "weekDay": "Tuesday",
+   "description": "Ram Navmi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "14-Apr-2011",
+   "weekDay": "Thursday",
+   "description": "Dr. Babasaheb Ambedkar Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "22-Apr-2011",
+   "weekDay": "Friday",
+   "description": "Good Friday",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "17-May-2011",
+   "weekDay": "Tuesday",
+   "description": "Buddha Pournima",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "15-Aug-2011",
+   "weekDay": "Monday",
+   "description": "Independence Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "19-Aug-2011",
+   "weekDay": "Friday",
+   "description": "Parsi New Year",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "31-Aug-2011",
+   "weekDay": "Wednesday",
+   "description": "Ramzan ID",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-Sep-2011",
+   "weekDay": "Thursday",
+   "description": "Ganesh Chaturthi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "30-Sep-2011",
+   "weekDay": "Friday",
+   "description": "Half Yearly Closing of Banks",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "06-Oct-2011",
+   "weekDay": "Thursday",
+   "description": "Dussera",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "26-Oct-2011",
+   "weekDay": "Wednesday",
+   "description": "Diwali (Laxmi Pujan)*",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "27-Oct-2011",
+   "weekDay": "Thursday",
+   "description": "Diwali (Balipratipada)",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "07-Nov-2011",
+   "weekDay": "Monday",
+   "description": "Bakri Id",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "10-Nov-2011",
+   "weekDay": "Thursday",
+   "description": "Gurunanak Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "06-Dec-2011",
+   "weekDay": "Tuesday",
+   "description": "Moharram",
+   "morning_session": null,
+   "evening_session": null
+  }
+ ],
+ "CM": [
+  {
+   "tradingDate": "26-Jan-2011",
+   "weekDay": "Wednesday",
+   "description": "Republic Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "02-Mar-2011",
+   "weekDay": "Wednesday",
+   "description": "Mahashivratri",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "12-Apr-2011",
+   "weekDay": "Tuesday",
+   "description": "Ram Navmi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "14-Apr-2011",
+   "weekDay": "Thursday",
+   "description": "Dr. Babasaheb Ambedkar Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "22-Apr-2011",
+   "weekDay": "Friday",
+   "description": "Good Friday",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "15-Aug-2011",
+   "weekDay": "Monday",
+   "description": "Independence Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "31-Aug-2011",
+   "weekDay": "Wednesday",
+   "description": "Ramzan ID",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-Sep-2011",
+   "weekDay": "Thursday",
+   "description": "Ganesh Chaturthi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "06-Oct-2011",
+   "weekDay": "Thursday",
+   "description": "Dussera",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "26-Oct-2011",
+   "weekDay": "Wednesday",
+   "description": "Diwali (Laxmi Pujan)*",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "27-Oct-2011",
+   "weekDay": "Thursday",
+   "description": "Diwali (Balipratipada)",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "07-Nov-2011",
+   "weekDay": "Monday",
+   "description": "Bakri Id",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "10-Nov-2011",
+   "weekDay": "Thursday",
+   "description": "Gurunanak Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "06-Dec-2011",
+   "weekDay": "Tuesday",
+   "description": "Moharram",
+   "morning_session": null,
+   "evening_session": null
+  }
+ ],
+ "FO": [
+  {
+   "tradingDate": "26-Jan-2011",
+   "weekDay": "Wednesday",
+   "description": "Republic Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "02-Mar-2011",
+   "weekDay": "Wednesday",
+   "description": "Mahashivratri",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "12-Apr-2011",
+   "weekDay": "Tuesday",
+   "description": "Ram Navmi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "14-Apr-2011",
+   "weekDay": "Thursday",
+   "description": "Dr. Babasaheb Ambedkar Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "22-Apr-2011",
+   "weekDay": "Friday",
+   "description": "Good Friday",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "15-Aug-2011",
+   "weekDay": "Monday",
+   "description": "Independence Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "31-Aug-2011",
+   "weekDay": "Wednesday",
+   "description": "Ramzan ID",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-Sep-2011",
+   "weekDay": "Thursday",
+   "description": "Ganesh Chaturthi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "06-Oct-2011",
+   "weekDay": "Thursday",
+   "description": "Dussera",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "26-Oct-2011",
+   "weekDay": "Wednesday",
+   "description": "Diwali (Laxmi Pujan)*",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "27-Oct-2011",
+   "weekDay": "Thursday",
+   "description": "Diwali (Balipratipada)",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "07-Nov-2011",
+   "weekDay": "Monday",
+   "description": "Bakri Id",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "10-Nov-2011",
+   "weekDay": "Thursday",
+   "description": "Gurunanak Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "06-Dec-2011",
+   "weekDay": "Tuesday",
+   "description": "Moharram",
+   "morning_session": null,
+   "evening_session": null
+  }
+ ],
+ "IRD": [
+  {
+   "tradingDate": "26-Jan-2011",
+   "weekDay": "Wednesday",
+   "description": "Republic Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "16-Feb-2011",
+   "weekDay": "Wednesday",
+   "description": "Id-E-Milad",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "02-Mar-2011",
+   "weekDay": "Wednesday",
+   "description": "Mahashivratri",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-Apr-2011",
+   "weekDay": "Friday",
+   "description": "Annual Closing of Banks",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "04-Apr-2011",
+   "weekDay": "Monday",
+   "description": "Gudi Padwa",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "12-Apr-2011",
+   "weekDay": "Tuesday",
+   "description": "Ram Navmi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "14-Apr-2011",
+   "weekDay": "Thursday",
+   "description": "Dr. Babasaheb Ambedkar Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "22-Apr-2011",
+   "weekDay": "Friday",
+   "description": "Good Friday",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "17-May-2011",
+   "weekDay": "Tuesday",
+   "description": "Buddha Pournima",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "15-Aug-2011",
+   "weekDay": "Monday",
+   "description": "Independence Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "19-Aug-2011",
+   "weekDay": "Friday",
+   "description": "Parsi New Year",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "31-Aug-2011",
+   "weekDay": "Wednesday",
+   "description": "Ramzan ID",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-Sep-2011",
+   "weekDay": "Thursday",
+   "description": "Ganesh Chaturthi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "30-Sep-2011",
+   "weekDay": "Friday",
+   "description": "Half Yearly Closing of Banks",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "06-Oct-2011",
+   "weekDay": "Thursday",
+   "description": "Dussera",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "26-Oct-2011",
+   "weekDay": "Wednesday",
+   "description": "Diwali (Laxmi Pujan)*",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "27-Oct-2011",
+   "weekDay": "Thursday",
+   "description": "Diwali (Balipratipada)",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "07-Nov-2011",
+   "weekDay": "Monday",
+   "description": "Bakri Id",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "10-Nov-2011",
+   "weekDay": "Thursday",
+   "description": "Gurunanak Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "06-Dec-2011",
+   "weekDay": "Tuesday",
+   "description": "Moharram",
+   "morning_session": null,
+   "evening_session": null
+  }
+ ],
+ "MF": [
+  {
+   "tradingDate": "26-Jan-2011",
+   "weekDay": "Wednesday",
+   "description": "Republic Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "02-Mar-2011",
+   "weekDay": "Wednesday",
+   "description": "Mahashivratri",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "12-Apr-2011",
+   "weekDay": "Tuesday",
+   "description": "Ram Navmi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "14-Apr-2011",
+   "weekDay": "Thursday",
+   "description": "Dr. Babasaheb Ambedkar Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "22-Apr-2011",
+   "weekDay": "Friday",
+   "description": "Good Friday",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "15-Aug-2011",
+   "weekDay": "Monday",
+   "description": "Independence Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "31-Aug-2011",
+   "weekDay": "Wednesday",
+   "description": "Ramzan ID",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-Sep-2011",
+   "weekDay": "Thursday",
+   "description": "Ganesh Chaturthi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "06-Oct-2011",
+   "weekDay": "Thursday",
+   "description": "Dussera",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "26-Oct-2011",
+   "weekDay": "Wednesday",
+   "description": "Diwali (Laxmi Pujan)*",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "27-Oct-2011",
+   "weekDay": "Thursday",
+   "description": "Diwali (Balipratipada)",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "07-Nov-2011",
+   "weekDay": "Monday",
+   "description": "Bakri Id",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "10-Nov-2011",
+   "weekDay": "Thursday",
+   "description": "Gurunanak Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "06-Dec-2011",
+   "weekDay": "Tuesday",
+   "description": "Moharram",
+   "morning_session": null,
+   "evening_session": null
+  }
+ ],
+ "RDM": [
+  {
+   "tradingDate": "26-Jan-2011",
+   "weekDay": "Wednesday",
+   "description": "Republic Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "02-Mar-2011",
+   "weekDay": "Wednesday",
+   "description": "Mahashivratri",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "12-Apr-2011",
+   "weekDay": "Tuesday",
+   "description": "Ram Navmi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "14-Apr-2011",
+   "weekDay": "Thursday",
+   "description": "Dr. Babasaheb Ambedkar Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "22-Apr-2011",
+   "weekDay": "Friday",
+   "description": "Good Friday",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "15-Aug-2011",
+   "weekDay": "Monday",
+   "description": "Independence Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "31-Aug-2011",
+   "weekDay": "Wednesday",
+   "description": "Ramzan ID",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-Sep-2011",
+   "weekDay": "Thursday",
+   "description": "Ganesh Chaturthi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "06-Oct-2011",
+   "weekDay": "Thursday",
+   "description": "Dussera",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "26-Oct-2011",
+   "weekDay": "Wednesday",
+   "description": "Diwali (Laxmi Pujan)*",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "27-Oct-2011",
+   "weekDay": "Thursday",
+   "description": "Diwali (Balipratipada)",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "07-Nov-2011",
+   "weekDay": "Monday",
+   "description": "Bakri Id",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "10-Nov-2011",
+   "weekDay": "Thursday",
+   "description": "Gurunanak Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "06-Dec-2011",
+   "weekDay": "Tuesday",
+   "description": "Moharram",
+   "morning_session": null,
+   "evening_session": null
+  }
+ ],
+ "SLBS": [
+  {
+   "tradingDate": "26-Jan-2011",
+   "weekDay": "Wednesday",
+   "description": "Republic Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "02-Mar-2011",
+   "weekDay": "Wednesday",
+   "description": "Mahashivratri",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "12-Apr-2011",
+   "weekDay": "Tuesday",
+   "description": "Ram Navmi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "14-Apr-2011",
+   "weekDay": "Thursday",
+   "description": "Dr. Babasaheb Ambedkar Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "22-Apr-2011",
+   "weekDay": "Friday",
+   "description": "Good Friday",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "15-Aug-2011",
+   "weekDay": "Monday",
+   "description": "Independence Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "31-Aug-2011",
+   "weekDay": "Wednesday",
+   "description": "Ramzan ID",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-Sep-2011",
+   "weekDay": "Thursday",
+   "description": "Ganesh Chaturthi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "06-Oct-2011",
+   "weekDay": "Thursday",
+   "description": "Dussera",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "26-Oct-2011",
+   "weekDay": "Wednesday",
+   "description": "Diwali (Laxmi Pujan)*",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "27-Oct-2011",
+   "weekDay": "Thursday",
+   "description": "Diwali (Balipratipada)",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "07-Nov-2011",
+   "weekDay": "Monday",
+   "description": "Bakri Id",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "10-Nov-2011",
+   "weekDay": "Thursday",
+   "description": "Gurunanak Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "06-Dec-2011",
+   "weekDay": "Tuesday",
+   "description": "Moharram",
+   "morning_session": null,
+   "evening_session": null
+  }
+ ],
+ "WDM": [
+  {
+   "tradingDate": "26-Jan-2011",
+   "weekDay": "Wednesday",
+   "description": "Republic Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "16-Feb-2011",
+   "weekDay": "Wednesday",
+   "description": "Id-E-Milad",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "02-Mar-2011",
+   "weekDay": "Wednesday",
+   "description": "Mahashivratri",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-Apr-2011",
+   "weekDay": "Friday",
+   "description": "Annual Closing of Banks",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "04-Apr-2011",
+   "weekDay": "Monday",
+   "description": "Gudi Padwa",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "12-Apr-2011",
+   "weekDay": "Tuesday",
+   "description": "Ram Navmi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "14-Apr-2011",
+   "weekDay": "Thursday",
+   "description": "Dr. Babasaheb Ambedkar Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "22-Apr-2011",
+   "weekDay": "Friday",
+   "description": "Good Friday",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "17-May-2011",
+   "weekDay": "Tuesday",
+   "description": "Buddha Pournima",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "15-Aug-2011",
+   "weekDay": "Monday",
+   "description": "Independence Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "19-Aug-2011",
+   "weekDay": "Friday",
+   "description": "Parsi New Year",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "31-Aug-2011",
+   "weekDay": "Wednesday",
+   "description": "Ramzan ID",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-Sep-2011",
+   "weekDay": "Thursday",
+   "description": "Ganesh Chaturthi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "06-Oct-2011",
+   "weekDay": "Thursday",
+   "description": "Dussera",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "26-Oct-2011",
+   "weekDay": "Wednesday",
+   "description": "Diwali (Laxmi Pujan)",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "27-Oct-2011",
+   "weekDay": "Thursday",
+   "description": "Diwali (Balipratipada)",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "07-Nov-2011",
+   "weekDay": "Monday",
+   "description": "Bakri Id",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "10-Nov-2011",
+   "weekDay": "Thursday",
+   "description": "Gurunanak Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "06-Dec-2011",
+   "weekDay": "Tuesday",
+   "description": "Moharram",
+   "morning_session": null,
+   "evening_session": null
+  }
+ ]
+}

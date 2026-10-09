@@ -10,6 +10,12 @@ Explorer's data source: it always reports scoring_status = "BLOCKED_B2"
 and never a rank or composite score, because B2 scoring is not
 implemented anywhere in equity_intel (see
 equity_intel/contracts/scan_run.py).
+
+The dashboard's extra views add NO routes: market breadth and data quality
+ride on /summary, sector strength on /sectors, chart bars and provenance on
+/stock/<symbol>, and the scanner's sector/RSI/RVOL/high-distance filters and
+sorting are optional query parameters on /candidates. All of it is
+descriptive counting of stored E4 values -- no rank, score, band or signal.
 """
 from __future__ import annotations
 
@@ -19,14 +25,30 @@ import functools
 import math
 import socket
 import sys
+from datetime import datetime
 from pathlib import Path
 from typing import Optional, Union
 
 from flask import Flask, jsonify, render_template, request
 
-from dashboard import queries
+from dashboard import aggregates, exceptions, health, queries, snapshot_audit, stock_detail
+from equity_intel.config import IST
+from equity_intel.indicators.trend import exponential_moving_average
 from equity_intel.persistence import connection, db_path_guard
 from equity_intel.persistence.schema import SCHEMA_VERSION
+
+# Shown on every page (Stage 1 data-trust pages and the original /equity page).
+BANNER_TEXT = "RESEARCH / PAPER ONLY · SCORING BLOCKED (B2) · NO TRADING SIGNALS"
+
+# Demo mode only: the seeded demo dates are fixed (scripts/dashboard_demo_seed.py BAR_DATES), so an
+# OUTDATED state is expected whenever the demo is viewed after that Friday.
+DEMO_DATES_NOTE = (
+    "Demo dates are fixed: Wed 2026-09-23 to Fri 2026-09-25 (latest session Fri 2026-09-25). "
+    "An OUTDATED state is therefore expected."
+)
+
+# Shown in place of the health panel when reading the database for it fails with a database error; the error text is never shown.
+HEALTH_PANEL_UNAVAILABLE = "The health panel could not be built because the database could not be read."
 
 DEFAULT_PAGE_SIZE = 25
 MAX_PAGE_SIZE = 200
@@ -51,6 +73,16 @@ def _to_int(value, default):
         return int(value)
     except (TypeError, ValueError):
         return default
+
+
+def _to_float(value):
+    """A finite float, None when absent, ValueError when present but invalid."""
+    if value is None or value == "":
+        return None
+    parsed = float(value)  # ValueError on garbage
+    if not math.isfinite(parsed):
+        raise ValueError(f"not a finite number: {value!r}")
+    return parsed
 
 
 class _DatabaseUnavailable(Exception):
@@ -181,6 +213,15 @@ def create_app(demo: bool = False, db_path: Optional[Union[str, Path]] = None) -
     else:
         app.config["DB_PATH"] = db_path_guard.DEMO_DB_PATH if demo else db_path_guard.CANONICAL_DB_PATH
 
+    @app.context_processor
+    def _inject_banner():
+        return {"banner_text": BANNER_TEXT, "demo_dates_note": DEMO_DATES_NOTE}
+
+    def _message_page(heading, message, status=200):
+        return render_template(
+            "message.html", demo=app.config["DEMO_MODE"], heading=heading, message=message
+        ), status
+
     def _resolve_run_id(conn, requested_run_id):
         if requested_run_id:
             return requested_run_id
@@ -212,18 +253,179 @@ def create_app(demo: bool = False, db_path: Optional[Union[str, Path]] = None) -
 
         return wrapper
 
+    def _health_panel(conn):
+        """The health panel (dashboard/health.py) for the current clock: app.config["HEALTH_CLOCK"] (a callable
+        returning a datetime, set by tests) or the current IST time. Shared by the JSON route and the /equity page."""
+        clock = app.config.get("HEALTH_CLOCK")
+        now = clock() if clock is not None else datetime.now(IST)
+        return health.build(conn, now, health.read_db_file_info(app.config["DB_PATH"]))
+
     @app.get("/equity")
     def equity_page():
         db_message = None
+        health_panel = None
         try:
-            _open_checked_connection(app.config["DB_PATH"]).close()
+            conn = _open_checked_connection(app.config["DB_PATH"])
         except _DatabaseUnavailable:
             db_message = _no_scans_body(app.config["DEMO_MODE"])["message"]
         except _DatabaseVersionMismatch as exc:
             db_message = _version_mismatch_body(app.config["DEMO_MODE"], exc.found_version)["message"]
         except _DatabaseError as exc:
             db_message = _database_error_body(app.config["DEMO_MODE"], exc.detail)["message"]
-        return render_template("equity.html", demo=app.config["DEMO_MODE"], db_message=db_message)
+        else:
+            try:
+                health_panel = _health_panel(conn)
+            except conn.Error:  # sqlite3.Error via the connection (this module never imports sqlite3): only a database error is absorbed, and no exception text is shown
+                db_message = HEALTH_PANEL_UNAVAILABLE
+            finally:
+                conn.close()
+        return render_template("equity.html", demo=app.config["DEMO_MODE"], db_message=db_message, health_panel=health_panel)
+
+    @app.get("/equity/stock/<symbol>")
+    def stock_detail_page(symbol):
+        """Stage 1 Stock Detail page: stored values only, no chart, no score."""
+        try:
+            conn = _open_checked_connection(app.config["DB_PATH"])
+        except _DatabaseUnavailable:
+            return _message_page("No scans yet", _no_scans_body(app.config["DEMO_MODE"])["message"])
+        except _DatabaseVersionMismatch as exc:
+            return _message_page("Database version mismatch",
+                                 _version_mismatch_body(app.config["DEMO_MODE"], exc.found_version)["message"])
+        except _DatabaseError as exc:
+            return _message_page("Database error", _database_error_body(app.config["DEMO_MODE"], exc.detail)["message"])
+        try:
+            run = queries.get_latest_complete_run(conn)
+            if run is None:
+                return _message_page("No COMPLETE scan run", "There is no COMPLETE full scan run to show yet.", 404)
+            result = queries.get_symbol_result(conn, run["run_id"], symbol)
+            if result is None:
+                return _message_page(
+                    "Symbol not found",
+                    f"{symbol!r} is not in the latest COMPLETE run ({run['run_id']}).",
+                    404,
+                )
+            context = stock_detail.build(conn, run, symbol, result, app.config["DEMO_MODE"])
+            return render_template("stock_detail.html", **context)
+        finally:
+            conn.close()
+
+    @app.get("/equity/exceptions")
+    def exceptions_page():
+        """Exceptions view, server-rendered from the same builder as the JSON route. GET only."""
+        try:
+            conn = _open_checked_connection(app.config["DB_PATH"])
+        except _DatabaseUnavailable:
+            return _message_page("No scans yet", _no_scans_body(app.config["DEMO_MODE"])["message"])
+        except _DatabaseVersionMismatch as exc:
+            return _message_page("Database version mismatch",
+                                 _version_mismatch_body(app.config["DEMO_MODE"], exc.found_version)["message"])
+        except _DatabaseError as exc:
+            return _message_page("Database error", _database_error_body(app.config["DEMO_MODE"], exc.detail)["message"])
+        try:
+            try:
+                params = exceptions.parse_params(request.args)
+            except exceptions.ParamError as exc:
+                return _message_page("Invalid parameter", str(exc), 400)
+            body = exceptions.build(conn, params)
+            if body["run"] is not None:
+                body["review_file"] = exceptions.review_panel(conn, body, app.config["DEMO_MODE"])
+        finally:
+            conn.close()
+        if body["run"] is None:
+            return _message_page("No COMPLETE scan run", "There is no COMPLETE full scan run to show yet.")
+        return render_template("exceptions.html", demo=app.config["DEMO_MODE"], not_recorded=stock_detail.NOT_RECORDED,
+                               links=exceptions.page_links(body), **body)
+
+    @app.get("/api/equity/exceptions")
+    @_guarded
+    def api_exceptions(conn):
+        """Symbols of the latest COMPLETE full run carrying a status or flag. GET only, no run_id."""
+        try:
+            params = exceptions.parse_params(request.args)
+        except exceptions.ParamError as exc:
+            return jsonify({"error": str(exc)}), 400
+        body = exceptions.build(conn, params)
+        if body["run"] is not None:
+            body["review_file"] = exceptions.review_panel(conn, body, app.config["DEMO_MODE"])
+        return jsonify({"demo": app.config["DEMO_MODE"], **body})
+
+    @app.get("/equity/snapshot-audit")
+    def snapshot_audit_page():
+        """Snapshot Audit view, server-rendered from the same builder as the JSON route. GET only."""
+        try:
+            conn = _open_checked_connection(app.config["DB_PATH"])
+        except _DatabaseUnavailable:
+            return _message_page("No scans yet", _no_scans_body(app.config["DEMO_MODE"])["message"])
+        except _DatabaseVersionMismatch as exc:
+            return _message_page("Database version mismatch",
+                                 _version_mismatch_body(app.config["DEMO_MODE"], exc.found_version)["message"])
+        except _DatabaseError as exc:
+            return _message_page("Database error", _database_error_body(app.config["DEMO_MODE"], exc.detail)["message"])
+        try:
+            try:
+                params = snapshot_audit.parse_params(request.args)
+                body = snapshot_audit.build(conn, params)
+            except snapshot_audit.ParamError as exc:
+                return _message_page("Invalid parameter", str(exc), 400)
+        finally:
+            conn.close()
+        return render_template("snapshot_audit.html", demo=app.config["DEMO_MODE"], not_recorded=stock_detail.NOT_RECORDED,
+                               links=snapshot_audit.page_links(body), **body)
+
+    @app.get("/equity/snapshot-audit/symbol/<symbol>")
+    def snapshot_audit_symbol_page(symbol):
+        """One symbol's differing bars and stored-row integrity for a pair of runs, server-rendered. GET only."""
+        try:
+            conn = _open_checked_connection(app.config["DB_PATH"])
+        except _DatabaseUnavailable:
+            return _message_page("No scans yet", _no_scans_body(app.config["DEMO_MODE"])["message"])
+        except _DatabaseVersionMismatch as exc:
+            return _message_page("Database version mismatch",
+                                 _version_mismatch_body(app.config["DEMO_MODE"], exc.found_version)["message"])
+        except _DatabaseError as exc:
+            return _message_page("Database error", _database_error_body(app.config["DEMO_MODE"], exc.detail)["message"])
+        try:
+            try:
+                params = snapshot_audit.parse_symbol_params(request.args)
+                body = snapshot_audit.build_symbol(conn, params, symbol)
+            except snapshot_audit.ParamError as exc:
+                return _message_page("Invalid parameter", str(exc), 400)
+        finally:
+            conn.close()
+        if body["state"] == "absent":
+            return _message_page("Symbol not found", body["message"], 404)
+        if not body["comparison_available"]:
+            return _message_page("No comparison available", body["message"])
+        return render_template("snapshot_audit_symbol.html", demo=app.config["DEMO_MODE"], not_recorded=stock_detail.NOT_RECORDED,
+                               links=snapshot_audit.symbol_links(body), **body)
+
+    @app.get("/api/equity/snapshot-audit/symbol/<symbol>")
+    @_guarded
+    def api_snapshot_audit_symbol(conn, symbol):
+        """The same payload as the drill-down page. 404 when the symbol is in neither run. GET only."""
+        try:
+            params = snapshot_audit.parse_symbol_params(request.args)
+            body = snapshot_audit.build_symbol(conn, params, symbol)
+        except snapshot_audit.ParamError as exc:
+            return jsonify({"error": str(exc)}), 400
+        return jsonify({"demo": app.config["DEMO_MODE"], **body}), (404 if body["state"] == "absent" else 200)
+
+    @app.get("/api/equity/snapshot-audit")
+    @_guarded
+    def api_snapshot_audit(conn):
+        """Bars whose stored hash differs between two COMPLETE full runs. GET only; base and other are the only run selectors."""
+        try:
+            params = snapshot_audit.parse_params(request.args)
+            body = snapshot_audit.build(conn, params)
+        except snapshot_audit.ParamError as exc:
+            return jsonify({"error": str(exc)}), 400
+        return jsonify({"demo": app.config["DEMO_MODE"], **body})
+
+    @app.get("/api/equity/health")
+    @_guarded
+    def api_health(conn):
+        """Layer cards and the freshness rules F1-F9 (dashboard/health.py). GET only."""
+        return jsonify({"demo": app.config["DEMO_MODE"], **_health_panel(conn)})
 
     @app.get("/api/equity/summary")
     @_guarded
@@ -237,11 +439,26 @@ def create_app(demo: bool = False, db_path: Optional[Union[str, Path]] = None) -
                     "message": "no COMPLETE scan run yet",
                 }
             )
+        e4 = _e4_context(conn, run["run_id"])
+        breadth = None
+        if e4 is not None:
+            breadth = aggregates.get_e4_breadth(aggregates.get_e4_rows(conn, run["run_id"], e4), e4)
         return jsonify(
             {
                 "demo": app.config["DEMO_MODE"],
                 "run": queries.summarize_run(run),
                 "outdated": queries.is_outdated(run),
+                "e4_scan": e4,
+                "breadth": breadth,
+                "history": aggregates.get_history_depth(conn, e4) if e4 else None,
+                "data_quality": aggregates.get_data_quality(conn, run["run_id"], e4),
+                "safety": {
+                    "mode": "PAPER / RESEARCH ONLY",
+                    "broker_execution": "DISABLED",
+                    "order_routes": "NONE",
+                    "write_routes": "NONE",
+                    "scoring": "BLOCKED_B2",
+                },
             }
         )
 
@@ -254,6 +471,7 @@ def create_app(demo: bool = False, db_path: Optional[Union[str, Path]] = None) -
             return None
         run = queries.get_run(conn, run_id) if run_id else None
         run_session = run.get("latest_closed_session") if run else None
+        e4["run_id"] = run_id
         e4["run_latest_closed_session"] = run_session
         e4["as_of_matches_run"] = bool(run_session) and run_session == e4["asof_date"]
         return e4
@@ -280,13 +498,26 @@ def create_app(demo: bool = False, db_path: Optional[Union[str, Path]] = None) -
         q = request.args.get("q") or None
         status = request.args.get("status") or None
         flag = request.args.get("flag") or None
+        sector = request.args.get("sector") or None
+        sort = request.args.get("sort") or None
+        sort_dir = (request.args.get("sort_dir") or "asc").lower()
+        e4 = _e4_context(conn, run_id)
         try:
-            total, rows = queries.get_candidates(conn, run_id, page, page_size, q, status, flag)
+            ranges = {
+                key: (_to_float(request.args.get(f"{key}_min")), _to_float(request.args.get(f"{key}_max")))
+                for key in queries.E4_RANGE_FILTERS
+            }
+            total, rows = queries.get_candidates(
+                conn, run_id, page, page_size, q, status, flag,
+                sector=sector, ranges=ranges, sort=sort, sort_dir=sort_dir,
+                e4_scan_id=e4["scan_id"] if e4 else None,
+            )
         except ValueError as exc:
             return jsonify({"error": str(exc)}), 400
-        e4 = _e4_context(conn, run_id)
         if e4 is not None:
-            features = queries.get_e4_features(conn, e4["scan_id"], [row["symbol"] for row in rows])
+            features = queries.get_e4_features(
+                conn, e4["scan_id"], [row["symbol"] for row in rows], e4["acquisition_run_id"]
+            )
             for row in rows:
                 row["e4"] = features.get(row["symbol"])
         return jsonify(
@@ -310,13 +541,38 @@ def create_app(demo: bool = False, db_path: Optional[Union[str, Path]] = None) -
         run_id = _resolve_run_id(conn, request.args.get("run_id"))
         if run_id is None:
             return jsonify({"demo": app.config["DEMO_MODE"], "run_id": None, "sectors": []})
+        e4 = _e4_context(conn, run_id)
+        strength = None
+        if e4 is not None:
+            strength = aggregates.get_sector_strength(aggregates.get_e4_rows(conn, run_id, e4))
         return jsonify(
             {
                 "demo": app.config["DEMO_MODE"],
                 "run_id": run_id,
                 "sectors": queries.get_sectors(conn, run_id),
+                "e4_scan": e4,
+                "strength": strength,
             }
         )
+
+    def _chart(conn, e4, symbol, e4_quality):
+        """Daily bars plus EMA series for the price chart. EMAs use the E4
+        scan's periods and, like the stored E4 values, only bars from the
+        detected break onward (earlier bars are drawn but have no EMA)."""
+        if e4 is None:
+            return None
+        bars = aggregates.get_chart_bars(conn, e4, symbol)
+        if not bars:
+            return None
+        break_date = e4_quality.get("break_date") if e4_quality else None
+        start = next((i for i, b in enumerate(bars) if break_date and b["trading_date"] >= break_date), 0)
+        closes = [float(b["close"]) for b in bars[start:]]
+        emas = {}
+        for label, key in (("short", "ema_short"), ("medium", "ema_medium"), ("long", "ema_long")):
+            period = e4["config"].get(key)
+            series = exponential_moving_average(closes, period) if period else None
+            emas[label] = {"period": period, "values": ([None] * start + series) if series else None}
+        return {"bars": bars, "break_date": break_date, "ema": emas, "acquisition_run_id": e4["acquisition_run_id"]}
 
     @app.get("/api/equity/stock/<symbol>")
     @_guarded
@@ -328,7 +584,11 @@ def create_app(demo: bool = False, db_path: Optional[Union[str, Path]] = None) -
         if result is None:
             return jsonify({"error": f"{symbol!r} not found in run {run_id!r}"}), 404
         e4 = _e4_context(conn, run_id)
-        e4_features = queries.get_e4_features(conn, e4["scan_id"], [symbol]).get(symbol) if e4 else None
+        e4_features = (
+            queries.get_e4_features(conn, e4["scan_id"], [symbol], e4["acquisition_run_id"]).get(symbol) if e4 else None
+        )
+        run = queries.summarize_run(queries.get_run(conn, run_id))
+        e4_quality = aggregates.get_e4_quality_row(conn, e4, symbol) if e4 else None
         return jsonify(
             {
                 "demo": app.config["DEMO_MODE"],
@@ -339,6 +599,24 @@ def create_app(demo: bool = False, db_path: Optional[Union[str, Path]] = None) -
                 "e4_features": e4_features,
                 "candles": queries.get_candles(conn, run_id, symbol),
                 "fetch_history": queries.get_fetch_history(conn, symbol),
+                "chart": _chart(conn, e4, symbol, e4_quality),
+                "data_quality": aggregates.get_data_quality(conn, run_id, e4, symbol),
+                "provenance": {
+                    "run_id": run_id,
+                    "universe_version": run.get("universe_version"),
+                    "corporate_action_review_version": run.get("corporate_action_review_version"),
+                    "git_commit": run.get("git_commit"),
+                    "git_dirty": run.get("git_dirty"),
+                    "calendar_source": run.get("calendar_source"),
+                    "calendar_verification": run.get("calendar_verification"),
+                    "latest_closed_session": run.get("latest_closed_session"),
+                    "price_source": run.get("price_source"),
+                    "benchmark": run.get("benchmark"),
+                    "instrument_key": result.get("instrument_key"),
+                    "isin": result.get("isin"),
+                    "series": result.get("series"),
+                    "e4_quality": e4_quality,
+                },
             }
         )
 
@@ -404,6 +682,8 @@ def main() -> None:
     app = create_app(demo=args.demo)
     url = f"http://{args.host}:{args.port}/equity"
     print(f"Serving equity_intel dashboard at {url}")
+    if args.demo:
+        print("DEMO MODE - using data/equity_intel_demo.db")
     try:
         app.run(host=args.host, port=args.port)
     except OSError as exc:

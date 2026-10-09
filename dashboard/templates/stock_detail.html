@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+{% block title %}{{ symbol }}{% endblock %}
+{% macro v(x) %}{% if x is none %}<span class="nr">{{ not_recorded }}</span>{% elif x is sameas true %}yes{% elif x is sameas false %}no{% elif x is float %}{{ "%.2f"|format(x) }}{% else %}{{ x }}{% endif %}{% endmacro %}
+{% macro layer(l) %}<span class="layer layer-{{ l }}">{{ l }}</span>{% endmacro %}
+{% block body %}
+{% set r = result %}
+{# 1. Header #}
+<div class="card" id="header">
+  <h1>{{ symbol }}</h1>
+  <div>{{ v(r.company_name) }} &middot; sector (CSV Industry): {{ v(r.sector) }}</div>
+  <div class="sub" id="identifiers">instrument key: <code>{{ v(r.instrument_key) }}</code> &middot; ISIN: <code>{{ v(r.isin) }}</code> &middot; series: <code>{{ v(r.series) }}</code></div>
+  <p>
+    <span class="badge b-{{ r.symbol_data_status }}" id="status-badge">{{ r.symbol_data_status }}</span> {{ layer("ScanRun") }}
+    {% if r.status_reason %}<span class="sub">{{ r.status_reason }}</span>{% endif %}
+  </p>
+  <p class="note">
+    Run <code>{{ run.run_id }}</code> ({{ run.scan_label }}) &middot; scan finished {{ v(run.finished_at) }}
+    &middot; latest closed session {{ v(run.latest_closed_session) }}
+    {% if outdated %}&middot; <b>OUTDATED (approximate: market holidays not known)</b>{% endif %}
+  </p>
+  {% if newer_run %}
+  <p class="notice" id="newer-run">A newer non-complete run exists: <code>{{ newer_run.run_id }}</code> started {{ newer_run.started_at }}
+    &mdash; {{ newer_run.reason }}; {{ newer_run.symbols }}. This page shows the last COMPLETE full run.</p>
+  {% endif %}
+</div>
+
+{# 2. Data status checks #}
+<div class="card" id="checks">
+  <h2>Data status checks <span class="note">stored results only</span></h2>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Check</th><th>Layer</th><th>Stored result</th><th>Rule</th></tr></thead>
+    <tbody>
+    {% for c in checks %}
+      <tr>
+        <td>{{ c.name }}</td><td>{{ layer(c.layer) }}</td>
+        <td>{% if c.ok is sameas true %}<span class="ok check-state">met</span>{% elif c.ok is sameas false %}<span class="bad check-state">not met</span>{% else %}<span class="nr check-state">not evaluated</span>{% endif %}: {{ c.result }}</td>
+        <td class="sub">{{ c.rule }} {% if c.rule_status != "frozen" %}<span class="prov">[{{ c.rule_status }}]</span>{% endif %}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table></div>
+</div>
+
+{# 3. E4 data #}
+<div class="card" id="e4">
+  <h2>E4 data {{ layer("E4") }} <span class="note" id="e4-raw-note">raw value, not a score</span></h2>
+  {% if e4.scan %}
+  <p class="note">E4 scan <code>{{ e4.scan.scan_id }}</code> as of {{ e4.scan.asof_date }} <span class="prov">[provisional, not B2-authoritative]</span>
+    {% if not e4.scan.as_of_matches_run %}&middot; <b>E4 as-of date does not match this ScanRun's latest closed session ({{ v(e4.scan.run_latest_closed_session) }})</b>{% endif %}</p>
+  {% else %}
+  <p class="note">No COMPLETE E4 scan in this database.</p>
+  {% endif %}
+  {% if e4.quality_status and e4.quality_status.status != "VALID" %}
+  <p class="note">E4 status for this symbol: {{ e4.quality_status.status }}{% if e4.quality_status.reason %} &mdash; {{ e4.quality_status.reason }}{% endif %}</p>
+  {% endif %}
+  <div class="tablewrap"><table>
+    <tbody>
+    {% for row in e4.rows %}
+      <tr><th>{{ row.label }}</th><td class="num">{{ v(row.value) }}</td><td class="sub">{{ row.note or "" }}</td></tr>
+    {% endfor %}
+    <tr><th>Feature row date</th><td class="num">{{ v(e4.last_date) }}</td><td></td></tr>
+    </tbody>
+  </table></div>
+</div>
+
+{# 4. Data provenance #}
+{% set p = provenance %}
+<div class="card" id="provenance">
+  <h2>Data provenance</h2>
+  <div class="tablewrap"><table><tbody>
+    <tr><th>Price source</th><td>{{ v(run.price_source) }}</td><td>{{ layer("ScanRun") }}</td></tr>
+    <tr><th>Universe source</th><td>Nifty 500 constituent CSV (spec section 2); universe_version (SHA-256): {% if run.universe_version %}<code>{{ run.universe_version }}</code>{% else %}{{ v(none) }}{% endif %}</td><td>{{ layer("ScanRun") }}</td></tr>
+    <tr><th>Benchmark</th><td>{{ v(run.benchmark) }}</td><td>{{ layer("ScanRun") }}</td></tr>
+    <tr><th>Calendar</th><td>{{ v(run.calendar_source) }} &middot; verification: {{ v(run.calendar_verification) }}</td><td>{{ layer("ScanRun") }}</td></tr>
+    <tr><th>Adjustment basis</th><td><span id="adjustment-status">NOT_DEFINED</span> <span class="note" id="adjustment-stored">(stored value in the E4 acquisition rows: {{ v(p.adjustment) }})</span></td><td>{{ layer("E4") }} acquisition rows</td></tr>
+    <tr><th>Bars retrieved</th><td>{% if p.bars.n %}{{ p.bars.n }} ({{ p.bars.first_date }} to {{ p.bars.last_date }}){% else %}{{ v(none) }}{% endif %}</td><td>{{ layer("ScanRun") }} snapshots</td></tr>
+    <tr><th>Data-through date</th><td id="data-through">{{ v(p.bars.last_date) }} <span class="note">(this symbol's last stored snapshot bar)</span></td><td>{{ layer("ScanRun") }} snapshots</td></tr>
+    <tr><th>Run latest closed session</th><td id="run-session">{{ v(run.latest_closed_session) }} <span class="note">(scan_runs; the session this run was judged against)</span></td><td>{{ layer("ScanRun") }} run</td></tr>
+    <tr><th>Retrieved at</th><td>{{ v(p.bars.retrieved_at) }}{% if p.bars.first_retrieved_at and p.bars.first_retrieved_at != p.bars.retrieved_at %} (first bar {{ p.bars.first_retrieved_at }}){% endif %}</td><td>{{ layer("ScanRun") }}</td></tr>
+    <tr><th>Snapshot content hash</th><td>
+      {% if p.last_bar_hash %}last bar: <code>{{ p.last_bar_hash }}</code>{% else %}{{ v(none) }}{% endif %}
+      <div class="note">hashes are stored per bar; no symbol-level hash is stored.</div>
+      <div id="hash-check"><b>{{ p.hash_check.label }}:</b>
+        <span id="hash-state" class="{{ 'ok' if p.hash_check.state == 'MATCH' else ('bad' if p.hash_check.state == 'MISMATCH' else 'nr') }}">{{ p.hash_check.state }}</span>
+        {% if p.hash_check.state == "UNAVAILABLE" %}<span class="note">(no stored bars to check)</span>
+        {% elif p.hash_check.state == "MISMATCH" %}<span class="note">{{ p.hash_check.mismatched|length }} of {{ p.hash_check.bars }} stored bars do not reproduce their stored hash
+          ({{ p.hash_check.mismatched[:5]|join(", ") }}{% if p.hash_check.mismatched|length > 5 %}, &hellip;{% endif %})</span>
+        {% else %}<span class="note">all {{ p.hash_check.bars }} stored bars reproduce their stored hash</span>{% endif %}
+        <span class="note">(this symbol only; not a run-level result)</span>
+        <div class="note" id="hash-note">Checks that stored bars match their stored hash. It does not prove the vendor data is unchanged; vendor revisions are detected by the Snapshot Audit compare.</div></div>
+    </td><td>{{ layer("ScanRun") }}</td></tr>
+    <tr><th>ScanRun id</th><td><code>{{ run.run_id }}</code></td><td>{{ layer("ScanRun") }}</td></tr>
+    <tr><th>Run provenance</th><td>git {{ v(run.git_commit) }}{% if run.git_dirty %} (dirty tree){% endif %} &middot; review-list version {% if run.corporate_action_review_version %}<code>{{ run.corporate_action_review_version }}</code>{% else %}{{ v(none) }}{% endif %}</td><td>{{ layer("ScanRun") }}</td></tr>
+  </tbody></table></div>
+</div>
+
+{# 4b. Stored daily bars #}
+<div class="card" id="ohlcv">
+  <h2>Daily bars <span class="note">last {{ ohlcv_rows }} stored bars of this run, newest first</span> {{ layer("ScanRun") }}</h2>
+  {% if ohlcv %}
+  <div class="tablewrap"><table>
+    <thead><tr><th>Date</th><th>Open</th><th>High</th><th>Low</th><th>Close</th><th>Volume</th><th>Bar status</th></tr></thead>
+    <tbody>
+    {% for b in ohlcv %}
+      <tr><td>{{ b.trading_date }}</td><td class="num">{{ v(b.open) }}</td><td class="num">{{ v(b.high) }}</td><td class="num">{{ v(b.low) }}</td><td class="num">{{ v(b.close) }}</td><td class="num">{{ v(b.volume) }}</td><td class="sub">{{ v(b.candle_validation_status) }}</td></tr>
+    {% endfor %}
+    </tbody>
+  </table></div>
+  <p class="note">Stored values as retrieved from the vendor. The dashboard does not adjust or compute them; whether the vendor adjusted them is NOT_DEFINED (see adjustment basis).</p>
+  {% else %}
+  <p class="note">{{ v(none) }}: no bars are stored for this symbol in this run.</p>
+  {% endif %}
+</div>
+
+{# 5. Status history #}
+<div class="card" id="history">
+  <h2>Status history <span class="note">one row per ScanRun, newest first</span> {{ layer("ScanRun") }}</h2>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Run</th><th>Run status</th><th>Session</th><th>Symbol status</th><th>Detail</th></tr></thead>
+    <tbody>
+    {% for h in history %}
+      <tr>
+        <td><code>{{ h.run_id }}</code><div class="note">{{ h.scan_label }} &middot; {{ h.started_at }}</div></td>
+        <td>{{ h.run_status }}</td><td>{{ v(h.latest_closed_session) }}</td>
+        <td><span class="badge b-{{ h.symbol_data_status }}">{{ h.symbol_data_status }}</span></td>
+        <td class="sub">{{ h.status_reason or "" }}{% if h.available_session_count is not none %} {{ h.available_session_count }} sessions available{% endif %}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table></div>
+</div>
+
+{# 6. Flags #}
+{% set pb = flags.price_break %}{% set rv = flags.review %}
+<div class="card" id="flags">
+  <h2>Corporate-action / data flags</h2>
+  <h3>CORPORATE_ACTION_REVIEW {{ layer("ScanRun") }}</h3>
+  <p>Flag in this run: <b>{{ "FLAGGED" if rv.flag else "not flagged" }}</b> &middot; review-list version used by the run:
+    {% if rv.version %}<code>{{ rv.version }}</code>{% else %}{{ v(none) }}{% endif %}</p>
+  {% if rv.message %}<p id="review-file-state">{{ rv.message }}</p>{% endif %}
+  {% if rv.version_note %}<p class="notice">{{ rv.version_note }}</p>{% endif %}
+  {% if rv.entries %}
+  <div class="tablewrap"><table>
+    <thead><tr><th>Event</th><th>Effective date</th><th>Reason</th><th>Reviewer</th><th>State</th></tr></thead>
+    <tbody>{% for e in rv.entries %}<tr><td>{{ e.event_type }}</td><td>{{ e.effective_date }}</td><td>{{ e.reason }}</td><td>{{ e.reviewer }}</td><td>{{ e.review_state }}</td></tr>{% endfor %}</tbody>
+  </table></div>
+  {% endif %}
+  <h3>PRICE_BREAK_DETECTED {{ layer("ScanRun") }}</h3>
+  <p>Flag in this run: <b>{{ "FLAGGED" if pb.flag else "not flagged" }}</b></p>
+  <div class="tablewrap"><table><tbody>
+    <tr><th>Event date</th><td>{{ v(pb.event_date) }}</td><td class="sub">{{ pb.detail_source or "" }} {{ layer("E4") if pb.event_date else "" }}</td></tr>
+    <tr><th>Gap (close ratio)</th><td>{% if pb.gap_ratio is none %}{{ v(none) }}{% else %}{{ "%.4f"|format(pb.gap_ratio) }}{% endif %}</td><td></td></tr>
+    <tr><th>Detection rule</th><td>{{ pb.rule }}</td><td></td></tr>
+    <tr><th>Rule version</th><td>{{ pb.rule_version }}</td><td></td></tr>
+  </tbody></table></div>
+  <p class="note">Exception view: <a href="/equity/exceptions">Exceptions</a>. Snapshot-changes view: <a href="/equity/snapshot-audit/symbol/{{ symbol|urlencode }}" id="snapshot-audit-link">Snapshot Audit for this symbol</a> <span class="sub">(uses the two newest COMPLETE full runs)</span>. This page is read-only; there is no review action.</p>
+  <p class="note">Other flags &middot; history gaps: {{ "yes" if r.history_gaps_flag else "no" }} &middot; non-EQ series: {{ "yes" if r.non_eq_series_flag else "no" }} {{ layer("ScanRun") }}</p>
+</div>
+{% endblock %}

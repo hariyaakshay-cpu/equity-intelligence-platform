@@ -1,0 +1,1408 @@
+{
+ "acquisition_run_id": "eqdata-20261002T235033Z-168f862f",
+ "unresolved": [],
+ "instrument_master": null,
+ "fetched_at": "2026-10-05T18:01:39+00:00",
+ "symbols": {
+  "360ONE": {
+   "instrument_key": "NSE_EQ|INE466L01038",
+   "first_bar": "2015-01-01",
+   "last_bar": "2026-10-01",
+   "bars": 2002,
+   "dates_sha256": "9b06b102571147344d3f92ab5f9af8febef72f550491d2c155a8d9a0e239ee9a",
+   "error": null
+  },
+  "3MINDIA": {
+   "instrument_key": "NSE_EQ|INE470A01017",
+   "first_bar": "2003-01-01",
+   "last_bar": "2026-10-01",
+   "bars": 5857,
+   "dates_sha256": "9d01465ebb299a9eb71aa87e273958304efa10e2689061a5e32b0b3a41228a5d",
+   "error": null
+  },
+  "AADHARHFC": {
+   "instrument_key": "NSE_EQ|INE883F01010",
+   "first_bar": "2024-05-15",
+   "last_bar": "2026-10-01",
+   "bars": 593,
+   "dates_sha256": "94bd62fc510ca89aef6ad4c1d8c1fef108c40ce670063e0c244e3b2d2a9d52d1",
+   "error": null
+  },
+  "AARTIIND": {
+   "instrument_key": "NSE_EQ|INE769A01020",
+   "first_bar": "2003-01-27",
+   "last_bar": "2026-10-01",
+   "bars": 5839,
+   "dates_sha256": "e2513474ab461a66a48967cded67b80213592eddddc865b2e4ddc3ed6520b425",
+   "error": null
+  },
+  "AAVAS": {
+   "instrument_key": "NSE_EQ|INE216P01012",
+   "first_bar": "2018-10-08",
+   "last_bar": "2026-10-01",
+   "bars": 1979,
+   "dates_sha256": "ced7c8430b73b5cbf8fbe817e6d6fd32002afba5b7dd4050537d5e244fdd0057",
+   "error": null
+  },
+  "ABB": {
+   "instrument_key": "NSE_EQ|INE117A01022",
+   "first_bar": "2003-01-27",
+   "last_bar": "2026-10-01",
+   "bars": 5839,
+   "dates_sha256": "e2513474ab461a66a48967cded67b80213592eddddc865b2e4ddc3ed6520b425",
+   "error": null
+  },
+  "ABBOTINDIA": {
+   "instrument_key": "NSE_EQ|INE358A01014",
+   "first_bar": "2003-01-01",
+   "last_bar": "2026-10-01",
+   "bars": 5857,
+   "dates_sha256": "9d01465ebb299a9eb71aa87e273958304efa10e2689061a5e32b0b3a41228a5d",
+   "error": null
+  },
+  "ABCAPITAL": {
+   "instrument_key": "NSE_EQ|INE674K01013",
+   "first_bar": "2017-09-01",
+   "last_bar": "2026-10-01",
+   "bars": 2250,
+   "dates_sha256": "24907389aff3f301de49d6317c06699e92ff9a9f3d7fc233cbfa6af57441b618",
+   "error": null
+  },
+  "ABDL": {
+   "instrument_key": "NSE_EQ|INE552Z01027",
+   "first_bar": "2024-07-02",
+   "last_bar": "2026-10-01",
+   "bars": 560,
+   "dates_sha256": "61f327f30b3132fbde0919119899b82ac7c2efb486551a42d18c2721b4a98f19",
+   "error": null
+  },
+  "ABFRL": {
+   "instrument_key": "NSE_EQ|INE647O01011",
+   "first_bar": "2013-07-17",
+   "last_bar": "2026-10-01",
+   "bars": 3263,
+   "dates_sha256": "24d484efd16e7e9bcb10be5700f659811e532bb3f2be6182905caab5dff22ec2",
+   "error": null
+  },
+  "ABLBL": {
+   "instrument_key": "NSE_EQ|INE14LE01019",
+   "first_bar": "2025-06-23",
+   "last_bar": "2026-10-01",
+   "bars": 318,
+   "dates_sha256": "0aea041d8fc03d5bf543fec8d1f2922a30dcac7d12f06963df53aa045702a414",
+   "error": null
+  },
+  "ABREL": {
+   "instrument_key": "NSE_EQ|INE055A01016",
+   "first_bar": "2003-01-27",
+   "last_bar": "2026-10-01",
+   "bars": 5839,
+   "dates_sha256": "e2513474ab461a66a48967cded67b80213592eddddc865b2e4ddc3ed6520b425",
+   "error": null
+  },
+  "ABSLAMC": {
+   "instrument_key": "NSE_EQ|INE404A01024",
+   "first_bar": "2021-10-11",
+   "last_bar": "2026-10-01",
+   "bars": 1235,
+   "dates_sha256": "dd6fdda6df7583c417d7a6ea40a5e7e9240ce27d4ebf62071cc5a862e4f51eab",
+   "error": null
+  },
+  "ACC": {
+   "instrument_key": "NSE_EQ|INE012A01025",
+   "first_bar": "2003-01-27",
+   "last_bar": "2026-10-01",
+   "bars": 5839,
+   "dates_sha256": "e2513474ab461a66a48967cded67b80213592eddddc865b2e4ddc3ed6520b425",
+   "error": null
+  },
+  "ACE": {
+   "instrument_key": "NSE_EQ|INE731H01025",
+   "first_bar": "2006-09-26",
+   "last_bar": "2026-10-01",
+   "bars": 4945,
+   "dates_sha256": "076a62be3da4f5da0f21366c437e0b2426e04e2c115c2114cf6bd0fa51d0c9a3",
+   "error": null
+  },
+  "ACMESOLAR": {
+   "instrument_key": "NSE_EQ|INE622W01025",
+   "first_bar": "2024-11-13",
+   "last_bar": "2026-10-01",
+   "bars": 467,
+   "dates_sha256": "4816f75ae4cd667e6c7d424e1cf481148ff0fe30cdca99374a83235469f4d14c",
+   "error": null
+  },
+  "ACUTAAS": {
+   "instrument_key": "NSE_EQ|INE00FF01025",
+   "first_bar": "2021-09-14",
+   "last_bar": "2026-10-01",
+   "bars": 1254,
+   "dates_sha256": "cfdb33e5566bcc4c46776857a712ea841b43319e3dc2d508c043cd9abeeab1ba",
+   "error": null
+  },
+  "ADANIENSOL": {
+   "instrument_key": "NSE_EQ|INE931S01010",
+   "first_bar": "2015-07-31",
+   "last_bar": "2026-10-01",
+   "bars": 2764,
+   "dates_sha256": "bbf3088624f9fe568a9006de4644229384fea39e6d0ce979a966112231b9c337",
+   "error": null
+  },
+  "ADANIENT": {
+   "instrument_key": "NSE_EQ|INE423A01024",
+   "first_bar": "2003-01-01",
+   "last_bar": "2026-10-01",
+   "bars": 5899,
+   "dates_sha256": "afa45b23ce9e70fc1bd80191f4bb315f1d65b51bdc752270d9eb1315b16dfaf5",
+   "error": null
+  },
+  "ADANIGREEN": {
+   "instrument_key": "NSE_EQ|INE364U01010",
+   "first_bar": "2018-06-18",
+   "last_bar": "2026-10-01",
+   "bars": 2054,
+   "dates_sha256": "e32898ff7fdcd1a4b405c813d7ab38cc925404ab41c18ea854683b0f7210f126",
+   "error": null
+  },
+  "ADANIPORTS": {
+   "instrument_key": "NSE_EQ|INE742F01042",
+   "first_bar": "2007-11-27",
+   "last_bar": "2026-10-01",
+   "bars": 4654,
+   "dates_sha256": "e5cf9edd798b2bd6f6ccec11350025a0fc37642f15bc4a7b734bcc0092adc4dd",
+   "error": null
+  },
+  "ADANIPOWER": {
+   "instrument_key": "NSE_EQ|INE814H01029",
+   "first_bar": "2009-08-20",
+   "last_bar": "2026-10-01",
+   "bars": 4231,
+   "dates_sha256": "9031ddfdafb1cb6e3522fb2f0311faa4a4705fdad95d9469605b8295102fa92e",
+   "error": null
+  },
+  "AEGISLOG": {
+   "instrument_key": "NSE_EQ|INE208C01025",
+   "first_bar": "2003-01-27",
+   "last_bar": "2026-10-01",
+   "bars": 5839,
+   "dates_sha256": "e2513474ab461a66a48967cded67b80213592eddddc865b2e4ddc3ed6520b425",
+   "error": null
+  },
+  "AEGISVOPAK": {
+   "instrument_key": "NSE_EQ|INE0INX01018",
+   "first_bar": "2025-06-02",
+   "last_bar": "2026-10-01",
+   "bars": 333,
+   "dates_sha256": "e90ab1f59810e45ea4899abdd1917cef721835775fd56622e140afacab662592",
+   "error": null
+  },
+  "AFCONS": {
+   "instrument_key": "NSE_EQ|INE101I01011",
+   "first_bar": "2024-11-04",
+   "last_bar": "2026-10-01",
+   "bars": 474,
+   "dates_sha256": "a85b7deaa4f9aab39e6f791dedbb2ff372587a08faea8ae303e692438f4a18f1",
+   "error": null
+  },
+  "AFFLE": {
+   "instrument_key": "NSE_EQ|INE00WC01027",
+   "first_bar": "2019-08-08",
+   "last_bar": "2026-10-01",
+   "bars": 1773,
+   "dates_sha256": "e0d330e98ec0174c684bd7bed387569bf82a1c7ae815a73bde9579b574f367e0",
+   "error": null
+  },
+  "AIAENG": {
+   "instrument_key": "NSE_EQ|INE212H01026",
+   "first_bar": "2005-12-14",
+   "last_bar": "2026-10-01",
+   "bars": 5140,
+   "dates_sha256": "af28fc3ae2b3f3cefe76963115ef74851d8a8812ebbb7bb40a3ea3894b15ce4a",
+   "error": null
+  },
+  "AIIL": {
+   "instrument_key": "NSE_EQ|INE206F01022",
+   "first_bar": "2024-04-23",
+   "last_bar": "2026-10-01",
+   "bars": 608,
+   "dates_sha256": "ad98b4d40e64da8263758aaff131c5f4936820f2b6b7b5748f5c910924db106e",
+   "error": null
+  },
+  "AJANTPHARM": {
+   "instrument_key": "NSE_EQ|INE031B01049",
+   "first_bar": "2003-01-27",
+   "last_bar": "2026-10-01",
+   "bars": 5839,
+   "dates_sha256": "e2513474ab461a66a48967cded67b80213592eddddc865b2e4ddc3ed6520b425",
+   "error": null
+  },
+  "ALKEM": {
+   "instrument_key": "NSE_EQ|INE540L01014",
+   "first_bar": "2015-12-23",
+   "last_bar": "2026-10-01",
+   "bars": 2667,
+   "dates_sha256": "c91942c990bfba71bc04e2b757ff04c0eb9caac104ff047ee036ec6a47757c0b",
+   "error": null
+  },
+  "AMBER": {
+   "instrument_key": "NSE_EQ|INE371P01015",
+   "first_bar": "2018-01-30",
+   "last_bar": "2026-10-01",
+   "bars": 2148,
+   "dates_sha256": "8eceb58d07965ad489e10d011c5e8096de1fa135a9ac7183886f0aa292aae13e",
+   "error": null
+  },
+  "AMBUJACEM": {
+   "instrument_key": "NSE_EQ|INE079A01024",
+   "first_bar": "2003-01-27",
+   "last_bar": "2026-10-01",
+   "bars": 5839,
+   "dates_sha256": "e2513474ab461a66a48967cded67b80213592eddddc865b2e4ddc3ed6520b425",
+   "error": null
+  },
+  "ANANDRATHI": {
+   "instrument_key": "NSE_EQ|INE463V01026",
+   "first_bar": "2021-12-14",
+   "last_bar": "2026-10-01",
+   "bars": 1192,
+   "dates_sha256": "edc46a888b78c758c9c7b5a87f5021810183fade6309a398ecc91a6a4bae2bbc",
+   "error": null
+  },
+  "ANANTRAJ": {
+   "instrument_key": "NSE_EQ|INE242C01024",
+   "first_bar": "2006-09-27",
+   "last_bar": "2026-10-01",
+   "bars": 4944,
+   "dates_sha256": "1ae7b5aff344dd6f481ffd5d7f076282a72cc8436861b526b4b52c5217ad737c",
+   "error": null
+  },
+  "ANGELONE": {
+   "instrument_key": "NSE_EQ|INE732I01021",
+   "first_bar": "2016-01-14",
+   "last_bar": "2026-10-01",
+   "bars": 1541,
+   "dates_sha256": "0b3a63df077c56151085491fce32e13c66566904f8678c8d32052447978b47d3",
+   "error": null
+  },
+  "ANTHEM": {
+   "instrument_key": "NSE_EQ|INE0CZ201020",
+   "first_bar": "2025-07-21",
+   "last_bar": "2026-10-01",
+   "bars": 298,
+   "dates_sha256": "e30ab1c3f7e857e5b759cd4f3c03da2b62e259089800428d116d3afa6f42b67e",
+   "error": null
+  },
+  "ANURAS": {
+   "instrument_key": "NSE_EQ|INE930P01018",
+   "first_bar": "2021-03-24",
+   "last_bar": "2026-10-01",
+   "bars": 1370,
+   "dates_sha256": "19739a7c60400bc26586b28edf47451ada84ff4ca038f33492e0acb2efb3dc00",
+   "error": null
+  },
+  "APARINDS": {
+   "instrument_key": "NSE_EQ|INE372A01015",
+   "first_bar": "2004-07-12",
+   "last_bar": "2026-10-01",
+   "bars": 5496,
+   "dates_sha256": "854d743c65b78a650f8a6a843d992bb50f8b43f2e933de9add68c868771f9d9c",
+   "error": null
+  },
+  "APLAPOLLO": {
+   "instrument_key": "NSE_EQ|INE702C01027",
+   "first_bar": "2011-12-14",
+   "last_bar": "2026-10-01",
+   "bars": 3659,
+   "dates_sha256": "7fa78525551859ffa07ea99ca34f6bf874cc3d1af1697a85e19a7be39ae0105b",
+   "error": null
+  },
+  "APOLLOHOSP": {
+   "instrument_key": "NSE_EQ|INE437A01024",
+   "first_bar": "2003-01-27",
+   "last_bar": "2026-10-01",
+   "bars": 5839,
+   "dates_sha256": "e2513474ab461a66a48967cded67b80213592eddddc865b2e4ddc3ed6520b425",
+   "error": null
+  },
+  "APOLLOTYRE": {
+   "instrument_key": "NSE_EQ|INE438A01022",
+   "first_bar": "2003-01-27",
+   "last_bar": "2026-10-01",
+   "bars": 5839,
+   "dates_sha256": "e2513474ab461a66a48967cded67b80213592eddddc865b2e4ddc3ed6520b425",
+   "error": null
+  },
+  "APTUS": {
+   "instrument_key": "NSE_EQ|INE852O01025",
+   "first_bar": "2021-08-24",
+   "last_bar": "2026-10-01",
+   "bars": 1268,
+   "dates_sha256": "eed6421bfe67d8602b5f4420fa765ad96936d00b863048687ecee63b9d56dd15",
+   "error": null
+  },
+  "ARE&M": {
+   "instrument_key": "NSE_EQ|INE885A01032",
+   "first_bar": "2003-01-27",
+   "last_bar": "2026-10-01",
+   "bars": 5839,
+   "dates_sha256": "e2513474ab461a66a48967cded67b80213592eddddc865b2e4ddc3ed6520b425",
+   "error": null
+  },
+  "ASAHIINDIA": {
+   "instrument_key": "NSE_EQ|INE439A01020",
+   "first_bar": "2003-01-27",
+   "last_bar": "2026-10-01",
+   "bars": 5839,
+   "dates_sha256": "e2513474ab461a66a48967cded67b80213592eddddc865b2e4ddc3ed6520b425",
+   "error": null
+  },
+  "ASHOKLEY": {
+   "instrument_key": "NSE_EQ|INE208A01029",
+   "first_bar": "2003-01-27",
+   "last_bar": "2026-10-01",
+   "bars": 5839,
+   "dates_sha256": "e2513474ab461a66a48967cded67b80213592eddddc865b2e4ddc3ed6520b425",
+   "error": null
+  },
+  "ASIANPAINT": {
+   "instrument_key": "NSE_EQ|INE021A01026",
+   "first_bar": "2003-01-27",
+   "last_bar": "2026-10-01",
+   "bars": 5839,
+   "dates_sha256": "e2513474ab461a66a48967cded67b80213592eddddc865b2e4ddc3ed6520b425",
+   "error": null
+  },
+  "ASTERDM": {
+   "instrument_key": "NSE_EQ|INE914M01019",
+   "first_bar": "2018-02-26",
+   "last_bar": "2026-10-01",
+   "bars": 2130,
+   "dates_sha256": "8183528a7c5de110f3b132ba73ce367dc08d2042046dcf05ac0511044f70ded9",
+   "error": null
+  },
+  "ASTRAL": {
+   "instrument_key": "NSE_EQ|INE006I01046",
+   "first_bar": "2007-03-20",
+   "last_bar": "2026-10-01",
+   "bars": 4828,
+   "dates_sha256": "0f416dfbbffcaa1904e977677385235965d63343d2a55f31fa81c425bc20bdc8",
+   "error": null
+  },
+  "ATGL": {
+   "instrument_key": "NSE_EQ|INE399L01023",
+   "first_bar": "2018-11-05",
+   "last_bar": "2026-10-01",
+   "bars": 1960,
+   "dates_sha256": "d1c569ca48899db3ea80e1c8ad2cc5a75c004dd64dfe778035c9e2d4f87ec344",
+   "error": null
+  },
+  "ATHERENERG": {
+   "instrument_key": "NSE_EQ|INE0LEZ01016",
+   "first_bar": "2025-05-06",
+   "last_bar": "2026-10-01",
+   "bars": 352,
+   "dates_sha256": "8ead86787efd82405154c774c9cd7f96ee43dd42f7d89365371f3e65df577d77",
+   "error": null
+  },
+  "ATUL": {
+   "instrument_key": "NSE_EQ|INE100A01010",
+   "first_bar": "2003-01-27",
+   "last_bar": "2026-10-01",
+   "bars": 5839,
+   "dates_sha256": "e2513474ab461a66a48967cded67b80213592eddddc865b2e4ddc3ed6520b425",
+   "error": null
+  },
+  "AUBANK": {
+   "instrument_key": "NSE_EQ|INE949L01017",
+   "first_bar": "2017-07-10",
+   "last_bar": "2026-10-01",
+   "bars": 2287,
+   "dates_sha256": "d73fbb743a4aa49ee666b631c232638de781161d5dee1af789e502cf0c962e51",
+   "error": null
+  },
+  "AUROPHARMA": {
+   "instrument_key": "NSE_EQ|INE406A01037",
+   "first_bar": "2003-01-27",
+   "last_bar": "2026-10-01",
+   "bars": 5839,
+   "dates_sha256": "e2513474ab461a66a48967cded67b80213592eddddc865b2e4ddc3ed6520b425",
+   "error": null
+  },
+  "AWL": {
+   "instrument_key": "NSE_EQ|INE699H01024",
+   "first_bar": "2022-02-08",
+   "last_bar": "2026-10-01",
+   "bars": 1082,
+   "dates_sha256": "3e9616e7f0100bbe1bc7fffec0f79b52523d6b4a4938130015be306a961e527b",
+   "error": null
+  },
+  "AXISBANK": {
+   "instrument_key": "NSE_EQ|INE238A01034",
+   "first_bar": "2003-01-01",
+   "last_bar": "2026-10-01",
+   "bars": 5857,
+   "dates_sha256": "9d01465ebb299a9eb71aa87e273958304efa10e2689061a5e32b0b3a41228a5d",
+   "error": null
+  },
+  "BAJAJ-AUTO": {
+   "instrument_key": "NSE_EQ|INE917I01010",
+   "first_bar": "2008-05-26",
+   "last_bar": "2026-10-01",
+   "bars": 4534,
+   "dates_sha256": "532e851e007108909dfd672c67ba84f11d412aaa7de86571975ff79c7fee7c28",
+   "error": null
+  },
+  "BAJAJFINSV": {
+   "instrument_key": "NSE_EQ|INE918I01026",
+   "first_bar": "2008-05-26",
+   "last_bar": "2026-10-01",
+   "bars": 4534,
+   "dates_sha256": "532e851e007108909dfd672c67ba84f11d412aaa7de86571975ff79c7fee7c28",
+   "error": null
+  },
+  "BAJAJHFL": {
+   "instrument_key": "NSE_EQ|INE377Y01014",
+   "first_bar": "2024-09-16",
+   "last_bar": "2026-10-01",
+   "bars": 508,
+   "dates_sha256": "5d35b3a630a644dec739cc77961371d32bd03408cebc4b885bfe0c4d49f8c3cc",
+   "error": null
+  },
+  "BAJAJHLDNG": {
+   "instrument_key": "NSE_EQ|INE118A01012",
+   "first_bar": "2003-01-27",
+   "last_bar": "2026-10-01",
+   "bars": 5839,
+   "dates_sha256": "e2513474ab461a66a48967cded67b80213592eddddc865b2e4ddc3ed6520b425",
+   "error": null
+  },
+  "BAJFINANCE": {
+   "instrument_key": "NSE_EQ|INE296A01032",
+   "first_bar": "2003-01-27",
+   "last_bar": "2026-10-01",
+   "bars": 5839,
+   "dates_sha256": "e2513474ab461a66a48967cded67b80213592eddddc865b2e4ddc3ed6520b425",
+   "error": null
+  },
+  "BALKRISIND": {
+   "instrument_key": "NSE_EQ|INE787D01026",
+   "first_bar": "2006-01-27",
+   "last_bar": "2026-10-01",
+   "bars": 5110,
+   "dates_sha256": "c29c9eef97fcca03c9520b2321b31596899bd5658d837fb6ff40295216acf940",
+   "error": null
+  },
+  "BALRAMCHIN": {
+   "instrument_key": "NSE_EQ|INE119A01028",
+   "first_bar": "2003-01-27",
+   "last_bar": "2026-10-01",
+   "bars": 5839,
+   "dates_sha256": "e2513474ab461a66a48967cded67b80213592eddddc865b2e4ddc3ed6520b425",
+   "error": null
+  },
+  "BANDHANBNK": {
+   "instrument_key": "NSE_EQ|INE545U01014",
+   "first_bar": "2018-03-27",
+   "last_bar": "2026-10-01",
+   "bars": 2110,
+   "dates_sha256": "46d7ed89ca130790e6f2a5d8bb902865880e6c074c87f45b5cea240cc3cd9a20",
+   "error": null
+  },
+  "BANKBARODA": {
+   "instrument_key": "NSE_EQ|INE028A01039",
+   "first_bar": "2003-01-27",
+   "last_bar": "2026-10-01",
+   "bars": 5839,
+   "dates_sha256": "e2513474ab461a66a48967cded67b80213592eddddc865b2e4ddc3ed6520b425",
+   "error": null
+  },
+  "BANKINDIA": {
+   "instrument_key": "NSE_EQ|INE084A01016",
+   "first_bar": "2003-01-27",
+   "last_bar": "2026-10-01",
+   "bars": 5839,
+   "dates_sha256": "e2513474ab461a66a48967cded67b80213592eddddc865b2e4ddc3ed6520b425",
+   "error": null
+  },
+  "BATAINDIA": {
+   "instrument_key": "NSE_EQ|INE176A01028",
+   "first_bar": "2003-01-27",
+   "last_bar": "2026-10-01",
+   "bars": 5839,
+   "dates_sha256": "e2513474ab461a66a48967cded67b80213592eddddc865b2e4ddc3ed6520b425",
+   "error": null
+  },
+  "BAYERCROP": {
+   "instrument_key": "NSE_EQ|INE462A01022",
+   "first_bar": "2010-01-08",
+   "last_bar": "2026-10-01",
+   "bars": 4139,
+   "dates_sha256": "d3fcc9050d8cdafd500709162a0d90071ce6c543a65782ad9299cf0d8111ceac",
+   "error": null
+  },
+  "BBTC": {
+   "instrument_key": "NSE_EQ|INE050A01025",
+   "first_bar": "2003-01-27",
+   "last_bar": "2026-10-01",
+   "bars": 5839,
+   "dates_sha256": "e2513474ab461a66a48967cded67b80213592eddddc865b2e4ddc3ed6520b425",
+   "error": null
+  },
+  "BDL": {
+   "instrument_key": "NSE_EQ|INE171Z01026",
+   "first_bar": "2018-03-23",
+   "last_bar": "2026-10-01",
+   "bars": 2112,
+   "dates_sha256": "88cb7fac480f0fb29a32302d739b9664591a3c795bc4de82d94d81d3a7387a12",
+   "error": null
+  },
+  "BEL": {
+   "instrument_key": "NSE_EQ|INE263A01024",
+   "first_bar": "2003-01-27",
+   "last_bar": "2026-10-01",
+   "bars": 5839,
+   "dates_sha256": "e2513474ab461a66a48967cded67b80213592eddddc865b2e4ddc3ed6520b425",
+   "error": null
+  },
+  "BELRISE": {
+   "instrument_key": "NSE_EQ|INE894V01022",
+   "first_bar": "2025-05-28",
+   "last_bar": "2026-10-01",
+   "bars": 336,
+   "dates_sha256": "369aba8b7e21780bb3cc81ed77686451438c28aadadbf41445348e49711f46ed",
+   "error": null
+  },
+  "BEML": {
+   "instrument_key": "NSE_EQ|INE258A01024",
+   "first_bar": "2003-01-27",
+   "last_bar": "2026-10-01",
+   "bars": 5839,
+   "dates_sha256": "e2513474ab461a66a48967cded67b80213592eddddc865b2e4ddc3ed6520b425",
+   "error": null
+  },
+  "BERGEPAINT": {
+   "instrument_key": "NSE_EQ|INE463A01038",
+   "first_bar": "2003-01-27",
+   "last_bar": "2026-10-01",
+   "bars": 5839,
+   "dates_sha256": "e2513474ab461a66a48967cded67b80213592eddddc865b2e4ddc3ed6520b425",
+   "error": null
+  },
+  "BHARATFORG": {
+   "instrument_key": "NSE_EQ|INE465A01025",
+   "first_bar": "2003-01-27",
+   "last_bar": "2026-10-01",
+   "bars": 5839,
+   "dates_sha256": "e2513474ab461a66a48967cded67b80213592eddddc865b2e4ddc3ed6520b425",
+   "error": null
+  },
+  "BHARTIARTL": {
+   "instrument_key": "NSE_EQ|INE397D01024",
+   "first_bar": "2003-01-01",
+   "last_bar": "2026-10-01",
+   "bars": 5857,
+   "dates_sha256": "9d01465ebb299a9eb71aa87e273958304efa10e2689061a5e32b0b3a41228a5d",
+   "error": null
+  },
+  "BHARTIHEXA": {
+   "instrument_key": "NSE_EQ|INE343G01021",
+   "first_bar": "2024-04-12",
+   "last_bar": "2026-10-01",
+   "bars": 614,
+   "dates_sha256": "62f6a91f9b0ae07e46a5d0d0638f9130e5fe1aa549ca8912b8249e8806982ead",
+   "error": null
+  },
+  "BHEL": {
+   "instrument_key": "NSE_EQ|INE257A01026",
+   "first_bar": "2003-01-27",
+   "last_bar": "2026-10-01",
+   "bars": 5839,
+   "dates_sha256": "e2513474ab461a66a48967cded67b80213592eddddc865b2e4ddc3ed6520b425",
+   "error": null
+  },
+  "BIKAJI": {
+   "instrument_key": "NSE_EQ|INE00E101023",
+   "first_bar": "2022-11-16",
+   "last_bar": "2026-10-01",
+   "bars": 963,
+   "dates_sha256": "143577b95b7f655d58aaa04c0ded6314233881657214891d7192a3f5a0a389e8",
+   "error": null
+  },
+  "BIOCON": {
+   "instrument_key": "NSE_EQ|INE376G01013",
+   "first_bar": "2004-04-07",
+   "last_bar": "2026-10-01",
+   "bars": 5540,
+   "dates_sha256": "a61dfedea91b3d879d3418bbf5f98371700d6536666395d9775641aaab52ecc3",
+   "error": null
+  },
+  "BLS": {
+   "instrument_key": "NSE_EQ|INE153T01027",
+   "first_bar": "2016-06-15",
+   "last_bar": "2026-10-01",
+   "bars": 2550,
+   "dates_sha256": "1810b169f12e5557d27c9d037caa53fee827e5352bb9a0c4ac48e12e3c7bb255",
+   "error": null
+  },
+  "BLUEDART": {
+   "instrument_key": "NSE_EQ|INE233B01017",
+   "first_bar": "2003-01-27",
+   "last_bar": "2026-10-01",
+   "bars": 5839,
+   "dates_sha256": "e2513474ab461a66a48967cded67b80213592eddddc865b2e4ddc3ed6520b425",
+   "error": null
+  },
+  "BLUEJET": {
+   "instrument_key": "NSE_EQ|INE0KBH01020",
+   "first_bar": "2023-11-01",
+   "last_bar": "2026-10-01",
+   "bars": 725,
+   "dates_sha256": "1291823f8e402eabcb2b841efeb541cae315bb8587d85d0c31d874f59753d78d",
+   "error": null
+  },
+  "BLUESTARCO": {
+   "instrument_key": "NSE_EQ|INE472A01039",
+   "first_bar": "2003-01-27",
+   "last_bar": "2026-10-01",
+   "bars": 5839,
+   "dates_sha256": "e2513474ab461a66a48967cded67b80213592eddddc865b2e4ddc3ed6520b425",
+   "error": null
+  },
+  "BOSCHLTD": {
+   "instrument_key": "NSE_EQ|INE323A01026",
+   "first_bar": "2003-01-01",
+   "last_bar": "2026-10-01",
+   "bars": 5857,
+   "dates_sha256": "9d01465ebb299a9eb71aa87e273958304efa10e2689061a5e32b0b3a41228a5d",
+   "error": null
+  },
+  "BPCL": {
+   "instrument_key": "NSE_EQ|INE029A01011",
+   "first_bar": "2003-01-27",
+   "last_bar": "2026-10-01",
+   "bars": 5839,
+   "dates_sha256": "e2513474ab461a66a48967cded67b80213592eddddc865b2e4ddc3ed6520b425",
+   "error": null
+  },
+  "BRIGADE": {
+   "instrument_key": "NSE_EQ|INE791I01019",
+   "first_bar": "2007-12-31",
+   "last_bar": "2026-10-01",
+   "bars": 4632,
+   "dates_sha256": "e3d5d3ae1e794c021a36631d748a94f69420c5c2660c208ca5bbd012639869a1",
+   "error": null
+  },
+  "BRITANNIA": {
+   "instrument_key": "NSE_EQ|INE216A01030",
+   "first_bar": "2003-01-27",
+   "last_bar": "2026-10-01",
+   "bars": 5839,
+   "dates_sha256": "e2513474ab461a66a48967cded67b80213592eddddc865b2e4ddc3ed6520b425",
+   "error": null
+  },
+  "BSE": {
+   "instrument_key": "NSE_EQ|INE118H01025",
+   "first_bar": "2017-02-03",
+   "last_bar": "2026-10-01",
+   "bars": 2392,
+   "dates_sha256": "88e9caf96340216a7001f3dd8cdd03f5e83ded57f9e37e030e2e8bf806adf0d7",
+   "error": null
+  },
+  "BSOFT": {
+   "instrument_key": "NSE_EQ|INE836A01035",
+   "first_bar": "2003-01-01",
+   "last_bar": "2026-10-01",
+   "bars": 5857,
+   "dates_sha256": "9d01465ebb299a9eb71aa87e273958304efa10e2689061a5e32b0b3a41228a5d",
+   "error": null
+  },
+  "CAMS": {
+   "instrument_key": "NSE_EQ|INE596I01020",
+   "first_bar": "2020-10-05",
+   "last_bar": "2026-10-01",
+   "bars": 1488,
+   "dates_sha256": "7a448d5b8b7d0485f6ccf99b75174f14f0a0137b37f27a3d52ce572a2249d130",
+   "error": null
+  },
+  "CANBK": {
+   "instrument_key": "NSE_EQ|INE476A01022",
+   "first_bar": "2003-01-01",
+   "last_bar": "2026-10-01",
+   "bars": 5857,
+   "dates_sha256": "9d01465ebb299a9eb71aa87e273958304efa10e2689061a5e32b0b3a41228a5d",
+   "error": null
+  },
+  "CANFINHOME": {
+   "instrument_key": "NSE_EQ|INE477A01020",
+   "first_bar": "2003-01-27",
+   "last_bar": "2026-10-01",
+   "bars": 5839,
+   "dates_sha256": "e2513474ab461a66a48967cded67b80213592eddddc865b2e4ddc3ed6520b425",
+   "error": null
+  },
+  "CANHLIFE": {
+   "instrument_key": "NSE_EQ|INE01TY01017",
+   "first_bar": "2025-10-17",
+   "last_bar": "2026-10-01",
+   "bars": 237,
+   "dates_sha256": "0a8a34be0dc680441c94887e8ac8d7ace86e57ceb96c7d452c7d7fa0c7ec33f6",
+   "error": null
+  },
+  "CAPLIPOINT": {
+   "instrument_key": "NSE_EQ|INE475E01026",
+   "first_bar": "2014-06-23",
+   "last_bar": "2026-10-01",
+   "bars": 3035,
+   "dates_sha256": "9bd5360ae1df822ffaf588cd63845e9c3876d36bfa047155679b069573ccc439",
+   "error": null
+  },
+  "CARBORUNIV": {
+   "instrument_key": "NSE_EQ|INE120A01034",
+   "first_bar": "2003-01-27",
+   "last_bar": "2026-10-01",
+   "bars": 5839,
+   "dates_sha256": "e2513474ab461a66a48967cded67b80213592eddddc865b2e4ddc3ed6520b425",
+   "error": null
+  },
+  "CARTRADE": {
+   "instrument_key": "NSE_EQ|INE290S01011",
+   "first_bar": "2021-08-20",
+   "last_bar": "2026-10-01",
+   "bars": 1270,
+   "dates_sha256": "70617b31da9d476fec57aba16104951de06fcb5bfb58d58b43705a7b7e828d93",
+   "error": null
+  },
+  "CASTROLIND": {
+   "instrument_key": "NSE_EQ|INE172A01027",
+   "first_bar": "2007-08-16",
+   "last_bar": "2026-10-01",
+   "bars": 4726,
+   "dates_sha256": "38b977cd3c815dbe9f2e698f6ae21cd6a733cb37a93423e252cc477d7b57d606",
+   "error": null
+  },
+  "CCL": {
+   "instrument_key": "NSE_EQ|INE421D01022",
+   "first_bar": "2004-05-21",
+   "last_bar": "2026-10-01",
+   "bars": 5511,
+   "dates_sha256": "85222be610efb2cfb6ad1550fe5980d3c042adfa6e8153e6cc94f3dea7d2b00d",
+   "error": null
+  },
+  "CDSL": {
+   "instrument_key": "NSE_EQ|INE736A01011",
+   "first_bar": "2017-06-30",
+   "last_bar": "2026-10-01",
+   "bars": 2293,
+   "dates_sha256": "9f75a71a5f2aea581424f91f4bca0ffe834c06ad7c8a3a8c1c2e80e2b18d6eec",
+   "error": null
+  },
+  "CEATLTD": {
+   "instrument_key": "NSE_EQ|INE482A01020",
+   "first_bar": "2003-01-27",
+   "last_bar": "2026-10-01",
+   "bars": 5839,
+   "dates_sha256": "e2513474ab461a66a48967cded67b80213592eddddc865b2e4ddc3ed6520b425",
+   "error": null
+  },
+  "CEMPRO": {
+   "instrument_key": "NSE_EQ|INE686A01026",
+   "first_bar": "2003-01-01",
+   "last_bar": "2026-10-01",
+   "bars": 5857,
+   "dates_sha256": "9d01465ebb299a9eb71aa87e273958304efa10e2689061a5e32b0b3a41228a5d",
+   "error": null
+  },
+  "CENTRALBK": {
+   "instrument_key": "NSE_EQ|INE483A01010",
+   "first_bar": "2007-08-21",
+   "last_bar": "2026-10-01",
+   "bars": 4723,
+   "dates_sha256": "dccfb2efdb4be911ca46f2b00a18444720115fbea802760de71e01a8e02a71a2",
+   "error": null
+  },
+  "CESC": {
+   "instrument_key": "NSE_EQ|INE486A01021",
+   "first_bar": "2003-01-27",
+   "last_bar": "2026-10-01",
+   "bars": 5839,
+   "dates_sha256": "e2513474ab461a66a48967cded67b80213592eddddc865b2e4ddc3ed6520b425",
+   "error": null
+  },
+  "CGCL": {
+   "instrument_key": "NSE_EQ|INE180C01042",
+   "first_bar": "2010-10-29",
+   "last_bar": "2026-10-01",
+   "bars": 3936,
+   "dates_sha256": "77b04d0ceef2b9ae4aa907634003e3f221a7c2afc9457b4e41745ac217b268f3",
+   "error": null
+  },
+  "CGPOWER": {
+   "instrument_key": "NSE_EQ|INE067A01029",
+   "first_bar": "2003-01-27",
+   "last_bar": "2026-10-01",
+   "bars": 5839,
+   "dates_sha256": "e2513474ab461a66a48967cded67b80213592eddddc865b2e4ddc3ed6520b425",
+   "error": null
+  },
+  "CHALET": {
+   "instrument_key": "NSE_EQ|INE427F01016",
+   "first_bar": "2019-02-07",
+   "last_bar": "2026-10-01",
+   "bars": 1896,
+   "dates_sha256": "f8c94c4c62179599f494b7a8c49daff7a35850d8c6b95b9e60dd664919996001",
+   "error": null
+  },
+  "CHAMBLFERT": {
+   "instrument_key": "NSE_EQ|INE085A01013",
+   "first_bar": "2003-01-27",
+   "last_bar": "2026-10-01",
+   "bars": 5839,
+   "dates_sha256": "e2513474ab461a66a48967cded67b80213592eddddc865b2e4ddc3ed6520b425",
+   "error": null
+  },
+  "CHENNPETRO": {
+   "instrument_key": "NSE_EQ|INE178A01016",
+   "first_bar": "2003-01-27",
+   "last_bar": "2026-10-01",
+   "bars": 5839,
+   "dates_sha256": "e2513474ab461a66a48967cded67b80213592eddddc865b2e4ddc3ed6520b425",
+   "error": null
+  },
+  "CHOICEIN": {
+   "instrument_key": "NSE_EQ|INE102B01014",
+   "first_bar": "2022-04-08",
+   "last_bar": "2026-10-01",
+   "bars": 1112,
+   "dates_sha256": "3c807679b392e55cac68939f0ecd3a942435e110ed427958db7b3415b2c65cbd",
+   "error": null
+  },
+  "CHOLAFIN": {
+   "instrument_key": "NSE_EQ|INE121A01024",
+   "first_bar": "2003-01-27",
+   "last_bar": "2026-10-01",
+   "bars": 5839,
+   "dates_sha256": "e2513474ab461a66a48967cded67b80213592eddddc865b2e4ddc3ed6520b425",
+   "error": null
+  },
+  "CHOLAHLDNG": {
+   "instrument_key": "NSE_EQ|INE149A01033",
+   "first_bar": "2017-09-25",
+   "last_bar": "2026-10-01",
+   "bars": 2234,
+   "dates_sha256": "ef237cc5a7a35bc749ef53fbda7356d2413c6f237e6993d7330eb521258091e3",
+   "error": null
+  },
+  "CIEINDIA": {
+   "instrument_key": "NSE_EQ|INE536H01010",
+   "first_bar": "2007-08-30",
+   "last_bar": "2026-10-01",
+   "bars": 4716,
+   "dates_sha256": "d730a16da1ef98ddaddcb27d9536fa818fe97e38c85f38cece0231b34a801dc2",
+   "error": null
+  },
+  "CIPLA": {
+   "instrument_key": "NSE_EQ|INE059A01026",
+   "first_bar": "2003-01-27",
+   "last_bar": "2026-10-01",
+   "bars": 5839,
+   "dates_sha256": "e2513474ab461a66a48967cded67b80213592eddddc865b2e4ddc3ed6520b425",
+   "error": null
+  },
+  "CLEAN": {
+   "instrument_key": "NSE_EQ|INE227W01023",
+   "first_bar": "2021-07-19",
+   "last_bar": "2026-10-01",
+   "bars": 1292,
+   "dates_sha256": "8ea50a9adb2635acccd8618050b342a6251749b2f784497db2e5a50522906662",
+   "error": null
+  },
+  "COALINDIA": {
+   "instrument_key": "NSE_EQ|INE522F01014",
+   "first_bar": "2010-11-04",
+   "last_bar": "2026-10-01",
+   "bars": 3932,
+   "dates_sha256": "4a53dda64e54a39308d4bb8895ed817b0e7547c6a6f4595f1a3e6e1f128c811c",
+   "error": null
+  },
+  "COCHINSHIP": {
+   "instrument_key": "NSE_EQ|INE704P01025",
+   "first_bar": "2017-08-11",
+   "last_bar": "2026-10-01",
+   "bars": 2263,
+   "dates_sha256": "1fdb4de3c21309892e04b10945d1d79aa5e52c2745e498433ff577e4ec27bb83",
+   "error": null
+  },
+  "COFORGE": {
+   "instrument_key": "NSE_EQ|INE591G01025",
+   "first_bar": "2004-08-30",
+   "last_bar": "2026-10-01",
+   "bars": 5462,
+   "dates_sha256": "04e1c3dbcb6b56f32a6a4813a7e6fb0394841d015ea08c705849a116592304f5",
+   "error": null
+  },
+  "COHANCE": {
+   "instrument_key": "NSE_EQ|INE03QK01018",
+   "first_bar": "2015-01-01",
+   "last_bar": "2026-10-01",
+   "bars": 1650,
+   "dates_sha256": "3326852be5390d677e3d4bcc28571529c1bec15eb242dc67367638c3c7e51e29",
+   "error": null
+  },
+  "COLPAL": {
+   "instrument_key": "NSE_EQ|INE259A01022",
+   "first_bar": "2003-01-27",
+   "last_bar": "2026-10-01",
+   "bars": 5839,
+   "dates_sha256": "e2513474ab461a66a48967cded67b80213592eddddc865b2e4ddc3ed6520b425",
+   "error": null
+  },
+  "CONCOR": {
+   "instrument_key": "NSE_EQ|INE111A01025",
+   "first_bar": "2003-01-27",
+   "last_bar": "2026-10-01",
+   "bars": 5839,
+   "dates_sha256": "e2513474ab461a66a48967cded67b80213592eddddc865b2e4ddc3ed6520b425",
+   "error": null
+  },
+  "CONCORDBIO": {
+   "instrument_key": "NSE_EQ|INE338H01029",
+   "first_bar": "2023-08-18",
+   "last_bar": "2026-10-01",
+   "bars": 775,
+   "dates_sha256": "893eb59ba2ec5a6c7c2dfc40c5c8743cfc2170dee36ab9ab4c72afd80a3e6546",
+   "error": null
+  },
+  "COROMANDEL": {
+   "instrument_key": "NSE_EQ|INE169A01031",
+   "first_bar": "2003-01-27",
+   "last_bar": "2026-10-01",
+   "bars": 5839,
+   "dates_sha256": "e2513474ab461a66a48967cded67b80213592eddddc865b2e4ddc3ed6520b425",
+   "error": null
+  },
+  "CPPLUS": {
+   "instrument_key": "NSE_EQ|INE819V01029",
+   "first_bar": "2025-08-05",
+   "last_bar": "2026-10-01",
+   "bars": 287,
+   "dates_sha256": "c52e13e36ed680d2e9e57984c7f115715ff5779e4285fcbb11a8d5da9d1cc290",
+   "error": null
+  },
+  "CRAFTSMAN": {
+   "instrument_key": "NSE_EQ|INE00LO01017",
+   "first_bar": "2021-03-25",
+   "last_bar": "2026-10-01",
+   "bars": 1369,
+   "dates_sha256": "bf06edee86c9d45c46db89a88fc0fc17ae4c1ed90e5e8f6bea9888510974f7bf",
+   "error": null
+  },
+  "CREDITACC": {
+   "instrument_key": "NSE_EQ|INE741K01010",
+   "first_bar": "2018-08-23",
+   "last_bar": "2026-10-01",
+   "bars": 2008,
+   "dates_sha256": "3acedb0fe9100b96bc9a32e21a0f4a9ee2441ba465db595381365810f17f2ca4",
+   "error": null
+  },
+  "CRISIL": {
+   "instrument_key": "NSE_EQ|INE007A01025",
+   "first_bar": "2003-01-27",
+   "last_bar": "2026-10-01",
+   "bars": 5839,
+   "dates_sha256": "e2513474ab461a66a48967cded67b80213592eddddc865b2e4ddc3ed6520b425",
+   "error": null
+  },
+  "CROMPTON": {
+   "instrument_key": "NSE_EQ|INE299U01018",
+   "first_bar": "2016-05-13",
+   "last_bar": "2026-10-01",
+   "bars": 2573,
+   "dates_sha256": "5cdb1145e434aaf457ccc3fab82164d3e8e302f7fb9baf263c7562853becd6cf",
+   "error": null
+  },
+  "CUB": {
+   "instrument_key": "NSE_EQ|INE491A01021",
+   "first_bar": "2003-01-27",
+   "last_bar": "2026-10-01",
+   "bars": 5839,
+   "dates_sha256": "e2513474ab461a66a48967cded67b80213592eddddc865b2e4ddc3ed6520b425",
+   "error": null
+  },
+  "CUMMINSIND": {
+   "instrument_key": "NSE_EQ|INE298A01020",
+   "first_bar": "2003-01-27",
+   "last_bar": "2026-10-01",
+   "bars": 5839,
+   "dates_sha256": "e2513474ab461a66a48967cded67b80213592eddddc865b2e4ddc3ed6520b425",
+   "error": null
+  },
+  "CYIENT": {
+   "instrument_key": "NSE_EQ|INE136B01020",
+   "first_bar": "2003-01-27",
+   "last_bar": "2026-10-01",
+   "bars": 5839,
+   "dates_sha256": "e2513474ab461a66a48967cded67b80213592eddddc865b2e4ddc3ed6520b425",
+   "error": null
+  },
+  "DABUR": {
+   "instrument_key": "NSE_EQ|INE016A01026",
+   "first_bar": "2003-01-27",
+   "last_bar": "2026-10-01",
+   "bars": 5839,
+   "dates_sha256": "e2513474ab461a66a48967cded67b80213592eddddc865b2e4ddc3ed6520b425",
+   "error": null
+  },
+  "DALBHARAT": {
+   "instrument_key": "NSE_EQ|INE00R701025",
+   "first_bar": "2019-02-05",
+   "last_bar": "2026-10-01",
+   "bars": 1898,
+   "dates_sha256": "07647a34f4b43766eee92757b56316108d26eb130d5ed8f35971c28c84bf2c82",
+   "error": null
+  },
+  "DATAPATTNS": {
+   "instrument_key": "NSE_EQ|INE0IX101010",
+   "first_bar": "2021-12-24",
+   "last_bar": "2026-10-01",
+   "bars": 1184,
+   "dates_sha256": "01b038689e9c042812c755bfd544f081d32a5ec22d164c98f10f40e8119bb966",
+   "error": null
+  },
+  "DCMSHRIRAM": {
+   "instrument_key": "NSE_EQ|INE499A01024",
+   "first_bar": "2003-01-27",
+   "last_bar": "2026-10-01",
+   "bars": 5839,
+   "dates_sha256": "e2513474ab461a66a48967cded67b80213592eddddc865b2e4ddc3ed6520b425",
+   "error": null
+  },
+  "DEEPAKFERT": {
+   "instrument_key": "NSE_EQ|INE501A01019",
+   "first_bar": "2003-01-27",
+   "last_bar": "2026-10-01",
+   "bars": 5839,
+   "dates_sha256": "e2513474ab461a66a48967cded67b80213592eddddc865b2e4ddc3ed6520b425",
+   "error": null
+  },
+  "DEEPAKNTR": {
+   "instrument_key": "NSE_EQ|INE288B01029",
+   "first_bar": "2010-09-29",
+   "last_bar": "2026-10-01",
+   "bars": 3958,
+   "dates_sha256": "56d0d9ca8dd1094df398b1c851004f54556beeb99690e60353f448afdc5b063b",
+   "error": null
+  },
+  "DELHIVERY": {
+   "instrument_key": "NSE_EQ|INE148O01028",
+   "first_bar": "2016-01-18",
+   "last_bar": "2026-10-01",
+   "bars": 1091,
+   "dates_sha256": "f0fe8c8cfaacb50dd85bf7a00f6e65b9ce71736416424fd71e70b612c8a749c4",
+   "error": null
+  },
+  "DEVYANI": {
+   "instrument_key": "NSE_EQ|INE872J01023",
+   "first_bar": "2021-08-16",
+   "last_bar": "2026-10-01",
+   "bars": 1273,
+   "dates_sha256": "1838a7ad49769d802611192e1be603ea8d9ecde58aacd90085453eafd3ce7bba",
+   "error": null
+  },
+  "DIVISLAB": {
+   "instrument_key": "NSE_EQ|INE361B01024",
+   "first_bar": "2003-03-12",
+   "last_bar": "2026-10-01",
+   "bars": 5808,
+   "dates_sha256": "dc7d4462fc4e508100939288d86ade27465f5c272f65403c655eb73e6ec345e2",
+   "error": null
+  },
+  "DIXON": {
+   "instrument_key": "NSE_EQ|INE935N01020",
+   "first_bar": "2017-09-18",
+   "last_bar": "2026-10-01",
+   "bars": 2239,
+   "dates_sha256": "681f9f7a43393886ae63270a36889b189fcfc7308ef1dcd8f7805a6db7a63469",
+   "error": null
+  },
+  "DLF": {
+   "instrument_key": "NSE_EQ|INE271C01023",
+   "first_bar": "2007-07-05",
+   "last_bar": "2026-10-01",
+   "bars": 4755,
+   "dates_sha256": "5f8995f7a8579c96d84a9956580113cc5408f070db6541d257d94b0d1bb64db4",
+   "error": null
+  },
+  "DMART": {
+   "instrument_key": "NSE_EQ|INE192R01011",
+   "first_bar": "2017-03-21",
+   "last_bar": "2026-10-01",
+   "bars": 2362,
+   "dates_sha256": "b8aca70fe5865247891cada1efd2789842165dd337a62a1e7d8ba4774b955dd3",
+   "error": null
+  },
+  "DOMS": {
+   "instrument_key": "NSE_EQ|INE321T01012",
+   "first_bar": "2023-12-20",
+   "last_bar": "2026-10-01",
+   "bars": 691,
+   "dates_sha256": "42f34007e90575731dd09b91cb833fe71eaa6683bb86b809584c84ea4c4abce6",
+   "error": null
+  },
+  "DRREDDY": {
+   "instrument_key": "NSE_EQ|INE089A01031",
+   "first_bar": "2010-01-04",
+   "last_bar": "2026-10-01",
+   "bars": 4143,
+   "dates_sha256": "a1bffb74de4cf9f5428fea4f25fc8d66d1bca024a24ac22ddf87f402e8c9ca44",
+   "error": null
+  },
+  "ECLERX": {
+   "instrument_key": "NSE_EQ|INE738I01010",
+   "first_bar": "2007-12-31",
+   "last_bar": "2026-10-01",
+   "bars": 4632,
+   "dates_sha256": "e3d5d3ae1e794c021a36631d748a94f69420c5c2660c208ca5bbd012639869a1",
+   "error": null
+  },
+  "EICHERMOT": {
+   "instrument_key": "NSE_EQ|INE066A01021",
+   "first_bar": "2003-01-27",
+   "last_bar": "2026-10-01",
+   "bars": 5839,
+   "dates_sha256": "e2513474ab461a66a48967cded67b80213592eddddc865b2e4ddc3ed6520b425",
+   "error": null
+  },
+  "EIDPARRY": {
+   "instrument_key": "NSE_EQ|INE126A01031",
+   "first_bar": "2003-01-27",
+   "last_bar": "2026-10-01",
+   "bars": 5839,
+   "dates_sha256": "e2513474ab461a66a48967cded67b80213592eddddc865b2e4ddc3ed6520b425",
+   "error": null
+  },
+  "EIHOTEL": {
+   "instrument_key": "NSE_EQ|INE230A01023",
+   "first_bar": "2003-01-27",
+   "last_bar": "2026-10-01",
+   "bars": 5839,
+   "dates_sha256": "e2513474ab461a66a48967cded67b80213592eddddc865b2e4ddc3ed6520b425",
+   "error": null
+  },
+  "ELECON": {
+   "instrument_key": "NSE_EQ|INE205B01031",
+   "first_bar": "2006-09-29",
+   "last_bar": "2026-10-01",
+   "bars": 4942,
+   "dates_sha256": "f4755d49db6c60897a1ab4b5998965ec20d018c74d0ad2e5148d628bccb5c8a8",
+   "error": null
+  },
+  "ELGIEQUIP": {
+   "instrument_key": "NSE_EQ|INE285A01027",
+   "first_bar": "2003-01-27",
+   "last_bar": "2026-10-01",
+   "bars": 5839,
+   "dates_sha256": "e2513474ab461a66a48967cded67b80213592eddddc865b2e4ddc3ed6520b425",
+   "error": null
+  },
+  "EMAMILTD": {
+   "instrument_key": "NSE_EQ|INE548C01032",
+   "first_bar": "2006-08-03",
+   "last_bar": "2026-10-01",
+   "bars": 4982,
+   "dates_sha256": "6dcaf950546bf808cb5aa2a8fedcd52142d1265e6ad7bdc89739c33bc612c080",
+   "error": null
+  },
+  "EMCURE": {
+   "instrument_key": "NSE_EQ|INE168P01015",
+   "first_bar": "2024-07-10",
+   "last_bar": "2026-10-01",
+   "bars": 554,
+   "dates_sha256": "4b2eeb7dd995523bd3ad56dea6c26500628429b3dd7830e6e1d9ba71ceae5ef9",
+   "error": null
+  },
+  "EMMVEE": {
+   "instrument_key": "NSE_EQ|INE1C6T01020",
+   "first_bar": "2025-11-18",
+   "last_bar": "2026-10-01",
+   "bars": 217,
+   "dates_sha256": "53d2601511b3c8cd860ba75082a7e1ad812e029b06f434817d446591b2550faa",
+   "error": null
+  },
+  "ENDURANCE": {
+   "instrument_key": "NSE_EQ|INE913H01037",
+   "first_bar": "2016-10-19",
+   "last_bar": "2026-10-01",
+   "bars": 2466,
+   "dates_sha256": "8076e8910ee489c5fef018bc69e22faba2d60254281ce49553acc8754aed0b66",
+   "error": null
+  },
+  "ENGINERSIN": {
+   "instrument_key": "NSE_EQ|INE510A01028",
+   "first_bar": "2003-01-27",
+   "last_bar": "2026-10-01",
+   "bars": 5839,
+   "dates_sha256": "e2513474ab461a66a48967cded67b80213592eddddc865b2e4ddc3ed6520b425",
+   "error": null
+  },
+  "ENRIN": {
+   "instrument_key": "NSE_EQ|INE1NPP01017",
+   "first_bar": "2025-06-19",
+   "last_bar": "2026-10-01",
+   "bars": 320,
+   "dates_sha256": "e093a34cc43cd7ce54c355e620a17c2519a056703bfed279752917c3bfa39074",
+   "error": null
+  },
+  "ERIS": {
+   "instrument_key": "NSE_EQ|INE406M01024",
+   "first_bar": "2017-06-29",
+   "last_bar": "2026-10-01",
+   "bars": 2294,
+   "dates_sha256": "8c51dffd17e74c267b66e27b0566bbdc5f9fd3ee7344a61cf6481bac73805b67",
+   "error": null
+  },
+  "ESCORTS": {
+   "instrument_key": "NSE_EQ|INE042A01014",
+   "first_bar": "2003-01-27",
+   "last_bar": "2026-10-01",
+   "bars": 5839,
+   "dates_sha256": "e2513474ab461a66a48967cded67b80213592eddddc865b2e4ddc3ed6520b425",
+   "error": null
+  },
+  "ETERNAL": {
+   "instrument_key": "NSE_EQ|INE758T01015",
+   "first_bar": "2021-07-23",
+   "last_bar": "2026-10-01",
+   "bars": 1289,
+   "dates_sha256": "0467ec16e53f0336ba65a49690405779b4f8041d9372f011cd6680b7e604fa5d",
+   "error": null
+  },
+  "EXIDEIND": {
+   "instrument_key": "NSE_EQ|INE302A01020",
+   "first_bar": "2003-01-27",
+   "last_bar": "2026-10-01",
+   "bars": 5839,
+   "dates_sha256": "e2513474ab461a66a48967cded67b80213592eddddc865b2e4ddc3ed6520b425",
+   "error": null
+  },
+  "FACT": {
+   "instrument_key": "NSE_EQ|INE188A01015",
+   "first_bar": "2003-01-27",
+   "last_bar": "2026-10-01",
+   "bars": 5839,
+   "dates_sha256": "e2513474ab461a66a48967cded67b80213592eddddc865b2e4ddc3ed6520b425",
+   "error": null
+  },
+  "FEDERALBNK": {
+   "instrument_key": "NSE_EQ|INE171A01029",
+   "first_bar": "2000-01-04",
+   "last_bar": "2026-10-01",
+   "bars": 6651,
+   "dates_sha256": "97d8829123bd9d38b142117ee54c529799da8e0781a4e85ece64298a3aa9cd73",
+   "error": null
+  },
+  "FINCABLES": {
+   "instrument_key": "NSE_EQ|INE235A01022",
+   "first_bar": "2003-01-27",
+   "last_bar": "2026-10-01",
+   "bars": 5839,
+   "dates_sha256": "e2513474ab461a66a48967cded67b80213592eddddc865b2e4ddc3ed6520b425",
+   "error": null
+  },
+  "FIRSTCRY": {
+   "instrument_key": "NSE_EQ|INE02RE01045",
+   "first_bar": "2024-08-13",
+   "last_bar": "2026-10-01",
+   "bars": 531,
+   "dates_sha256": "c4df9a8245c6592fc97e399402bf7045fd1bbcb33b0354be53ccf39990188582",
+   "error": null
+  },
+  "FIVESTAR": {
+   "instrument_key": "NSE_EQ|INE128S01021",
+   "first_bar": "2022-11-21",
+   "last_bar": "2026-10-01",
+   "bars": 960,
+   "dates_sha256": "fccdcca1fd9f870867044796c7d301316f929dfda2d05e7c4959becbacb20334",
+   "error": null
+  },
+  "FLUOROCHEM": {
+   "instrument_key": "NSE_EQ|INE09N301011",
+   "first_bar": "2019-10-16",
+   "last_bar": "2026-10-01",
+   "bars": 1730,
+   "dates_sha256": "e915617b8679c1ce5bc5894479b5c357309c9351826af6e78923730dc0620390",
+   "error": null
+  },
+  "FORCEMOT": {
+   "instrument_key": "NSE_EQ|INE451A01017",
+   "first_bar": "2019-08-20",
+   "last_bar": "2026-10-01",
+   "bars": 1691,
+   "dates_sha256": "3dfd42362b2e14ae1ee294211497a1495201983ecb904fb48947b5924fe16ff0",
+   "error": null
+  },
+  "FORTIS": {
+   "instrument_key": "NSE_EQ|INE061F01013",
+   "first_bar": "2007-05-09",
+   "last_bar": "2026-10-01",
+   "bars": 4796,
+   "dates_sha256": "b5f9dff6b68738830c27ddb06fcf6f17431e98f1b92b54d2c1f39aea9f13edf6",
+   "error": null
+  },
+  "FSL": {
+   "instrument_key": "NSE_EQ|INE684F01012",
+   "first_bar": "2007-02-22",
+   "last_bar": "2026-10-01",
+   "bars": 4846,
+   "dates_sha256": "c4af240093352db0807a663ace3fea48eac7a29635ad145904ce2594dc5369b5",
+   "error": null
+  },
+  "GABRIEL": {
+   "instrument_key": "NSE_EQ|INE524A01029",
+   "first_bar": "2005-04-20",
+   "last_bar": "2026-10-01",
+   "bars": 5303,
+   "dates_sha256": "bdc22d004ecd3d4717195d485bda807babce31e22613c91702abb3dbc8147541",
+   "error": null
+  },
+  "GAIL": {
+   "instrument_key": "NSE_EQ|INE129A01019",
+   "first_bar": "2003-01-27",
+   "last_bar": "2026-10-01",
+   "bars": 5839,
+   "dates_sha256": "e2513474ab461a66a48967cded67b80213592eddddc865b2e4ddc3ed6520b425",
+   "error": null
+  },
+  "GALLANTT": {
+   "instrument_key": "NSE_EQ|INE297H01019",
+   "first_bar": "2006-04-04",
+   "last_bar": "2026-10-01",
+   "bars": 4970,
+   "dates_sha256": "e764f99b6d8b4e2467c6a13250796cc2111e7cf29cdc8f74dd4190ecf6633b3e",
+   "error": null
+  },
+  "GESHIP": {
+   "instrument_key": "NSE_EQ|INE017A01032",
+   "first_bar": "2003-01-27",
+   "last_bar": "2026-10-01",
+   "bars": 5839,
+   "dates_sha256": "e2513474ab461a66a48967cded67b80213592eddddc865b2e4ddc3ed6520b425",
+   "error": null
+  },
+  "GICRE": {
+   "instrument_key": "NSE_EQ|INE481Y01014",
+   "first_bar": "2017-10-25",
+   "last_bar": "2026-10-01",
+   "bars": 2215,
+   "dates_sha256": "0d39c0888acb2148bb0553e26b894363845ea053e50dac294249a0a5cfe36e7e",
+   "error": null
+  },
+  "GILLETTE": {
+   "instrument_key": "NSE_EQ|INE322A01010",
+   "first_bar": "2003-01-01",
+   "last_bar": "2026-10-01",
+   "bars": 5857,
+   "dates_sha256": "9d01465ebb299a9eb71aa87e273958304efa10e2689061a5e32b0b3a41228a5d",
+   "error": null
+  }
+ }
+}

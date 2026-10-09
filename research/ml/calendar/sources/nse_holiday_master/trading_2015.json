@@ -1,0 +1,1490 @@
+{
+ "CBM": [
+  {
+   "tradingDate": "04-Jan-2015",
+   "weekDay": "Sunday",
+   "description": "Id-e-Milad",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "26-Jan-2015",
+   "weekDay": "Monday",
+   "description": "Republic Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "17-Feb-2015",
+   "weekDay": "Tuesday",
+   "description": "Mahashivratri",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "19-Feb-2015",
+   "weekDay": "Thursday",
+   "description": "Chhatrapati Shivaji Maharaj Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "28-Feb-2015",
+   "weekDay": "Saturday",
+   "description": "Union Budget",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "06-Mar-2015",
+   "weekDay": "Friday",
+   "description": "Holi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "21-Mar-2015",
+   "weekDay": "Saturday",
+   "description": "Gudi Padwa",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "28-Mar-2015",
+   "weekDay": "Saturday",
+   "description": "Ram Navami",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-Apr-2015",
+   "weekDay": "Wednesday",
+   "description": "Annual Bank Closing",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "02-Apr-2015",
+   "weekDay": "Thursday",
+   "description": "Mahavir Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "03-Apr-2015",
+   "weekDay": "Friday",
+   "description": "Good Friday",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "14-Apr-2015",
+   "weekDay": "Tuesday",
+   "description": "Dr. Baba Saheb Ambedkar Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-May-2015",
+   "weekDay": "Friday",
+   "description": "Maharashtra Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "04-May-2015",
+   "weekDay": "Monday",
+   "description": "Buddha Pournima",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "18-Jul-2015",
+   "weekDay": "Saturday",
+   "description": "Id-uI-Fitar (Ramzan ID)",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "15-Aug-2015",
+   "weekDay": "Saturday",
+   "description": "Independence Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "18-Aug-2015",
+   "weekDay": "Tuesday",
+   "description": "Parsi New Year",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "17-Sep-2015",
+   "weekDay": "Thursday",
+   "description": "Ganesh Chaturthi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "25-Sep-2015",
+   "weekDay": "Friday",
+   "description": "Bakri ID",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "02-Oct-2015",
+   "weekDay": "Friday",
+   "description": "Mahatma Gandhi Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "22-Oct-2015",
+   "weekDay": "Thursday",
+   "description": "Dussehra",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "24-Oct-2015",
+   "weekDay": "Saturday",
+   "description": "Muharram",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "11-Nov-2015",
+   "weekDay": "Wednesday",
+   "description": "Diwali-Laxmi Pujan",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "12-Nov-2015",
+   "weekDay": "Thursday",
+   "description": "Diwali-Balipratipada",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "25-Nov-2015",
+   "weekDay": "Wednesday",
+   "description": "Gurunanak Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "24-Dec-2015",
+   "weekDay": "Thursday",
+   "description": "Id-e-Milad",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "25-Dec-2015",
+   "weekDay": "Friday",
+   "description": "Christmas",
+   "morning_session": null,
+   "evening_session": null
+  }
+ ],
+ "CD": [
+  {
+   "tradingDate": "04-Jan-2015",
+   "weekDay": "Sunday",
+   "description": "Id-e-Milad",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "26-Jan-2015",
+   "weekDay": "Monday",
+   "description": "Republic Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "17-Feb-2015",
+   "weekDay": "Tuesday",
+   "description": "Mahashivratri",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "19-Feb-2015",
+   "weekDay": "Thursday",
+   "description": "Chhatrapati Shivaji Maharaj Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "28-Feb-2015",
+   "weekDay": "Saturday",
+   "description": "Union Budget",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "06-Mar-2015",
+   "weekDay": "Friday",
+   "description": "Holi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "21-Mar-2015",
+   "weekDay": "Saturday",
+   "description": "Gudi Padwa",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "28-Mar-2015",
+   "weekDay": "Saturday",
+   "description": "Ram Navami",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-Apr-2015",
+   "weekDay": "Wednesday",
+   "description": "Annual Bank Closing",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "02-Apr-2015",
+   "weekDay": "Thursday",
+   "description": "Mahavir Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "03-Apr-2015",
+   "weekDay": "Friday",
+   "description": "Good Friday",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "14-Apr-2015",
+   "weekDay": "Tuesday",
+   "description": "Dr. Baba Saheb Ambedkar Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-May-2015",
+   "weekDay": "Friday",
+   "description": "Maharashtra Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "04-May-2015",
+   "weekDay": "Monday",
+   "description": "Buddha Pournima",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "18-Jul-2015",
+   "weekDay": "Saturday",
+   "description": "Id-uI-Fitar (Ramzan ID)",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "15-Aug-2015",
+   "weekDay": "Saturday",
+   "description": "Independence Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "18-Aug-2015",
+   "weekDay": "Tuesday",
+   "description": "Parsi New Year",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "17-Sep-2015",
+   "weekDay": "Thursday",
+   "description": "Ganesh Chaturthi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "25-Sep-2015",
+   "weekDay": "Friday",
+   "description": "Bakri ID",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "02-Oct-2015",
+   "weekDay": "Friday",
+   "description": "Mahatma Gandhi Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "22-Oct-2015",
+   "weekDay": "Thursday",
+   "description": "Dussehra",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "24-Oct-2015",
+   "weekDay": "Saturday",
+   "description": "Muharram",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "12-Nov-2015",
+   "weekDay": "Thursday",
+   "description": "Diwali-Balipratipada",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "25-Nov-2015",
+   "weekDay": "Wednesday",
+   "description": "Gurunanak Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "24-Dec-2015",
+   "weekDay": "Thursday",
+   "description": "Id-e-Milad",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "25-Dec-2015",
+   "weekDay": "Friday",
+   "description": "Christmas",
+   "morning_session": null,
+   "evening_session": null
+  }
+ ],
+ "CM": [
+  {
+   "tradingDate": "26-Jan-2015",
+   "weekDay": "Monday",
+   "description": "Republic Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "17-Feb-2015",
+   "weekDay": "Tuesday",
+   "description": "Mahashivratri",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "28-Feb-2015",
+   "weekDay": "Saturday",
+   "description": "Union Budget",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "06-Mar-2015",
+   "weekDay": "Friday",
+   "description": "Holi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "28-Mar-2015",
+   "weekDay": "Saturday",
+   "description": "Ram Navami",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "02-Apr-2015",
+   "weekDay": "Thursday",
+   "description": "Mahavir Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "03-Apr-2015",
+   "weekDay": "Friday",
+   "description": "Good Friday",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "14-Apr-2015",
+   "weekDay": "Tuesday",
+   "description": "Dr. Baba Saheb Ambedkar Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-May-2015",
+   "weekDay": "Friday",
+   "description": "Maharashtra Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "18-Jul-2015",
+   "weekDay": "Saturday",
+   "description": "Id-uI-Fitar (Ramzan ID)",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "15-Aug-2015",
+   "weekDay": "Saturday",
+   "description": "Independence Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "17-Sep-2015",
+   "weekDay": "Thursday",
+   "description": "Ganesh Chaturthi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "25-Sep-2015",
+   "weekDay": "Friday",
+   "description": "Bakri ID",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "02-Oct-2015",
+   "weekDay": "Friday",
+   "description": "Mahatma Gandhi Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "22-Oct-2015",
+   "weekDay": "Thursday",
+   "description": "Dussehra",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "24-Oct-2015",
+   "weekDay": "Saturday",
+   "description": "Muharram",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "12-Nov-2015",
+   "weekDay": "Thursday",
+   "description": "Diwali-Balipratipada",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "25-Nov-2015",
+   "weekDay": "Wednesday",
+   "description": "Gurunanak Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "25-Dec-2015",
+   "weekDay": "Friday",
+   "description": "Christmas",
+   "morning_session": null,
+   "evening_session": null
+  }
+ ],
+ "FO": [
+  {
+   "tradingDate": "26-Jan-2015",
+   "weekDay": "Monday",
+   "description": "Republic Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "17-Feb-2015",
+   "weekDay": "Tuesday",
+   "description": "Mahashivratri",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "28-Feb-2015",
+   "weekDay": "Saturday",
+   "description": "Union Budget",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "06-Mar-2015",
+   "weekDay": "Friday",
+   "description": "Holi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "28-Mar-2015",
+   "weekDay": "Saturday",
+   "description": "Ram Navami",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "02-Apr-2015",
+   "weekDay": "Thursday",
+   "description": "Mahavir Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "03-Apr-2015",
+   "weekDay": "Friday",
+   "description": "Good Friday",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "14-Apr-2015",
+   "weekDay": "Tuesday",
+   "description": "Dr. Baba Saheb Ambedkar Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-May-2015",
+   "weekDay": "Friday",
+   "description": "Maharashtra Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "18-Jul-2015",
+   "weekDay": "Saturday",
+   "description": "Id-uI-Fitar (Ramzan ID)",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "15-Aug-2015",
+   "weekDay": "Saturday",
+   "description": "Independence Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "17-Sep-2015",
+   "weekDay": "Thursday",
+   "description": "Ganesh Chaturthi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "25-Sep-2015",
+   "weekDay": "Friday",
+   "description": "Bakri ID",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "02-Oct-2015",
+   "weekDay": "Friday",
+   "description": "Mahatma Gandhi Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "22-Oct-2015",
+   "weekDay": "Thursday",
+   "description": "Dussehra",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "24-Oct-2015",
+   "weekDay": "Saturday",
+   "description": "Muharram",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "12-Nov-2015",
+   "weekDay": "Thursday",
+   "description": "Diwali-Balipratipada",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "25-Nov-2015",
+   "weekDay": "Wednesday",
+   "description": "Gurunanak Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "25-Dec-2015",
+   "weekDay": "Friday",
+   "description": "Christmas",
+   "morning_session": null,
+   "evening_session": null
+  }
+ ],
+ "IRD": [
+  {
+   "tradingDate": "04-Jan-2015",
+   "weekDay": "Sunday",
+   "description": "Id-e-Milad",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "26-Jan-2015",
+   "weekDay": "Monday",
+   "description": "Republic Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "17-Feb-2015",
+   "weekDay": "Tuesday",
+   "description": "Mahashivratri",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "19-Feb-2015",
+   "weekDay": "Thursday",
+   "description": "Chhatrapati Shivaji Maharaj Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "28-Feb-2015",
+   "weekDay": "Saturday",
+   "description": "Union Budget",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "06-Mar-2015",
+   "weekDay": "Friday",
+   "description": "Holi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "21-Mar-2015",
+   "weekDay": "Saturday",
+   "description": "Gudi Padwa",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "28-Mar-2015",
+   "weekDay": "Saturday",
+   "description": "Ram Navami",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-Apr-2015",
+   "weekDay": "Wednesday",
+   "description": "Annual Bank Closing",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "02-Apr-2015",
+   "weekDay": "Thursday",
+   "description": "Mahavir Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "03-Apr-2015",
+   "weekDay": "Friday",
+   "description": "Good Friday",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "14-Apr-2015",
+   "weekDay": "Tuesday",
+   "description": "Dr. Baba Saheb Ambedkar Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-May-2015",
+   "weekDay": "Friday",
+   "description": "Maharashtra Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "04-May-2015",
+   "weekDay": "Monday",
+   "description": "Buddha Pournima",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "18-Jul-2015",
+   "weekDay": "Saturday",
+   "description": "Id-uI-Fitar (Ramzan ID)",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "15-Aug-2015",
+   "weekDay": "Saturday",
+   "description": "Independence Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "18-Aug-2015",
+   "weekDay": "Tuesday",
+   "description": "Parsi New Year",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "17-Sep-2015",
+   "weekDay": "Thursday",
+   "description": "Ganesh Chaturthi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "25-Sep-2015",
+   "weekDay": "Friday",
+   "description": "Bakri ID",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "02-Oct-2015",
+   "weekDay": "Friday",
+   "description": "Mahatma Gandhi Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "22-Oct-2015",
+   "weekDay": "Thursday",
+   "description": "Dussehra",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "24-Oct-2015",
+   "weekDay": "Saturday",
+   "description": "Muharram",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "12-Nov-2015",
+   "weekDay": "Thursday",
+   "description": "Diwali-Balipratipada",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "25-Nov-2015",
+   "weekDay": "Wednesday",
+   "description": "Gurunanak Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "24-Dec-2015",
+   "weekDay": "Thursday",
+   "description": "Id-e-Milad",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "25-Dec-2015",
+   "weekDay": "Friday",
+   "description": "Christmas",
+   "morning_session": null,
+   "evening_session": null
+  }
+ ],
+ "MF": [
+  {
+   "tradingDate": "26-Jan-2015",
+   "weekDay": "Monday",
+   "description": "Republic Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "17-Feb-2015",
+   "weekDay": "Tuesday",
+   "description": "Mahashivratri",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "28-Feb-2015",
+   "weekDay": "Saturday",
+   "description": "Union Budget",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "06-Mar-2015",
+   "weekDay": "Friday",
+   "description": "Holi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "28-Mar-2015",
+   "weekDay": "Saturday",
+   "description": "Ram Navami",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "02-Apr-2015",
+   "weekDay": "Thursday",
+   "description": "Mahavir Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "03-Apr-2015",
+   "weekDay": "Friday",
+   "description": "Good Friday",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "14-Apr-2015",
+   "weekDay": "Tuesday",
+   "description": "Dr. Baba Saheb Ambedkar Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-May-2015",
+   "weekDay": "Friday",
+   "description": "Maharashtra Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "18-Jul-2015",
+   "weekDay": "Saturday",
+   "description": "Id-uI-Fitar (Ramzan ID)",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "15-Aug-2015",
+   "weekDay": "Saturday",
+   "description": "Independence Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "17-Sep-2015",
+   "weekDay": "Thursday",
+   "description": "Ganesh Chaturthi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "25-Sep-2015",
+   "weekDay": "Friday",
+   "description": "Bakri ID",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "02-Oct-2015",
+   "weekDay": "Friday",
+   "description": "Mahatma Gandhi Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "22-Oct-2015",
+   "weekDay": "Thursday",
+   "description": "Dussehra",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "24-Oct-2015",
+   "weekDay": "Saturday",
+   "description": "Muharram",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "11-Nov-2015",
+   "weekDay": "Wednesday",
+   "description": "Diwali-Laxmi Pujan",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "12-Nov-2015",
+   "weekDay": "Thursday",
+   "description": "Diwali-Balipratipada",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "25-Nov-2015",
+   "weekDay": "Wednesday",
+   "description": "Gurunanak Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "25-Dec-2015",
+   "weekDay": "Friday",
+   "description": "Christmas",
+   "morning_session": null,
+   "evening_session": null
+  }
+ ],
+ "NDM": [
+  {
+   "tradingDate": "04-Jan-2015",
+   "weekDay": "Sunday",
+   "description": "Id-e-Milad",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "26-Jan-2015",
+   "weekDay": "Monday",
+   "description": "Republic Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "17-Feb-2015",
+   "weekDay": "Tuesday",
+   "description": "Mahashivratri",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "19-Feb-2015",
+   "weekDay": "Thursday",
+   "description": "Chhatrapati Shivaji Maharaj Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "28-Feb-2015",
+   "weekDay": "Saturday",
+   "description": "Union Budget",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "06-Mar-2015",
+   "weekDay": "Friday",
+   "description": "Holi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "21-Mar-2015",
+   "weekDay": "Saturday",
+   "description": "Gudi Padwa",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "28-Mar-2015",
+   "weekDay": "Saturday",
+   "description": "Ram Navami",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-Apr-2015",
+   "weekDay": "Wednesday",
+   "description": "Annual Bank Closing",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "02-Apr-2015",
+   "weekDay": "Thursday",
+   "description": "Mahavir Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "03-Apr-2015",
+   "weekDay": "Friday",
+   "description": "Good Friday",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "14-Apr-2015",
+   "weekDay": "Tuesday",
+   "description": "Dr. Baba Saheb Ambedkar Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-May-2015",
+   "weekDay": "Friday",
+   "description": "Maharashtra Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "04-May-2015",
+   "weekDay": "Monday",
+   "description": "Buddha Pournima",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "18-Jul-2015",
+   "weekDay": "Saturday",
+   "description": "Id-uI-Fitar (Ramzan ID)",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "15-Aug-2015",
+   "weekDay": "Saturday",
+   "description": "Independence Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "18-Aug-2015",
+   "weekDay": "Tuesday",
+   "description": "Parsi New Year",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "17-Sep-2015",
+   "weekDay": "Thursday",
+   "description": "Ganesh Chaturthi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "25-Sep-2015",
+   "weekDay": "Friday",
+   "description": "Bakri ID",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "02-Oct-2015",
+   "weekDay": "Friday",
+   "description": "Mahatma Gandhi Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "22-Oct-2015",
+   "weekDay": "Thursday",
+   "description": "Dussehra",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "24-Oct-2015",
+   "weekDay": "Saturday",
+   "description": "Muharram",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "11-Nov-2015",
+   "weekDay": "Wednesday",
+   "description": "Diwali-Laxmi Pujan",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "12-Nov-2015",
+   "weekDay": "Thursday",
+   "description": "Diwali-Balipratipada",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "25-Nov-2015",
+   "weekDay": "Wednesday",
+   "description": "Gurunanak Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "24-Dec-2015",
+   "weekDay": "Thursday",
+   "description": "Id-e-Milad",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "25-Dec-2015",
+   "weekDay": "Friday",
+   "description": "Christmas",
+   "morning_session": null,
+   "evening_session": null
+  }
+ ],
+ "SLBS": [
+  {
+   "tradingDate": "26-Jan-2015",
+   "weekDay": "Monday",
+   "description": "Republic Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "17-Feb-2015",
+   "weekDay": "Tuesday",
+   "description": "Mahashivratri",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "28-Feb-2015",
+   "weekDay": "Saturday",
+   "description": "Union Budget",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "06-Mar-2015",
+   "weekDay": "Friday",
+   "description": "Holi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "28-Mar-2015",
+   "weekDay": "Saturday",
+   "description": "Ram Navami",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "02-Apr-2015",
+   "weekDay": "Thursday",
+   "description": "Mahavir Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "03-Apr-2015",
+   "weekDay": "Friday",
+   "description": "Good Friday",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "14-Apr-2015",
+   "weekDay": "Tuesday",
+   "description": "Dr. Baba Saheb Ambedkar Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-May-2015",
+   "weekDay": "Friday",
+   "description": "Maharashtra Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "18-Jul-2015",
+   "weekDay": "Saturday",
+   "description": "Id-uI-Fitar (Ramzan ID)",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "15-Aug-2015",
+   "weekDay": "Saturday",
+   "description": "Independence Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "17-Sep-2015",
+   "weekDay": "Thursday",
+   "description": "Ganesh Chaturthi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "25-Sep-2015",
+   "weekDay": "Friday",
+   "description": "Bakri ID",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "02-Oct-2015",
+   "weekDay": "Friday",
+   "description": "Mahatma Gandhi Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "22-Oct-2015",
+   "weekDay": "Thursday",
+   "description": "Dussehra",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "24-Oct-2015",
+   "weekDay": "Saturday",
+   "description": "Muharram",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "12-Nov-2015",
+   "weekDay": "Thursday",
+   "description": "Diwali-Balipratipada",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "25-Nov-2015",
+   "weekDay": "Wednesday",
+   "description": "Gurunanak Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "25-Dec-2015",
+   "weekDay": "Friday",
+   "description": "Christmas",
+   "morning_session": null,
+   "evening_session": null
+  }
+ ],
+ "WDM": [
+  {
+   "tradingDate": "04-Jan-2015",
+   "weekDay": "Sunday",
+   "description": "Id-e-Milad",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "26-Jan-2015",
+   "weekDay": "Monday",
+   "description": "Republic Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "17-Feb-2015",
+   "weekDay": "Tuesday",
+   "description": "Mahashivratri",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "19-Feb-2015",
+   "weekDay": "Thursday",
+   "description": "Chhatrapati Shivaji Maharaj Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "28-Feb-2015",
+   "weekDay": "Saturday",
+   "description": "Union Budget",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "06-Mar-2015",
+   "weekDay": "Friday",
+   "description": "Holi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "21-Mar-2015",
+   "weekDay": "Saturday",
+   "description": "Gudi Padwa",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "28-Mar-2015",
+   "weekDay": "Saturday",
+   "description": "Ram Navami",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-Apr-2015",
+   "weekDay": "Wednesday",
+   "description": "Annual Bank Closing",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "02-Apr-2015",
+   "weekDay": "Thursday",
+   "description": "Mahavir Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "03-Apr-2015",
+   "weekDay": "Friday",
+   "description": "Good Friday",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "14-Apr-2015",
+   "weekDay": "Tuesday",
+   "description": "Dr. Baba Saheb Ambedkar Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-May-2015",
+   "weekDay": "Friday",
+   "description": "Maharashtra Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "04-May-2015",
+   "weekDay": "Monday",
+   "description": "Buddha Pournima",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "18-Jul-2015",
+   "weekDay": "Saturday",
+   "description": "Id-uI-Fitar (Ramzan ID)",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "15-Aug-2015",
+   "weekDay": "Saturday",
+   "description": "Independence Day",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "18-Aug-2015",
+   "weekDay": "Tuesday",
+   "description": "Parsi New Year",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "17-Sep-2015",
+   "weekDay": "Thursday",
+   "description": "Ganesh Chaturthi",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "25-Sep-2015",
+   "weekDay": "Friday",
+   "description": "Bakri ID",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "02-Oct-2015",
+   "weekDay": "Friday",
+   "description": "Mahatma Gandhi Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "22-Oct-2015",
+   "weekDay": "Thursday",
+   "description": "Dussehra",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "24-Oct-2015",
+   "weekDay": "Saturday",
+   "description": "Muharram",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "11-Nov-2015",
+   "weekDay": "Wednesday",
+   "description": "Diwali-Laxmi Pujan",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "12-Nov-2015",
+   "weekDay": "Thursday",
+   "description": "Diwali-Balipratipada",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "25-Nov-2015",
+   "weekDay": "Wednesday",
+   "description": "Gurunanak Jayanti",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "24-Dec-2015",
+   "weekDay": "Thursday",
+   "description": "Id-e-Milad",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "25-Dec-2015",
+   "weekDay": "Friday",
+   "description": "Christmas",
+   "morning_session": null,
+   "evening_session": null
+  }
+ ]
+}

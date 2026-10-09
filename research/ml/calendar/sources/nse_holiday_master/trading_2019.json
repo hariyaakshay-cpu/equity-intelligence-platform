@@ -1,0 +1,1450 @@
+{
+ "CBM": [
+  {
+   "tradingDate": "19-Feb-2019",
+   "weekDay": "Tuesday",
+   "description": "Chatrapati Shivaji Jayanti\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "04-Mar-2019",
+   "weekDay": "Monday",
+   "description": "Mahashivratri\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "21-Mar-2019",
+   "weekDay": "Thursday",
+   "description": "Holi\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-Apr-2019",
+   "weekDay": "Monday",
+   "description": "Annual Bank Closing\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "17-Apr-2019",
+   "weekDay": "Wednesday",
+   "description": "Mahavir Jayanti\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "19-Apr-2019",
+   "weekDay": "Friday",
+   "description": "Good Friday\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "29-Apr-2019",
+   "weekDay": "Monday",
+   "description": "Parliamentary Elections\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-May-2019",
+   "weekDay": "Wednesday",
+   "description": "Maharashtra Day\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "05-Jun-2019",
+   "weekDay": "Wednesday",
+   "description": "Id-Ul-Fitr (Ramzan ID)\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "12-Aug-2019",
+   "weekDay": "Monday",
+   "description": "Bakri Id\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "15-Aug-2019",
+   "weekDay": "Thursday",
+   "description": "Independence Day\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "02-Sep-2019",
+   "weekDay": "Monday",
+   "description": "Ganesh Chaturthi\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "10-Sep-2019",
+   "weekDay": "Tuesday",
+   "description": "Moharram\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "02-Oct-2019",
+   "weekDay": "Wednesday",
+   "description": "Mahatma Gandhi Jayanti\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "08-Oct-2019",
+   "weekDay": "Tuesday",
+   "description": "Dasera\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "21-Oct-2019",
+   "weekDay": "Monday",
+   "description": "General Assembly Elections in Maharashtra\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "27-Oct-2019",
+   "weekDay": "Sunday",
+   "description": "Diwali-Laxmi Pujan*\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "28-Oct-2019",
+   "weekDay": "Monday",
+   "description": "Diwali-Balipratipada\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "12-Nov-2019",
+   "weekDay": "Tuesday",
+   "description": "Gurunanak Jayanti\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "25-Dec-2019",
+   "weekDay": "Wednesday",
+   "description": "Christmas\r",
+   "morning_session": null,
+   "evening_session": null
+  }
+ ],
+ "CD": [
+  {
+   "tradingDate": "26-Jan-2019",
+   "weekDay": "Saturday",
+   "description": "Republic Day\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "19-Feb-2019",
+   "weekDay": "Tuesday",
+   "description": "Chatrapati Shivaji Jayanti\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "04-Mar-2019",
+   "weekDay": "Monday",
+   "description": "Mahashivratri\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "21-Mar-2019",
+   "weekDay": "Thursday",
+   "description": "Holi\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-Apr-2019",
+   "weekDay": "Monday",
+   "description": "Annual Bank Closing\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "06-Apr-2019",
+   "weekDay": "Saturday",
+   "description": "Gudi Padwa\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "13-Apr-2019",
+   "weekDay": "Saturday",
+   "description": "Ram Navami\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "14-Apr-2019",
+   "weekDay": "Sunday",
+   "description": "Dr.Baba Saheb Ambedkar Jayanti\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "17-Apr-2019",
+   "weekDay": "Wednesday",
+   "description": "Mahavir Jayanti\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "19-Apr-2019",
+   "weekDay": "Friday",
+   "description": "Good Friday\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "29-Apr-2019",
+   "weekDay": "Monday",
+   "description": "Parliamentary Elections\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-May-2019",
+   "weekDay": "Wednesday",
+   "description": "Maharashtra Day\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "18-May-2019",
+   "weekDay": "Saturday",
+   "description": "Buddha Pournima\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "05-Jun-2019",
+   "weekDay": "Wednesday",
+   "description": "Id-Ul-Fitr (Ramzan ID)\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "12-Aug-2019",
+   "weekDay": "Monday",
+   "description": "Bakri Id\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "15-Aug-2019",
+   "weekDay": "Thursday",
+   "description": "Independence Day\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "17-Aug-2019",
+   "weekDay": "Saturday",
+   "description": "Parsi New Year\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "02-Sep-2019",
+   "weekDay": "Monday",
+   "description": "Ganesh Chaturthi\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "10-Sep-2019",
+   "weekDay": "Tuesday",
+   "description": "Moharram\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "02-Oct-2019",
+   "weekDay": "Wednesday",
+   "description": "Mahatma Gandhi Jayanti\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "08-Oct-2019",
+   "weekDay": "Tuesday",
+   "description": "Dasera\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "21-Oct-2019",
+   "weekDay": "Monday",
+   "description": "General Assembly Elections in Maharashtra\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "27-Oct-2019",
+   "weekDay": "Sunday",
+   "description": "Diwali-Laxmi Pujan*\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "28-Oct-2019",
+   "weekDay": "Monday",
+   "description": "Diwali-Balipratipada\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "10-Nov-2019",
+   "weekDay": "Sunday",
+   "description": "Id-E-Milad\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "12-Nov-2019",
+   "weekDay": "Tuesday",
+   "description": "Gurunanak Jayanti\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "25-Dec-2019",
+   "weekDay": "Wednesday",
+   "description": "Christmas\r",
+   "morning_session": null,
+   "evening_session": null
+  }
+ ],
+ "CM": [
+  {
+   "tradingDate": "26-Jan-2019",
+   "weekDay": "Saturday",
+   "description": "Republic Day\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "04-Mar-2019",
+   "weekDay": "Monday",
+   "description": "Mahashivratri\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "21-Mar-2019",
+   "weekDay": "Thursday",
+   "description": "Holi\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "13-Apr-2019",
+   "weekDay": "Saturday",
+   "description": "Ram Navami\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "14-Apr-2019",
+   "weekDay": "Sunday",
+   "description": "Dr.Baba Saheb Ambedkar Jayanti\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "17-Apr-2019",
+   "weekDay": "Wednesday",
+   "description": "Mahavir Jayanti\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "19-Apr-2019",
+   "weekDay": "Friday",
+   "description": "Good Friday\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "29-Apr-2019",
+   "weekDay": "Monday",
+   "description": "Parliamentary Elections\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-May-2019",
+   "weekDay": "Wednesday",
+   "description": "Maharashtra Day\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "05-Jun-2019",
+   "weekDay": "Wednesday",
+   "description": "Id-Ul-Fitr (Ramzan ID)\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "12-Aug-2019",
+   "weekDay": "Monday",
+   "description": "Bakri Id\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "15-Aug-2019",
+   "weekDay": "Thursday",
+   "description": "Independence Day\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "02-Sep-2019",
+   "weekDay": "Monday",
+   "description": "Ganesh Chaturthi\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "10-Sep-2019",
+   "weekDay": "Tuesday",
+   "description": "Moharram\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "02-Oct-2019",
+   "weekDay": "Wednesday",
+   "description": "Mahatma Gandhi Jayanti\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "08-Oct-2019",
+   "weekDay": "Tuesday",
+   "description": "Dasera\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "21-Oct-2019",
+   "weekDay": "Monday",
+   "description": "General Assembly Elections in Maharashtra\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "27-Oct-2019",
+   "weekDay": "Sunday",
+   "description": "Diwali-Laxmi Pujan*\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "28-Oct-2019",
+   "weekDay": "Monday",
+   "description": "Diwali-Balipratipada\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "12-Nov-2019",
+   "weekDay": "Tuesday",
+   "description": "Gurunanak Jayanti\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "25-Dec-2019",
+   "weekDay": "Wednesday",
+   "description": "Christmas\r",
+   "morning_session": null,
+   "evening_session": null
+  }
+ ],
+ "COM": [
+  {
+   "tradingDate": "26-Jan-2019",
+   "weekDay": "Saturday",
+   "description": "Republic Day\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "13-Apr-2019",
+   "weekDay": "Saturday",
+   "description": "Ram Navami\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "14-Apr-2019",
+   "weekDay": "Sunday",
+   "description": "Dr.Baba Saheb Ambedkar Jayanti\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "19-Apr-2019",
+   "weekDay": "Friday",
+   "description": "Good Friday\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "29-Apr-2019",
+   "weekDay": "Monday",
+   "description": "Parliamentary Elections\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "15-Aug-2019",
+   "weekDay": "Thursday",
+   "description": "Independence Day\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "02-Oct-2019",
+   "weekDay": "Wednesday",
+   "description": "Mahatma Gandhi Jayanti\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "27-Oct-2019",
+   "weekDay": "Sunday",
+   "description": "Diwali-Laxmi Pujan*\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "25-Dec-2019",
+   "weekDay": "Wednesday",
+   "description": "Christmas\r",
+   "morning_session": null,
+   "evening_session": null
+  }
+ ],
+ "FO": [
+  {
+   "tradingDate": "26-Jan-2019",
+   "weekDay": "Saturday",
+   "description": "Republic Day\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "04-Mar-2019",
+   "weekDay": "Monday",
+   "description": "Mahashivratri\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "21-Mar-2019",
+   "weekDay": "Thursday",
+   "description": "Holi\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "13-Apr-2019",
+   "weekDay": "Saturday",
+   "description": "Ram Navami\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "14-Apr-2019",
+   "weekDay": "Sunday",
+   "description": "Dr.Baba Saheb Ambedkar Jayanti\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "17-Apr-2019",
+   "weekDay": "Wednesday",
+   "description": "Mahavir Jayanti\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "19-Apr-2019",
+   "weekDay": "Friday",
+   "description": "Good Friday\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "29-Apr-2019",
+   "weekDay": "Monday",
+   "description": "Parliamentary Elections\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-May-2019",
+   "weekDay": "Wednesday",
+   "description": "Maharashtra Day\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "05-Jun-2019",
+   "weekDay": "Wednesday",
+   "description": "Id-Ul-Fitr (Ramzan ID)\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "12-Aug-2019",
+   "weekDay": "Monday",
+   "description": "Bakri Id\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "15-Aug-2019",
+   "weekDay": "Thursday",
+   "description": "Independence Day\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "02-Sep-2019",
+   "weekDay": "Monday",
+   "description": "Ganesh Chaturthi\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "10-Sep-2019",
+   "weekDay": "Tuesday",
+   "description": "Moharram\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "02-Oct-2019",
+   "weekDay": "Wednesday",
+   "description": "Mahatma Gandhi Jayanti\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "08-Oct-2019",
+   "weekDay": "Tuesday",
+   "description": "Dasera\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "21-Oct-2019",
+   "weekDay": "Monday",
+   "description": "General Assembly Elections in Maharashtra\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "27-Oct-2019",
+   "weekDay": "Sunday",
+   "description": "Diwali-Laxmi Pujan*\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "28-Oct-2019",
+   "weekDay": "Monday",
+   "description": "Diwali-Balipratipada\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "12-Nov-2019",
+   "weekDay": "Tuesday",
+   "description": "Gurunanak Jayanti\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "25-Dec-2019",
+   "weekDay": "Wednesday",
+   "description": "Christmas\r",
+   "morning_session": null,
+   "evening_session": null
+  }
+ ],
+ "IRD": [
+  {
+   "tradingDate": "26-Jan-2019",
+   "weekDay": "Saturday",
+   "description": "Republic Day\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "19-Feb-2019",
+   "weekDay": "Tuesday",
+   "description": "Chatrapati Shivaji Jayanti\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "04-Mar-2019",
+   "weekDay": "Monday",
+   "description": "Mahashivratri\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "21-Mar-2019",
+   "weekDay": "Thursday",
+   "description": "Holi\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-Apr-2019",
+   "weekDay": "Monday",
+   "description": "Annual Bank Closing\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "06-Apr-2019",
+   "weekDay": "Saturday",
+   "description": "Gudi Padwa\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "13-Apr-2019",
+   "weekDay": "Saturday",
+   "description": "Ram Navami\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "14-Apr-2019",
+   "weekDay": "Sunday",
+   "description": "Dr.Baba Saheb Ambedkar Jayanti\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "17-Apr-2019",
+   "weekDay": "Wednesday",
+   "description": "Mahavir Jayanti\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "19-Apr-2019",
+   "weekDay": "Friday",
+   "description": "Good Friday\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "29-Apr-2019",
+   "weekDay": "Monday",
+   "description": "Parliamentary Elections\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-May-2019",
+   "weekDay": "Wednesday",
+   "description": "Maharashtra Day\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "18-May-2019",
+   "weekDay": "Saturday",
+   "description": "Buddha Pournima\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "05-Jun-2019",
+   "weekDay": "Wednesday",
+   "description": "Id-Ul-Fitr (Ramzan ID)\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "12-Aug-2019",
+   "weekDay": "Monday",
+   "description": "Bakri Id\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "15-Aug-2019",
+   "weekDay": "Thursday",
+   "description": "Independence Day\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "17-Aug-2019",
+   "weekDay": "Saturday",
+   "description": "Parsi New Year\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "02-Sep-2019",
+   "weekDay": "Monday",
+   "description": "Ganesh Chaturthi\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "10-Sep-2019",
+   "weekDay": "Tuesday",
+   "description": "Moharram\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "02-Oct-2019",
+   "weekDay": "Wednesday",
+   "description": "Mahatma Gandhi Jayanti\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "08-Oct-2019",
+   "weekDay": "Tuesday",
+   "description": "Dasera\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "21-Oct-2019",
+   "weekDay": "Monday",
+   "description": "General Assembly Elections in Maharashtra\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "27-Oct-2019",
+   "weekDay": "Sunday",
+   "description": "Diwali-Laxmi Pujan*\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "28-Oct-2019",
+   "weekDay": "Monday",
+   "description": "Diwali-Balipratipada\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "10-Nov-2019",
+   "weekDay": "Sunday",
+   "description": "Id-E-Milad\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "12-Nov-2019",
+   "weekDay": "Tuesday",
+   "description": "Gurunanak Jayanti\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "25-Dec-2019",
+   "weekDay": "Wednesday",
+   "description": "Christmas\r",
+   "morning_session": null,
+   "evening_session": null
+  }
+ ],
+ "MF": [
+  {
+   "tradingDate": "04-Mar-2019",
+   "weekDay": "Monday",
+   "description": "Mahashivratri\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "21-Mar-2019",
+   "weekDay": "Thursday",
+   "description": "Holi\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "17-Apr-2019",
+   "weekDay": "Wednesday",
+   "description": "Mahavir Jayanti\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "19-Apr-2019",
+   "weekDay": "Friday",
+   "description": "Good Friday\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "29-Apr-2019",
+   "weekDay": "Monday",
+   "description": "Parliamentary Elections\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-May-2019",
+   "weekDay": "Wednesday",
+   "description": "Maharashtra Day\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "05-Jun-2019",
+   "weekDay": "Wednesday",
+   "description": "Id-Ul-Fitr (Ramzan ID)\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "12-Aug-2019",
+   "weekDay": "Monday",
+   "description": "Bakri Id\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "15-Aug-2019",
+   "weekDay": "Thursday",
+   "description": "Independence Day\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "02-Sep-2019",
+   "weekDay": "Monday",
+   "description": "Ganesh Chaturthi\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "10-Sep-2019",
+   "weekDay": "Tuesday",
+   "description": "Moharram\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "02-Oct-2019",
+   "weekDay": "Wednesday",
+   "description": "Mahatma Gandhi Jayanti\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "08-Oct-2019",
+   "weekDay": "Tuesday",
+   "description": "Dasera\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "21-Oct-2019",
+   "weekDay": "Monday",
+   "description": "General Assembly Elections in Maharashtra\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "27-Oct-2019",
+   "weekDay": "Sunday",
+   "description": "Diwali-Laxmi Pujan*\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "28-Oct-2019",
+   "weekDay": "Monday",
+   "description": "Diwali-Balipratipada\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "12-Nov-2019",
+   "weekDay": "Tuesday",
+   "description": "Gurunanak Jayanti\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "25-Dec-2019",
+   "weekDay": "Wednesday",
+   "description": "Christmas\r",
+   "morning_session": null,
+   "evening_session": null
+  }
+ ],
+ "NDM": [
+  {
+   "tradingDate": "19-Feb-2019",
+   "weekDay": "Tuesday",
+   "description": "Chatrapati Shivaji Jayanti\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "04-Mar-2019",
+   "weekDay": "Monday",
+   "description": "Mahashivratri\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "21-Mar-2019",
+   "weekDay": "Thursday",
+   "description": "Holi\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-Apr-2019",
+   "weekDay": "Monday",
+   "description": "Annual Bank Closing\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "17-Apr-2019",
+   "weekDay": "Wednesday",
+   "description": "Mahavir Jayanti\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "19-Apr-2019",
+   "weekDay": "Friday",
+   "description": "Good Friday\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "29-Apr-2019",
+   "weekDay": "Monday",
+   "description": "Parliamentary Elections\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-May-2019",
+   "weekDay": "Wednesday",
+   "description": "Maharashtra Day\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "05-Jun-2019",
+   "weekDay": "Wednesday",
+   "description": "Id-Ul-Fitr (Ramzan ID)\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "12-Aug-2019",
+   "weekDay": "Monday",
+   "description": "Bakri Id\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "15-Aug-2019",
+   "weekDay": "Thursday",
+   "description": "Independence Day\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "02-Sep-2019",
+   "weekDay": "Monday",
+   "description": "Ganesh Chaturthi\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "10-Sep-2019",
+   "weekDay": "Tuesday",
+   "description": "Moharram\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "02-Oct-2019",
+   "weekDay": "Wednesday",
+   "description": "Mahatma Gandhi Jayanti\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "08-Oct-2019",
+   "weekDay": "Tuesday",
+   "description": "Dasera\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "21-Oct-2019",
+   "weekDay": "Monday",
+   "description": "General Assembly Elections in Maharashtra\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "27-Oct-2019",
+   "weekDay": "Sunday",
+   "description": "Diwali-Laxmi Pujan*\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "28-Oct-2019",
+   "weekDay": "Monday",
+   "description": "Diwali-Balipratipada\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "12-Nov-2019",
+   "weekDay": "Tuesday",
+   "description": "Gurunanak Jayanti\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "25-Dec-2019",
+   "weekDay": "Wednesday",
+   "description": "Christmas\r",
+   "morning_session": null,
+   "evening_session": null
+  }
+ ],
+ "NTRP": [
+  {
+   "tradingDate": "19-Feb-2019",
+   "weekDay": "Tuesday",
+   "description": "Chatrapati Shivaji Jayanti\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "04-Mar-2019",
+   "weekDay": "Monday",
+   "description": "Mahashivratri\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "21-Mar-2019",
+   "weekDay": "Thursday",
+   "description": "Holi\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-Apr-2019",
+   "weekDay": "Monday",
+   "description": "Annual Bank Closing\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "17-Apr-2019",
+   "weekDay": "Wednesday",
+   "description": "Mahavir Jayanti\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "19-Apr-2019",
+   "weekDay": "Friday",
+   "description": "Good Friday\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "29-Apr-2019",
+   "weekDay": "Monday",
+   "description": "Parliamentary Elections\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-May-2019",
+   "weekDay": "Wednesday",
+   "description": "Maharashtra Day\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "05-Jun-2019",
+   "weekDay": "Wednesday",
+   "description": "Id-Ul-Fitr (Ramzan ID)\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "12-Aug-2019",
+   "weekDay": "Monday",
+   "description": "Bakri Id\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "15-Aug-2019",
+   "weekDay": "Thursday",
+   "description": "Independence Day\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "02-Sep-2019",
+   "weekDay": "Monday",
+   "description": "Ganesh Chaturthi\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "10-Sep-2019",
+   "weekDay": "Tuesday",
+   "description": "Moharram\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "02-Oct-2019",
+   "weekDay": "Wednesday",
+   "description": "Mahatma Gandhi Jayanti\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "08-Oct-2019",
+   "weekDay": "Tuesday",
+   "description": "Dasera\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "21-Oct-2019",
+   "weekDay": "Monday",
+   "description": "General Assembly Elections in Maharashtra\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "27-Oct-2019",
+   "weekDay": "Sunday",
+   "description": "Diwali-Laxmi Pujan*\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "28-Oct-2019",
+   "weekDay": "Monday",
+   "description": "Diwali-Balipratipada\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "12-Nov-2019",
+   "weekDay": "Tuesday",
+   "description": "Gurunanak Jayanti\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "25-Dec-2019",
+   "weekDay": "Wednesday",
+   "description": "Christmas\r",
+   "morning_session": null,
+   "evening_session": null
+  }
+ ],
+ "SLBS": [
+  {
+   "tradingDate": "26-Jan-2019",
+   "weekDay": "Saturday",
+   "description": "Republic Day\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "04-Mar-2019",
+   "weekDay": "Monday",
+   "description": "Mahashivratri\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "21-Mar-2019",
+   "weekDay": "Thursday",
+   "description": "Holi\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "13-Apr-2019",
+   "weekDay": "Saturday",
+   "description": "Ram Navami\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "14-Apr-2019",
+   "weekDay": "Sunday",
+   "description": "Dr.Baba Saheb Ambedkar Jayanti\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "17-Apr-2019",
+   "weekDay": "Wednesday",
+   "description": "Mahavir Jayanti\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "19-Apr-2019",
+   "weekDay": "Friday",
+   "description": "Good Friday\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "29-Apr-2019",
+   "weekDay": "Monday",
+   "description": "Parliamentary Elections\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "01-May-2019",
+   "weekDay": "Wednesday",
+   "description": "Maharashtra Day\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "05-Jun-2019",
+   "weekDay": "Wednesday",
+   "description": "Id-Ul-Fitr (Ramzan ID)\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "12-Aug-2019",
+   "weekDay": "Monday",
+   "description": "Bakri Id\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "15-Aug-2019",
+   "weekDay": "Thursday",
+   "description": "Independence Day\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "02-Sep-2019",
+   "weekDay": "Monday",
+   "description": "Ganesh Chaturthi\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "10-Sep-2019",
+   "weekDay": "Tuesday",
+   "description": "Moharram\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "02-Oct-2019",
+   "weekDay": "Wednesday",
+   "description": "Mahatma Gandhi Jayanti\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "08-Oct-2019",
+   "weekDay": "Tuesday",
+   "description": "Dasera\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "21-Oct-2019",
+   "weekDay": "Monday",
+   "description": "General Assembly Elections in Maharashtra\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "27-Oct-2019",
+   "weekDay": "Sunday",
+   "description": "Diwali-Laxmi Pujan*\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "28-Oct-2019",
+   "weekDay": "Monday",
+   "description": "Diwali-Balipratipada\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "12-Nov-2019",
+   "weekDay": "Tuesday",
+   "description": "Gurunanak Jayanti\r",
+   "morning_session": null,
+   "evening_session": null
+  },
+  {
+   "tradingDate": "25-Dec-2019",
+   "weekDay": "Wednesday",
+   "description": "Christmas\r",
+   "morning_session": null,
+   "evening_session": null
+  }
+ ]
+}
