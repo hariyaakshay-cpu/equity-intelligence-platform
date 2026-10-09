@@ -358,6 +358,47 @@ function layerCountNote(dq) {
   return 'The ScanRun and E4 layers are counted separately and never added together; a symbol with a recorded warning in both layers is in each count.' +
     (e && e.not_listed_with_warnings ? ' ' + e.not_listed_with_warnings + ' E4 symbol(s) with a recorded warning are not in this scan run, so they are counted but not listed.' : '');
 }
+function indicatorTiles(b) {
+  const lg = b ? b.above_ema.long : null, hp = b ? b.high_proximity : null;
+  return [
+    lg ? { value: shareText(lg), label: 'E4: close above EMA ' + lg.period, sub: shareSub(lg) }
+       : { value: '–', label: 'E4: close above EMA', sub: 'no COMPLETE E4 scan' },
+    hp ? { value: hp.buckets[0].count, label: 'E4: within ' + hp.buckets[0].hi + '% of the ' + hp.window + '-bar high', sub: 'of ' + hp.of + ' with a value; a histogram bucket, not a signal' }
+       : { value: '–', label: 'E4: 52-week high', sub: 'no COMPLETE E4 scan' },
+  ];
+}
+function sessionTile(run) {
+  return { value: run.latest_closed_session || '–', label: 'ScanRun: latest closed session', sub: 'ScanRun calendar: ' + (run.calendar_verification || '–') };
+}
+// Stock Intelligence "Data quality": plain words per layer, no tick or warning glyphs. `dq` is this symbol's issue (or undefined).
+function symbolQualityGroups(r, q, hasFeatures, hasE4Scan, dq) {
+  const warnings = dq ? dq.warnings : [];
+  const has = code => warnings.some(w => warningHasCode(w, code));
+  const counted = r.available_session_count !== null && r.available_session_count !== undefined;
+  const scan = [
+    'status ' + r.symbol_data_status + '; ' + (counted ? r.available_session_count + ' sessions available, ' + (r.missing_session_count ?? '–') + ' missing' : 'session counts not recorded'),
+    has('history_gaps') ? 'history gaps recorded' : 'no history gaps recorded',
+    has('price_break_detected') ? 'price-break flag set' : 'price-break flag not set',
+    has('corporate_action_review') ? 'listed in the corporate-action review file' : 'not listed in the corporate-action review file',
+  ];
+  const e4 = !hasE4Scan ? ['no COMPLETE E4 scan'] : [
+    q ? 'quality ' + q.status + ': ' + q.n_bars + ' bars, full high window ' + (q.w52_complete ? 'yes' : 'no') + ', volume usable ' + (q.volume_usable ? 'yes' : 'no') : 'no quality row for this symbol',
+    hasFeatures ? 'indicator values available' : 'indicator values not available',
+    has('e4_break') ? 'a break is recorded' : 'no break recorded',
+  ];
+  return [{ layer: 'ScanRun', lines: scan }, { layer: 'E4', lines: e4 }];
+}
+function symbolQualityHtml(groups) {
+  return '<ul class="warnlist" style="list-style:none;padding:0">' + groups.map(g => g.lines.map(t => '<li>' + layerTag(g.layer) + esc(t) + '</li>').join('')).join('') + '</ul>';
+}
+// Scanner table columns: [sort key, label, numeric, layer]. symbol, company, sector, status and flags come from the scan run; the rest from E4.
+function explorerHeads(e4) {
+  const cols = e4 ? e4Columns(e4.config) : [];
+  return [['symbol', 'symbol', false, 'ScanRun'], ['company_name', 'company', false, 'ScanRun'], ['sector', 'sector', false, 'ScanRun'],
+      ['symbol_data_status', 'status', false, 'ScanRun'], [null, 'flags', false, 'ScanRun']]
+    .concat(e4 ? [[null, 'close', true, 'E4'], [null, 'vs EMA ' + (e4.config.ema_long || '') + ' %', true, 'E4']] : [])
+    .concat(cols.map(c => [c[0], c[1], true, 'E4']));
+}
 function goDetails(symbol) {
   document.getElementById('details-symbol').value = symbol;
   showSection('details');
@@ -375,13 +416,11 @@ async function loadOverview() {
   const run = data.run, sc = run.status_counts || {}, dq = data.data_quality, b = data.breadth;
   document.getElementById('hdr-run').textContent = 'run ' + run.run_id + ' · ' + (run.finished_at || run.started_at);
   let html = '';
-  const lg = b ? b.above_ema.long : null, hp = b ? b.high_proximity : null;
   html += '<div class="kpis">' +
     universeTiles(run, b, data.e4_scan).map(tileHtml).join('') +
     warningTiles(dq).map(tileHtml).join('') +
-    kpi(lg ? shareText(lg) : '–', lg ? 'above EMA ' + lg.period : 'above EMA (no E4 scan)', lg ? shareSub(lg) : '') +
-    kpi(hp ? hp.buckets[0].count : '–', hp ? 'within ' + hp.buckets[0].hi + '% of the ' + hp.window + '-bar high' : '52-week high', hp ? 'of ' + hp.of + ' with a value; a histogram bucket, not a signal' : '') +
-    kpi(run.latest_closed_session || '–', 'latest closed session', 'calendar: ' + (run.calendar_verification || '–')) +
+    indicatorTiles(b).map(tileHtml).join('') +
+    tileHtml(sessionTile(run)) +
     '</div>';
   html += '<div class="grid2"><div class="card"><h3>ScanRun status counts and recorded warnings</h3>' + donut(sc) +
     warningChipsHtml(dq, (k, v) => '<a href="#" class="chip" data-dq="' + esc(k) + '">' + esc(k) + ' ' + v + '</a>') +
@@ -403,8 +442,8 @@ async function loadOverview() {
   }
   html += '</div>';
   html += '<div class="card"><h3>Sector overview <span class="note" style="text-transform:none;letter-spacing:0">% of each sector above EMA ' + (b ? b.above_ema.medium.period : '') + ' &middot; alphabetical, not a ranking</span></h3><div id="sector-overview" class="note">' + (b ? 'Loading...' : 'No COMPLETE E4 indicator scan found.') + '</div></div>';
-  html += '<div class="card"><h3>Last run</h3><div class="kv"><div>run</div><div>' + esc(run.run_id) + ' (' + esc(run.scan_label) + ')</div><div>started</div><div>' + esc(run.started_at) +
-    '</div><div>finished</div><div>' + esc(run.finished_at || '–') + '</div><div>universe</div><div>' + esc(run.universe_version || '–') +
+  html += '<div class="card"><h3>ScanRun: latest COMPLETE run</h3><div class="kv"><div>run</div><div>' + esc(run.run_id) + ' (' + esc(run.scan_label) + ')</div><div>started</div><div>' + esc(run.started_at) +
+    '</div><div>finished</div><div>' + esc(run.finished_at || '–') + '</div><div>universe version</div><div>' + esc(run.universe_version || '–') +
     '</div><div>git commit</div><div>' + esc(run.git_commit || '–') + (run.git_dirty ? ' (dirty tree)' : '') + '</div></div></div>';
   box.innerHTML = html;
   box.querySelectorAll('[data-dq]').forEach(a => a.addEventListener('click', e => { e.preventDefault(); qualityFilter = a.dataset.dq; renderQuality(); showSection('quality'); }));
@@ -515,13 +554,11 @@ function renderCandidatesTable() {
   const container = document.getElementById('explorer-table');
   container.innerHTML = '';
   const e4 = explorerState.e4, cols = e4 ? e4Columns(e4.config) : [];
-  const heads = [['symbol', 'symbol', false], ['company_name', 'company', false], ['sector', 'sector', false], ['symbol_data_status', 'status', false], [null, 'flags', false]]
-    .concat(e4 ? [[null, 'close', true], [null, 'vs EMA ' + (e4.config.ema_long || '') + ' %', true]] : [])
-    .concat(cols.map(c => [c[0], c[1], true]));
+  const heads = explorerHeads(e4);
   const tr = el('tr');
-  heads.forEach(([k, label, isNum]) => {
+  heads.forEach(([k, label, isNum, layer]) => {
     const arrow = k && k === explorerState.sort ? (explorerState.sort_dir === 'asc' ? ' ▲' : ' ▼') : '';
-    const th = el('th', {class: (isNum ? 'num ' : '') + (k ? 'sortable' : '')}, [label + arrow]);
+    const th = el('th', {class: (isNum ? 'num ' : '') + (k ? 'sortable' : '')}, [label + arrow, el('div', {class: 'hp-layer'}, [layer])]);
     if (k) th.addEventListener('click', () => {
       if (explorerState.sort === k) explorerState.sort_dir = explorerState.sort_dir === 'asc' ? 'desc' : 'asc';
       else { explorerState.sort = k; explorerState.sort_dir = 'asc'; }
@@ -696,15 +733,7 @@ async function loadDetails() {
   }
   const dq = data.data_quality.issues[0];
   const p = data.provenance, q = p.e4_quality;
-  const codes = new Set(dq ? dq.warnings.map(w => w.code) : []);
-  const tick = (ok, text) => '<li>' + (ok ? '<span class="up">✓</span> ' : '<span style="color:var(--warn)">⚠</span> ') + esc(text) + '</li>';
-  const checks = [
-    tick(!codes.has('history_gaps') && !codes.has('INSUFFICIENT_HISTORY'), (q ? q.n_bars + ' daily observations' : r.available_session_count + ' sessions available') + (codes.has('history_gaps') ? ', with gaps' : '')),
-    tick(!codes.has('price_break_detected') && !codes.has('e4_break'), codes.has('price_break_detected') || codes.has('e4_break') ? 'possible price break (see below)' : 'no price break detected'),
-    tick(!!data.e4_features, data.e4_features ? 'E4 indicators available' : 'E4 indicators not available'),
-    tick(!codes.has('corporate_action_review'), codes.has('corporate_action_review') ? 'corporate-action review pending' : 'not in the corporate-action review file'),
-  ];
-  html += '<div class="card"><h3>Data quality</h3><ul class="warnlist" style="list-style:none;padding:0">' + checks.join('') + '</ul>' +
+  html += '<div class="card"><h3>Data quality</h3>' + symbolQualityHtml(symbolQualityGroups(r, q, !!data.e4_features, !!data.e4_scan, dq)) +
     (dq ? '<h3 style="margin-top:12px">Warnings and reasons</h3>' + warningsHtml(dq.warnings) : '<p class="note">No warnings recorded for this symbol.</p>') + '</div>';
   html += '<div class="card"><h3>Provenance</h3><div class="kv"><div>run</div><div>' + esc(p.run_id) + '</div><div>universe version</div><div>' + esc(p.universe_version || '–') +
     '</div><div>corporate-action review</div><div>' + esc(p.corporate_action_review_version || '–') + '</div><div>git commit</div><div>' + esc(p.git_commit || '–') + (p.git_dirty ? ' (dirty tree)' : '') +
