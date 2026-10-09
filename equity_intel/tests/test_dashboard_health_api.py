@@ -208,7 +208,7 @@ def test_demo_mode_builds_a_full_panel(tmp_path, monkeypatch):
     app = create_app(demo=True)                                    # no db_path: the demo database path comes from db_path_guard
     app.config["HEALTH_CLOCK"] = lambda: datetime(2026, 9, 26, 12, 0, 0)
     body = app.test_client().get(API).get_json()
-    assert body["demo"] is True and body["layers"]["scanrun"]["run_id"] == "r-demo-latest-complete" and body["layers"]["e4"]["scan_id"] == "demo-e4-1"
+    assert body["demo"] is True and body["layers"]["scanrun"]["run_id"] == "r-demo-latest-complete" and body["layers"]["e4"]["scan_id"] == "demo-e4-2"
     assert [r["id"] for r in body["freshness"]] == ["F1", "F2", "F3", "F4a", "F4b", "F5", "F6", "F7", "F8a", "F8b", "F9"]
     assert _rows(body)["F1"]["state"] == "OK" and "DEMO_INDEX" in _rows(body)["F4b"]["value"]
 

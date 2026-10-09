@@ -293,8 +293,8 @@ def test_demo_mode_renders_a_full_panel_with_the_demo_banner(tmp_path, monkeypat
     res, page = _get(app.test_client())
     panel = _panel_html(page)
     assert res.status_code == 200 and "DEMO DATA - NOT REAL" in page
-    assert "r-demo-latest-complete" in panel and "demo-e4-1" in panel and "DEMO_INDEX" in _text(panel)
-    assert [_row_cells(panel, f"F{i}")[1] for i in (1, 2)] == ["OK", "OK"]
+    assert "r-demo-latest-complete" in panel and "demo-e4-2" in panel and "DEMO_INDEX" in _text(panel)
+    assert [_row_cells(panel, f"F{i}")[1] for i in (1, 2)] == ["OK", "WARN"]
     assert len(re.findall(r'<tr id="health-row-', panel)) == 11
 
 

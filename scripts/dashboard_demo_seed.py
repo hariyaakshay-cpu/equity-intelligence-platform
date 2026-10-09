@@ -403,69 +403,82 @@ def _weekdays_ending(end_iso: str, n: int) -> list[str]:
 
 
 def _seed_e4_tables(resolved: Path, latest_session: str) -> None:
-    """Fabricated E4 acquisition + feature tables for the demo database.
+    """Fabricated E4 acquisition + feature tables for the demo database: two COMPLETE E4 scans.
+
+    demo-e4-1 is as of `latest_session` (the ScanRun's latest closed session). demo-e4-2 is started later and is as of the
+    weekday before it, so it is the newest COMPLETE E4 scan and the demo shows the "E4 older" case: the E4 as-of date is one
+    session older than the ScanRun latest closed session. Both have the same status mix, so the status counts are the same.
 
     Applies the exact-DEMO_DB_PATH guard itself, before opening anything:
     connection.connect() would also accept the canonical equity_intel.db, so
     its own allow-list is not a sufficient protection here.
     """
     resolved = _require_demo_path(resolved)
-    dates = _weekdays_ending(latest_session, E4_DEMO_BARS + 1)  # one spare for STALE symbols
-    acq, e4 = "demo-acq-1", "demo-e4-1"
+    older_session = _weekdays_ending(latest_session, 2)[0]
     conn = connection.connect(resolved)
     try:
-        conn.execute(
-            "INSERT INTO acquisition_runs(run_id,run_started_at,run_completed_at,status,report_json) VALUES(?,?,?,?,?)",
-            (acq, "2026-09-27T09:00:00", "2026-09-27T09:10:00", "COMPLETE",
-             json.dumps({"adjustment_status": DEMO_ADJUSTMENT_STATUS, "benchmark_key": "DEMO_INDEX",
-                         "benchmark_observation_count": len(dates), "benchmark_status": "OK"})),
-        )
-        for d in dates:
-            conn.execute(
-                "INSERT INTO acquired_benchmark VALUES(?,?,?,?,?,?)",
-                (acq, "DEMO_INDEX", d, 1000.0, "demo-seed", "2026-09-27T09:00:00+05:30"),
-            )
-        conn.execute(
-            "INSERT INTO e4_scan_runs(scan_id,acquisition_run_id,started_at,completed_at,status,asof_date,"
-            "calendar_status,indicator_config_json) VALUES(?,?,?,?,?,?,?,?)",
-            (e4, acq, "2026-09-27T09:12:00", "2026-09-27T09:13:00", "COMPLETE", latest_session, "PROVISIONAL",
-             json.dumps(DEMO_E4_CONFIG)),
-        )
-        for i, (symbol, _name, _sector, status, reason, flags) in enumerate(FAKE_SYMBOLS):
-            if status == "FAILED":
-                continue  # no bars, no E4 rows: the dashboard must show "not recorded"
-            n_bars = 41 if status == "INSUFFICIENT_HISTORY" else E4_DEMO_BARS
-            # a STALE symbol's newest observation is one session older than the E4 as-of date
-            symbol_dates = dates[-(n_bars + 1):-1] if status == "STALE" else dates[-n_bars:]
-            for j, d in enumerate(symbol_dates):
-                close = 100.0 + i + j * 0.1
-                conn.execute(
-                    "INSERT INTO acquired_observations VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
-                    (acq, symbol, d, close - 1, close + 2, close - 2, close, 1_000_000.0 + j,
-                     "demo-seed", "demo", "2026-09-27T09:00:00+05:30", f"DEMO|{symbol}", "NSE",
-                     "PROVISIONAL", DEMO_ADJUSTMENT_STATUS, acq),
-                )
-            full = status == "VALID"
-            complete = n_bars >= DEMO_E4_CONFIG["minimum_history_bars"]  # w52_complete / volume_usable follow bar count
-            reason_e4 = None if full else reason
-            break_date = symbol_dates[len(symbol_dates) // 2] if flags["price_break_detected"] else None
-            conn.execute(
-                "INSERT INTO e4_data_quality_results VALUES(?,?,?,?,?,?,?,?,?)",
-                (e4, symbol, status, reason_e4, n_bars, int(complete), break_date,
-                 0.45 if break_date else None, int(complete)),
-            )
-            if full:
-                last = 100.0 + i + (E4_DEMO_BARS - 1) * 0.1
-                conn.execute(
-                    "INSERT INTO e4_feature_sets(scan_id,symbol,last_date,ema_short,ema_medium,ema_long,rsi,roc,"
-                    "relative_return,relative_volume,distance_from_high,prior_high_long,atr_percent) "
-                    "VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)",
-                    (e4, symbol, symbol_dates[-1], last - 0.5, last - 1.5, last - 3.0, 50.0 + i % 20, 1.0 + i % 5,
-                     0.5 + i % 7, 0.8 + (i % 10) / 10, 2.0 + i % 8, last + 2.0 + i % 8, 1.5),
-                )
+        _seed_one_e4_scan(conn, latest_session, "demo-acq-1", "demo-e4-1", "2026-09-27T09:00:00", "2026-09-27T09:10:00",
+                          "2026-09-27T09:12:00", "2026-09-27T09:13:00")
+        _seed_one_e4_scan(conn, older_session, "demo-acq-2", "demo-e4-2", "2026-09-28T09:00:00", "2026-09-28T09:10:00",
+                          "2026-09-28T09:12:00", "2026-09-28T09:13:00")
         conn.commit()
     finally:
         conn.close()
+
+
+def _seed_one_e4_scan(conn, asof: str, acq: str, e4: str, acq_started: str, acq_completed: str, scan_started: str,
+                      scan_completed: str) -> None:
+    """One acquisition run and the COMPLETE E4 scan built on it, as of `asof`. Does not commit."""
+    dates = _weekdays_ending(asof, E4_DEMO_BARS + 1)  # one spare for STALE symbols
+    conn.execute(
+        "INSERT INTO acquisition_runs(run_id,run_started_at,run_completed_at,status,report_json) VALUES(?,?,?,?,?)",
+        (acq, acq_started, acq_completed, "COMPLETE",
+         json.dumps({"adjustment_status": DEMO_ADJUSTMENT_STATUS, "benchmark_key": "DEMO_INDEX",
+                     "benchmark_observation_count": len(dates), "benchmark_status": "OK"})),
+    )
+    for d in dates:
+        conn.execute(
+            "INSERT INTO acquired_benchmark VALUES(?,?,?,?,?,?)",
+            (acq, "DEMO_INDEX", d, 1000.0, "demo-seed", acq_started + "+05:30"),
+        )
+    conn.execute(
+        "INSERT INTO e4_scan_runs(scan_id,acquisition_run_id,started_at,completed_at,status,asof_date,"
+        "calendar_status,indicator_config_json) VALUES(?,?,?,?,?,?,?,?)",
+        (e4, acq, scan_started, scan_completed, "COMPLETE", asof, "PROVISIONAL",
+         json.dumps(DEMO_E4_CONFIG)),
+    )
+    for i, (symbol, _name, _sector, status, reason, flags) in enumerate(FAKE_SYMBOLS):
+        if status == "FAILED":
+            continue  # no bars, no E4 rows: the dashboard must show "not recorded"
+        n_bars = 41 if status == "INSUFFICIENT_HISTORY" else E4_DEMO_BARS
+        # a STALE symbol's newest observation is one session older than the E4 as-of date
+        symbol_dates = dates[-(n_bars + 1):-1] if status == "STALE" else dates[-n_bars:]
+        for j, d in enumerate(symbol_dates):
+            close = 100.0 + i + j * 0.1
+            conn.execute(
+                "INSERT INTO acquired_observations VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+                (acq, symbol, d, close - 1, close + 2, close - 2, close, 1_000_000.0 + j,
+                 "demo-seed", "demo", acq_started + "+05:30", f"DEMO|{symbol}", "NSE",
+                 "PROVISIONAL", DEMO_ADJUSTMENT_STATUS, acq),
+            )
+        full = status == "VALID"
+        complete = n_bars >= DEMO_E4_CONFIG["minimum_history_bars"]  # w52_complete / volume_usable follow bar count
+        reason_e4 = None if full else reason
+        break_date = symbol_dates[len(symbol_dates) // 2] if flags["price_break_detected"] else None
+        conn.execute(
+            "INSERT INTO e4_data_quality_results VALUES(?,?,?,?,?,?,?,?,?)",
+            (e4, symbol, status, reason_e4, n_bars, int(complete), break_date,
+             0.45 if break_date else None, int(complete)),
+        )
+        if full:
+            last = 100.0 + i + (E4_DEMO_BARS - 1) * 0.1
+            conn.execute(
+                "INSERT INTO e4_feature_sets(scan_id,symbol,last_date,ema_short,ema_medium,ema_long,rsi,roc,"
+                "relative_return,relative_volume,distance_from_high,prior_high_long,atr_percent) "
+                "VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)",
+                (e4, symbol, symbol_dates[-1], last - 0.5, last - 1.5, last - 3.0, 50.0 + i % 20, 1.0 + i % 5,
+                 0.5 + i % 7, 0.8 + (i % 10) / 10, 2.0 + i % 8, last + 2.0 + i % 8, 1.5),
+            )
 
 
 if __name__ == "__main__":

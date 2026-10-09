@@ -635,7 +635,7 @@ def test_the_demo_database_builds_a_full_panel(tmp_path, monkeypatch):
     monkeypatch.setattr(db_path_guard, "DEMO_DB_PATH", demo)
     seed.seed_demo_database(demo)
     panel = _panel(demo, datetime(2026, 9, 26, 12, 0, 0), health.read_db_file_info(demo))
-    assert panel["layers"]["scanrun"]["run_id"] == "r-demo-latest-complete" and panel["layers"]["e4"]["scan_id"] == "demo-e4-1"
+    assert panel["layers"]["scanrun"]["run_id"] == "r-demo-latest-complete" and panel["layers"]["e4"]["scan_id"] == "demo-e4-2"
     assert panel["layers"]["scanrun"]["denominator"] == len(seed.FAKE_SYMBOLS)
     assert _rows(panel)["F1"]["state"] == "OK"                                           # the demo session is the Friday before this injected now
     assert _rows(panel)["F8a"]["state"] == "UNKNOWN" and "DEMO_INDEX" in _rows(panel)["F4b"]["value"]

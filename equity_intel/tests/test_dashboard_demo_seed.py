@@ -284,7 +284,7 @@ def test_seeded_e4_bar_counts_are_consistent_with_the_demo_minimum_history(paths
     assert minimum == 252
     rows = _rows(demo, """
         SELECT q.symbol, q.status, q.n_bars, q.w52_complete,
-               (SELECT COUNT(*) FROM acquired_observations o WHERE o.symbol = q.symbol)
+               (SELECT COUNT(*) FROM acquired_observations o JOIN e4_scan_runs s ON s.acquisition_run_id = o.run_id WHERE s.scan_id = q.scan_id AND o.symbol = q.symbol)
         FROM e4_data_quality_results q""")
     assert rows
     for symbol, status, n_bars, w52, observed in rows:
