@@ -33,7 +33,7 @@
     {% for c in checks %}
       <tr>
         <td>{{ c.name }}</td><td>{{ layer(c.layer) }}</td>
-        <td>{% if c.ok is sameas true %}<span class="ok">&#10003;</span> {% elif c.ok is sameas false %}<span class="bad">&#10007;</span> {% endif %}{{ c.result }}</td>
+        <td>{% if c.ok is sameas true %}<span class="ok check-state">met</span>{% elif c.ok is sameas false %}<span class="bad check-state">not met</span>{% else %}<span class="nr check-state">not evaluated</span>{% endif %}: {{ c.result }}</td>
         <td class="sub">{{ c.rule }} {% if c.rule_status != "frozen" %}<span class="prov">[{{ c.rule_status }}]</span>{% endif %}</td>
       </tr>
     {% endfor %}
