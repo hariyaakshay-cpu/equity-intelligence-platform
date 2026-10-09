@@ -1,0 +1,113 @@
+<div class="card" id="health-panel">
+  <h3>{{ health_panel.title }}</h3>
+  <p class="note" id="health-now">{{ health_panel.now_text }} &middot; expected latest session {{ health_panel.expected_session }} (the most recent Monday-Friday date whose {{ health_panel.session_cutoff_hour_ist }}:00 IST cutoff has passed) &middot; scoring status {{ health_panel.scoring_status }}. These states are display rules applied to stored dates; they are not a verdict on the data.</p>
+  <p class="note" id="health-holiday-caveat">{{ health_panel.holiday_caveat }}</p>
+
+  <div id="health-banners">
+    {% for banner in health_panel.banners %}
+    <div class="outdated-banner hp-banner" data-layer="{{ banner.layer }}" data-kind="{{ banner.kind }}">{{ banner.text }}</div>
+    {% endfor %}
+    <p class="note" id="health-banner-note">The older OUTDATED banner further down this tab, when it is shown, compares the run with the current time on a different basis and can disagree with the banners above.</p>
+  </div>
+
+  <div class="grid2" id="health-layers">
+    <div class="card" id="health-card-scanrun">
+      <h3>ScanRun layer</h3>
+      {% set s = health_panel.layers.scanrun %}
+      {% if s %}
+      <div class="kv">
+        <div>run</div><div>{{ s.run_id }} ({{ s.scan_label }})</div>
+        <div>started</div><div>{{ s.started_at or '–' }}</div>
+        <div>finished</div><div>{{ s.finished_at or '–' }}</div>
+        <div>latest closed session</div><div>{{ s.latest_closed_session or '–' }}</div>
+        <div>symbols</div><div>{{ s.denominator_text }}</div>
+      </div>
+      <div class="tablewrap" style="margin-top:10px"><table>
+        <thead><tr><th>status</th><th class="num">recounted</th><th class="num">stored on the run</th><th>agreement</th></tr></thead>
+        <tbody>{% for status, count in s.status_recount.items() %}<tr><td>{{ status }}</td><td class="num">{{ count }}</td><td class="num">{{ s.status_stored[status] if status in s.status_stored else '–' }}</td><td>{{ s.status_agreement[status] if status in s.status_agreement else '–' }}</td></tr>{% endfor %}</tbody>
+      </table></div>
+      {% else %}
+      <p class="note">There is no COMPLETE full ScanRun.</p>
+      {% endif %}
+    </div>
+    <div class="card" id="health-card-e4">
+      <h3>E4 layer</h3>
+      {% set e = health_panel.layers.e4 %}
+      {% if e %}
+      <div class="kv">
+        <div>E4 scan</div><div>{{ e.scan_id }}</div>
+        <div>acquisition run</div><div>{{ e.acquisition_run_id or '–' }}</div>
+        <div>as-of date</div><div>{{ e.asof_date or e.asof_date_raw or '–' }}</div>
+        <div>calendar status</div><div>{{ e.calendar_status or '–' }}</div>
+        <div>started</div><div>{{ e.started_at_ist or '–' }}</div>
+        <div>completed</div><div>{{ e.completed_at_ist or '–' }}</div>
+        <div>symbols</div><div>{{ e.denominator_text }}</div>
+        <div>feature sets</div><div>{{ e.feature_sets if e.feature_sets is not none else '–' }}</div>
+      </div>
+      <div class="tablewrap" style="margin-top:10px"><table>
+        <thead><tr><th>status</th><th class="num">count</th></tr></thead>
+        <tbody>{% for status, count in e.status_counts.items() %}<tr><td>{{ status }}</td><td class="num">{{ count }}</td></tr>{% endfor %}</tbody>
+      </table></div>
+      {% else %}
+      <p class="note">There is no COMPLETE E4 scan.</p>
+      {% endif %}
+    </div>
+  </div>
+  <p class="note" id="health-note-layers">The two layers are separate: their counts are never added together and this page does not reconcile them.</p>
+  <p class="note" id="health-relationship">{{ health_panel.relationship.sentence }}{% if health_panel.relationship.counts_sentence %} {{ health_panel.relationship.counts_sentence }}{% endif %}</p>
+
+  <h3 style="margin-top:14px">Freshness rules</h3>
+  <div class="tablewrap"><table id="health-rows">
+    <thead><tr><th>rule</th><th>state</th><th>value</th><th>how the state is decided</th><th>printed now</th></tr></thead>
+    <tbody>
+    {% for row in health_panel.freshness %}
+    <tr id="health-row-{{ row.id }}">
+      <td>{{ row.id }} &middot; {{ row.label }}{% if row.layer %} <span class="hp-layer">{{ row.layer }}</span>{% endif %}</td>
+      <td><span class="hp-state hp-state-{{ row.state }}">{{ row.state }}</span></td>
+      <td>{{ row.value }}{% for line in row.detail %}<div class="note">{{ line }}</div>{% endfor %}</td>
+      <td class="note">{{ row.rule }}</td>
+      <td class="note">{{ row.now or '–' }}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+  </table></div>
+
+  {% for row in health_panel.freshness if row.id == 'F5' %}
+  <div id="health-aborted">
+    <h3 style="margin-top:14px">ABORTED runs in the window (F5)</h3>
+    {% for kind, title in (('full', 'Full runs'), ('smoke', '--symbols smoke runs')) %}
+    {% set group = row[kind] %}
+    <p class="note" id="health-aborted-{{ kind }}">{{ title }}: {{ group.count }}{% if group.more %} ({{ group.more }} more not listed){% endif %}</p>
+    {% if group.runs %}
+    <div class="tablewrap"><table>
+      <thead><tr><th>run</th><th>started</th><th>abort code</th><th>recorded text</th></tr></thead>
+      <tbody>{% for run in group.runs %}<tr><td>{{ run.run_id }}</td><td>{{ run.started_at }}</td><td>{{ run.abort_code or '–' }}</td><td class="note">{{ run.abort_reason_note or 'no text recorded' }}</td></tr>{% endfor %}</tbody>
+    </table></div>
+    {% endif %}
+    {% endfor %}
+  </div>
+  {% endfor %}
+
+  {% set d = health_panel.layer_disagreements %}
+  <div id="health-disagreements">
+    <h3 style="margin-top:14px">Symbols whose status differs between the layers</h3>
+    {% if d %}
+    <p class="note" id="health-disagreement-sentence">{{ d.sentence }}</p>
+    <p class="note">Present in only the ScanRun layer: {{ d.only_in_scanrun }}. Present in only the E4 layer: {{ d.only_in_e4 }}.</p>
+    {% if d.rows %}
+    <div class="tablewrap"><table>
+      <thead><tr><th>symbol</th><th>ScanRun status</th><th>ScanRun reason</th><th>E4 status</th><th>E4 reason</th><th>recorded text</th></tr></thead>
+      <tbody>{% for r in d.rows %}<tr>
+        <td><a href="{{ r.stock_url }}">{{ r.symbol }}</a>{% if r.company_name %} <span class="note">{{ r.company_name }}</span>{% endif %}</td>
+        <td>{{ r.scanrun_status }}</td><td>{{ r.scanrun_reason_code or '–' }}</td>
+        <td>{{ r.e4_status }}</td><td>{{ r.e4_reason_code or '–' }}</td>
+        <td class="note">{{ r.reason_note or 'no text recorded' }}</td>
+      </tr>{% endfor %}</tbody>
+    </table></div>
+    {% if d.more %}<p class="note">{{ d.more }} more differing symbol(s) are not listed.</p>{% endif %}
+    {% endif %}
+    {% else %}
+    <p class="note">The comparison needs a COMPLETE full ScanRun and a COMPLETE E4 scan; one of them is missing.</p>
+    {% endif %}
+  </div>
+</div>

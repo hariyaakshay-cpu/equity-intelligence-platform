@@ -47,6 +47,9 @@ DEMO_DATES_NOTE = (
     "An OUTDATED state is therefore expected."
 )
 
+# Shown in place of the health panel when reading the database for it fails with a database error; the error text is never shown.
+HEALTH_PANEL_UNAVAILABLE = "The health panel could not be built because the database could not be read."
+
 DEFAULT_PAGE_SIZE = 25
 MAX_PAGE_SIZE = 200
 
@@ -250,18 +253,33 @@ def create_app(demo: bool = False, db_path: Optional[Union[str, Path]] = None) -
 
         return wrapper
 
+    def _health_panel(conn):
+        """The health panel (dashboard/health.py) for the current clock: app.config["HEALTH_CLOCK"] (a callable
+        returning a datetime, set by tests) or the current IST time. Shared by the JSON route and the /equity page."""
+        clock = app.config.get("HEALTH_CLOCK")
+        now = clock() if clock is not None else datetime.now(IST)
+        return health.build(conn, now, health.read_db_file_info(app.config["DB_PATH"]))
+
     @app.get("/equity")
     def equity_page():
         db_message = None
+        health_panel = None
         try:
-            _open_checked_connection(app.config["DB_PATH"]).close()
+            conn = _open_checked_connection(app.config["DB_PATH"])
         except _DatabaseUnavailable:
             db_message = _no_scans_body(app.config["DEMO_MODE"])["message"]
         except _DatabaseVersionMismatch as exc:
             db_message = _version_mismatch_body(app.config["DEMO_MODE"], exc.found_version)["message"]
         except _DatabaseError as exc:
             db_message = _database_error_body(app.config["DEMO_MODE"], exc.detail)["message"]
-        return render_template("equity.html", demo=app.config["DEMO_MODE"], db_message=db_message)
+        else:
+            try:
+                health_panel = _health_panel(conn)
+            except conn.Error:  # sqlite3.Error via the connection (this module never imports sqlite3): only a database error is absorbed, and no exception text is shown
+                db_message = HEALTH_PANEL_UNAVAILABLE
+            finally:
+                conn.close()
+        return render_template("equity.html", demo=app.config["DEMO_MODE"], db_message=db_message, health_panel=health_panel)
 
     @app.get("/equity/stock/<symbol>")
     def stock_detail_page(symbol):
@@ -406,11 +424,8 @@ def create_app(demo: bool = False, db_path: Optional[Union[str, Path]] = None) -
     @app.get("/api/equity/health")
     @_guarded
     def api_health(conn):
-        """Layer cards and the freshness rules F1-F9 (dashboard/health.py). GET only. The clock is
-        app.config["HEALTH_CLOCK"] (a callable returning a datetime) when a test sets it, else the current IST time."""
-        clock = app.config.get("HEALTH_CLOCK")
-        now = clock() if clock is not None else datetime.now(IST)
-        return jsonify({"demo": app.config["DEMO_MODE"], **health.build(conn, now, health.read_db_file_info(app.config["DB_PATH"]))})
+        """Layer cards and the freshness rules F1-F9 (dashboard/health.py). GET only."""
+        return jsonify({"demo": app.config["DEMO_MODE"], **_health_panel(conn)})
 
     @app.get("/api/equity/summary")
     @_guarded

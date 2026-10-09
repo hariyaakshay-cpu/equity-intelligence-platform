@@ -78,6 +78,11 @@
   .warnlist code { color:#e9c46a; }
   svg text { fill:var(--mut); font-size:10px; }
   .heat td { font-variant-numeric:tabular-nums; text-align:right; }
+  .hp-state { display:inline-block; padding:1px 8px; border-radius:3px; border:1px solid var(--line); font-size:11px; font-weight:600; letter-spacing:.4px; }
+  .hp-state-OK { color:var(--txt); } .hp-state-WARN { background:#3a2d0e; color:#e9c46a; border-color:#6b5316; }
+  .hp-state-UNKNOWN { color:var(--mut); border-style:dashed; }
+  .hp-layer { display:inline-block; padding:0 6px; border:1px solid var(--line); border-radius:4px; color:var(--mut); font-size:11px; }
+  .hp-banner { border-radius:6px; margin-bottom:8px; }
   @media (max-width:640px) {
     .kv { grid-template-columns:1fr; gap:0; } .kv div:nth-child(even) { margin-bottom:8px; }
     main { padding:14px 12px; } header, .safety, nav { padding-left:12px; padding-right:12px; }
@@ -121,7 +126,10 @@
   <button data-section="trade" class="gated">Trade Research</button>
 </nav>
 <main>
-  <section id="overview" class="active"><div id="overview-content">Loading...</div></section>
+  <section id="overview" class="active">
+    {% if health_panel %}{% include "health_panel.html" %}{% endif %}
+    <div id="overview-content">Loading...</div>
+  </section>
 
   <section id="explorer">
     <div class="card">
