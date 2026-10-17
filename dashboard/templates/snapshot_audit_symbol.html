@@ -34,6 +34,23 @@
   </ul>
 </div>
 
+{# Review-file annotation: facts only, shown only when the review file lists an entry in the window #}
+{% if review_annotation %}
+<div class="card" id="review-annotation">
+  <h2>Review-file entries dated between the two runs {{ layer("ScanRun") }}</h2>
+  <p class="note" id="review-annotation-window">{{ review_annotation.window_note }}. Older run started {{ review_annotation.older_started_at }}; newer run started {{ review_annotation.newer_started_at }}.</p>
+  <div class="tablewrap"><table id="review-annotation-rows">
+    <thead><tr><th>Symbol</th><th>Event type</th><th>Effective date</th><th>Older run started</th><th>Newer run started</th></tr></thead>
+    <tbody>
+      {% for r in review_annotation.rows %}<tr><td>{{ r.symbol }}</td><td>{{ r.event_type }}</td><td>{{ r.effective_date }}</td><td>{{ review_annotation.older_started_at }}</td><td>{{ review_annotation.newer_started_at }}</td></tr>
+      {% endfor %}
+    </tbody>
+  </table></div>
+  <p class="note" id="review-annotation-sentence">{{ review_annotation.sentence }}.</p>
+  {% if review_annotation.skipped_unparseable %}<p class="note">{{ review_annotation.skipped_unparseable }} review-file entr{{ "y" if review_annotation.skipped_unparseable == 1 else "ies" }} with a non-ISO effective date {{ "was" if review_annotation.skipped_unparseable == 1 else "were" }} not placed in the window.</p>{% endif %}
+</div>
+{% endif %}
+
 {# 3. Stored-row integrity #}
 <div class="card" id="integrity">
   <h2>Stored-row integrity {{ layer("ScanRun") }}</h2>

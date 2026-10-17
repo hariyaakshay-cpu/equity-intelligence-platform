@@ -31,7 +31,7 @@ from typing import Optional, Union
 
 from flask import Flask, jsonify, render_template, request
 
-from dashboard import aggregates, exceptions, health, queries, snapshot_audit, stock_detail
+from dashboard import aggregates, exceptions, health, queries, review_annotation, snapshot_audit, stock_detail
 from equity_intel.config import IST
 from equity_intel.indicators.trend import exponential_moving_average
 from equity_intel.persistence import connection, db_path_guard
@@ -59,29 +59,33 @@ MAX_PAGE_SIZE = 200
 DEFAULT_PORT = 5050
 
 
+def _positive_int(args, name, default, maximum=None) -> int:
+    """A positive whole number from the query string; ValueError when present but invalid (never silently reset)."""
+    raw = args.get(name)
+    if raw is None or raw == "":
+        return default
+    if not (raw.isascii() and raw.isdigit()) or int(raw) < 1:
+        raise ValueError(f"{name} must be a positive whole number, got {raw!r}")
+    value = int(raw)
+    if maximum is not None and value > maximum:
+        raise ValueError(f"{name} must be at most {maximum}, got {value}")
+    return value
+
+
 def _page_params(args) -> tuple[int, int]:
-    page = max(_to_int(args.get("page"), 1), 1)
-    page_size = args.get("page_size")
-    page_size = min(max(_to_int(page_size, DEFAULT_PAGE_SIZE), 1), MAX_PAGE_SIZE)
-    return page, page_size
+    return _positive_int(args, "page", 1), _positive_int(args, "page_size", DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE)
 
 
-def _to_int(value, default):
-    if value is None or value == "":
-        return default
-    try:
-        return int(value)
-    except (TypeError, ValueError):
-        return default
-
-
-def _to_float(value):
-    """A finite float, None when absent, ValueError when present but invalid."""
+def _to_float(value, name):
+    """A finite float, None when absent, ValueError (naming the parameter) when present but invalid."""
     if value is None or value == "":
         return None
-    parsed = float(value)  # ValueError on garbage
+    try:
+        parsed = float(value)
+    except ValueError:
+        raise ValueError(f"{name} must be a number, got {value!r}") from None
     if not math.isfinite(parsed):
-        raise ValueError(f"not a finite number: {value!r}")
+        raise ValueError(f"{name} must be a finite number, got {value!r}")
     return parsed
 
 
@@ -365,6 +369,7 @@ def create_app(demo: bool = False, db_path: Optional[Union[str, Path]] = None) -
             try:
                 params = snapshot_audit.parse_params(request.args)
                 body = snapshot_audit.build(conn, params)
+                body["review_annotation"] = review_annotation.build(body, app.config["DEMO_MODE"])
             except snapshot_audit.ParamError as exc:
                 return _message_page("Invalid parameter", str(exc), 400)
         finally:
@@ -388,6 +393,7 @@ def create_app(demo: bool = False, db_path: Optional[Union[str, Path]] = None) -
             try:
                 params = snapshot_audit.parse_symbol_params(request.args)
                 body = snapshot_audit.build_symbol(conn, params, symbol)
+                body["review_annotation"] = review_annotation.build(body, app.config["DEMO_MODE"], symbol)
             except snapshot_audit.ParamError as exc:
                 return _message_page("Invalid parameter", str(exc), 400)
         finally:
@@ -406,6 +412,7 @@ def create_app(demo: bool = False, db_path: Optional[Union[str, Path]] = None) -
         try:
             params = snapshot_audit.parse_symbol_params(request.args)
             body = snapshot_audit.build_symbol(conn, params, symbol)
+            body["review_annotation"] = review_annotation.build(body, app.config["DEMO_MODE"], symbol)
         except snapshot_audit.ParamError as exc:
             return jsonify({"error": str(exc)}), 400
         return jsonify({"demo": app.config["DEMO_MODE"], **body}), (404 if body["state"] == "absent" else 200)
@@ -417,6 +424,7 @@ def create_app(demo: bool = False, db_path: Optional[Union[str, Path]] = None) -
         try:
             params = snapshot_audit.parse_params(request.args)
             body = snapshot_audit.build(conn, params)
+            body["review_annotation"] = review_annotation.build(body, app.config["DEMO_MODE"])
         except snapshot_audit.ParamError as exc:
             return jsonify({"error": str(exc)}), 400
         return jsonify({"demo": app.config["DEMO_MODE"], **body})
@@ -480,7 +488,12 @@ def create_app(demo: bool = False, db_path: Optional[Union[str, Path]] = None) -
     @_guarded
     def api_candidates(conn):
         run_id = _resolve_run_id(conn, request.args.get("run_id"))
-        page, page_size = _page_params(request.args)
+        if run_id is not None and queries.get_run(conn, run_id) is None:
+            return jsonify({"error": f"run {run_id!r} not found"}), 404
+        try:
+            page, page_size = _page_params(request.args)
+        except ValueError as exc:
+            return jsonify({"error": str(exc)}), 400
         if run_id is None:
             return jsonify(
                 {
@@ -504,7 +517,7 @@ def create_app(demo: bool = False, db_path: Optional[Union[str, Path]] = None) -
         e4 = _e4_context(conn, run_id)
         try:
             ranges = {
-                key: (_to_float(request.args.get(f"{key}_min")), _to_float(request.args.get(f"{key}_max")))
+                key: (_to_float(request.args.get(f"{key}_min"), f"{key}_min"), _to_float(request.args.get(f"{key}_max"), f"{key}_max"))
                 for key in queries.E4_RANGE_FILTERS
             }
             total, rows = queries.get_candidates(
@@ -539,6 +552,8 @@ def create_app(demo: bool = False, db_path: Optional[Union[str, Path]] = None) -
     @_guarded
     def api_sectors(conn):
         run_id = _resolve_run_id(conn, request.args.get("run_id"))
+        if run_id is not None and queries.get_run(conn, run_id) is None:
+            return jsonify({"error": f"run {run_id!r} not found"}), 404
         if run_id is None:
             return jsonify({"demo": app.config["DEMO_MODE"], "run_id": None, "sectors": []})
         e4 = _e4_context(conn, run_id)
@@ -623,7 +638,10 @@ def create_app(demo: bool = False, db_path: Optional[Union[str, Path]] = None) -
     @app.get("/api/equity/scan-history")
     @_guarded
     def api_scan_history(conn):
-        page, page_size = _page_params(request.args)
+        try:
+            page, page_size = _page_params(request.args)
+        except ValueError as exc:
+            return jsonify({"error": str(exc)}), 400
         total, rows = queries.get_scan_history(conn, page, page_size)
         now = queries.now_ist_naive()
         runs = []
