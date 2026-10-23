@@ -11,12 +11,11 @@ from __future__ import annotations
 from datetime import date, datetime, timedelta
 from typing import Callable, Optional, Sequence
 
+from equity_intel.config import session_date
+
 
 def _bar_date(candle) -> date | None:
-    stamp = getattr(candle, "timestamp", None)
-    if isinstance(stamp, datetime):
-        return stamp.date()
-    return stamp if isinstance(stamp, date) else None
+    return session_date(getattr(candle, "timestamp", None))
 
 
 def backfill_latest_bars(provider, instrument_key: str, candles: Sequence, expected_last: date | None,

@@ -16,6 +16,10 @@ def main() -> int:
     cfg = load_config(ROOT / "config/indicators_v1.json")
     summary = run_feature_scan(cfg, db_path=ROOT / "data/equity_intel.db")
     print(summary)
+    if summary["stale_adjustment_basis"]:
+        print(f"WARNING: {len(summary['stale_adjustment_basis'])} symbol(s) have a corporate action effective on/after "
+              f"acquisition run {summary['acquisition_run_id']} was fetched; features withheld (ADJUSTMENT_BASIS_STALE). "
+              "Re-run scripts/equity_data_acquisition.py, then this script.")
     return 0
 
 

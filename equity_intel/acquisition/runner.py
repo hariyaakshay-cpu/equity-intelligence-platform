@@ -16,6 +16,7 @@ from equity_intel.acquisition.persistence import (finish_run, save_benchmark, sa
 from equity_intel.acquisition.reporting import write_report
 from equity_intel.acquisition.universe import load_universe
 from equity_intel.acquisition.validation import validate_candles
+from equity_intel.config import session_date
 
 REQUIRED_SESSIONS = 252
 CALENDAR_LOOKBACK_DAYS = 500
@@ -26,12 +27,7 @@ def _to_candles(raw: list[object]) -> list[Candle]:
     candles: list[Candle] = []
     for item in raw:
         stamp = item.timestamp
-        if isinstance(stamp, datetime):
-            trading_date = stamp.date()
-        elif isinstance(stamp, date):
-            trading_date = stamp
-        else:
-            trading_date = None
+        trading_date = session_date(stamp)
         values = []
         for name in ("open", "high", "low", "close", "volume"):
             try:
