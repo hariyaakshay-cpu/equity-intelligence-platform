@@ -93,3 +93,8 @@ This is a V1 decision, not an official NSE source. The official NSE
 holiday and special-session list (Section 5 above) is still not obtained, so
 upgrading to a verified calendar remains open and the calendar is not
 counted as verified.
+
+Later note (2026-10-03): a verified NSE equity calendar now exists for ML
+research at `research/ml/calendar/` (status VALIDATED, 2011-01-01 to
+2026-10-02). The scanner does not use it yet and it needs extending past
+2026-10-02.

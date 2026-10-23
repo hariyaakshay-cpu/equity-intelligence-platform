@@ -624,8 +624,8 @@ exclusions (counts)      protocol_file_hash
 
 ```
 1. This specification (with amendments) — reviewed and approved   ✓ 2026-10-03
-2. Verified NSE trading calendar (5A.1)                            ← current step
-3. Survivorship audit (5A.2)
+2. Verified NSE trading calendar (5A.1)   ✓ v1 validated (to 2026-10-02)
+3. Survivorship audit (5A.2)              ← current step (v1 partial, drift bound not chosen)
 4. Point-in-time feature rules confirmed, including the break rule and the
    corporate-action event list (5A.3)
 5. History-depth result (5A.4; sample probe done, full universe pending)
