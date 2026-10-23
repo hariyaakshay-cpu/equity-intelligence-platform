@@ -55,7 +55,7 @@ A signal that has not passed Stage 4 must not be sent, however it is labelled.
 | D3 | Universe: full NIFTY 500 or a liquid subset? **DECIDED 2026-10-24: liquid subset; liquidity cut-off TO BE SET** | Thin names make signals untradeable |
 | D4 | Bar interval(s) and signal frequency cap per day **DECIDED 2026-10-24: 5-minute bars, max 5 signals per day** | Drives data volume, noise, notification fatigue |
 | D5 | Does a signal ship with an invalidation / stop level? **DECIDED 2026-10-24: no; direction and setup only. Stop, targets and sizing wait for a separate approved Trade Plan spec** | Needs the separate Trade Plan spec if yes |
-| D6 | Acceptance thresholds for Stage 4 (AUC/expectancy, min trades, drawdown, concentration) | Must be fixed before any result exists |
+| D6 | Acceptance thresholds for Stage 4 (AUC/expectancy, min trades, drawdown, concentration) **DECIDED 2026-10-24 (starting values, fixed before any result exists): min 300 trades per setup; expectancy after costs above zero in walk-forward, with the date-block bootstrap interval not crossing zero; no single symbol above 10% of total profit and no sector above 25%; at least 60 non-overlapping walk-forward sessions. Max drawdown: TO BE SET** | Must be fixed before any result exists |
 | D7 | Cost model inputs (brokerage plan, taxes, charges, slippage assumption) | Expectancy must be net of costs; not invented here |
 | D8 | Where the process runs and when (PC on during market hours? token refresh routine) | Token expires ~03:30 IST; needs interactive login |
 
