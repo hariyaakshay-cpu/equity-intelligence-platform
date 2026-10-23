@@ -1,6 +1,6 @@
 # B3 Live Evidence Resolution — 2026-09-26
 
-Status: EVIDENCE + DECIDED VERDICTS (B3-01 through B3-06); B3-07 remains OPEN
+Status: EVIDENCE + DECIDED VERDICTS (B3-01 through B3-06); B3-07 remains OPEN as of 2026-09-26 (see Section 6: resolved for V1 on 2026-09-27)
 
 ## 1. Provenance
 
@@ -81,3 +81,15 @@ d) The trading calendar must be a **positive list of actual sessions** (special 
 - **B3-07**: official NSE trading-holiday and special-session source, needed to build a positive session
   list per Section 4(d).
 - **B2** (threshold source): unchanged — still BLOCKED, not addressed by this task.
+
+## 6. Update 2026-09-27 — B3-07 for V1
+
+Decided: for V1, Nifty 500 index daily candles (`NSE_INDEX|Nifty 500`) are the
+authoritative trading calendar, recorded on every ScanRun with
+`calendar_verification = "UNVERIFIED_INDEX_ONLY"`. See
+`docs/architecture/equity_intel_scanner_v1_spec.md`, Section 3.
+
+This is a V1 decision, not an official NSE source. The official NSE
+holiday and special-session list (Section 5 above) is still not obtained, so
+upgrading to a verified calendar remains open and the calendar is not
+counted as verified.
