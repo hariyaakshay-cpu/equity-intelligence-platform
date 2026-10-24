@@ -102,7 +102,60 @@ def pdh_break_long(bars: Sequence[Bar], prev_high: Optional[float], earliest: ti
     return None
 
 
+# ---- Round 2 (docs/architecture/equity_intel_intraday_setups_v1_preregistration.md) ----
+GAP_MIN, GAP_MAX = 1.01, 1.04
+GAP_GO_END = time(10, 30)
+DIP_VWAP_FACTOR = 0.985
+DIP_MIN_BAR = 6
+DIP_END = time(13, 30)
+LATE_TIME = time(13, 30)
+LATE_MIN_GAIN = 1.015
+LATE_NEAR_HIGH = 0.997
+
+
+def gap_go_long(bars: Sequence[Bar], prev_close: Optional[float]) -> Optional[int]:
+    if prev_close is None or not bars or not _clean_prefix(bars, 0):
+        return None
+    if not (GAP_MIN * prev_close <= bars[0].o <= GAP_MAX * prev_close):
+        return None
+    return orb_long(bars, P1_N_OR, GAP_GO_END)
+
+
+def dip_reversal_long(bars: Sequence[Bar]) -> Optional[int]:
+    cum_pv = cum_v = 0.0
+    for i, b in enumerate(bars):
+        if not _clean_prefix(bars, i) or not b.v:
+            return None
+        cum_pv += (b.h + b.l + b.c) / 3.0 * b.v
+        cum_v += b.v
+        if b.close_time > DIP_END:
+            return None
+        if i >= DIP_MIN_BAR and i >= 1:
+            vwap = cum_pv / cum_v
+            prev = bars[i - 1]
+            if prev.c <= vwap * DIP_VWAP_FACTOR and b.c > b.o and b.c > prev.h:
+                return i
+    return None
+
+
+def late_strength_long(bars: Sequence[Bar], prev_close: Optional[float]) -> Optional[int]:
+    if prev_close is None:
+        return None
+    hi = 0.0
+    for i, b in enumerate(bars):
+        if not _clean_prefix(bars, i) or not b.v:
+            return None
+        hi = max(hi, b.h)
+        if b.close_time == LATE_TIME:
+            ok = b.c >= prev_close * LATE_MIN_GAIN and b.c >= hi * LATE_NEAR_HIGH
+            return i if ok else None
+        if b.close_time > LATE_TIME:
+            return None
+    return None
+
+
 SETUPS = {"ORB_LONG": "orb", "VWAP_RECLAIM_LONG": "vwap", "PDH_BREAK_LONG": "pdh"}
+ROUND2_SETUPS = ["GAP_GO_LONG", "DIP_REVERSAL_LONG", "LATE_STRENGTH_LONG"]
 
 
 def find_trigger(setup: str, bars: Sequence[Bar], prev_close: Optional[float], prev_high: Optional[float]) -> Optional[int]:
@@ -112,4 +165,10 @@ def find_trigger(setup: str, bars: Sequence[Bar], prev_close: Optional[float], p
         return vwap_reclaim_long(bars, prev_close)
     if setup == "PDH_BREAK_LONG":
         return pdh_break_long(bars, prev_high)
+    if setup == "GAP_GO_LONG":
+        return gap_go_long(bars, prev_close)
+    if setup == "DIP_REVERSAL_LONG":
+        return dip_reversal_long(bars)
+    if setup == "LATE_STRENGTH_LONG":
+        return late_strength_long(bars, prev_close)
     raise ValueError(f"unknown setup {setup!r}")

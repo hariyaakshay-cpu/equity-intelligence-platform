@@ -51,13 +51,15 @@ def trade_for(bars: Sequence[Bar], trig: int):
     return {"trigger_ts": bars[trig].ts.isoformat(), "gross_pct": gross, "net_pct": gross - round_trip_cost_pct()}
 
 
-def run_setup(setup: str, sessions: Dict[str, Dict[str, Sequence[Bar]]]) -> List[dict]:
+def run_setup(setup: str, sessions: Dict[str, Dict[str, Sequence[Bar]]], date_filter=None) -> List[dict]:
     """sessions[symbol][YYYY-MM-DD] -> closed bars. Previous-session context taken from the same dict
     (previous available session of that symbol; the verified NSE calendar is still required for the product)."""
     per_day: Dict[str, list] = defaultdict(list)
     for sym, days in sessions.items():
         dates = sorted(days)
         for k, d in enumerate(dates):
+            if date_filter is not None and d not in date_filter:
+                continue
             bars = days[d]
             prev = days[dates[k - 1]] if k else None
             prev_close = prev[-1].c if prev else None
@@ -76,7 +78,8 @@ def run_setup(setup: str, sessions: Dict[str, Dict[str, Sequence[Bar]]]) -> List
     return trades
 
 
-def evaluate(trades: Sequence[dict], boots: int = 2000, seed: int = 1) -> dict:
+def evaluate(trades: Sequence[dict], boots: int = 2000, seed: int = 1, ci_alpha: float = 0.05,
+             min_trades: int = None, min_sessions: int = None) -> dict:
     n = len(trades)
     out = {"trades": n, "sessions": len({t["date"] for t in trades}),
            "round_trip_cost_pct": round(round_trip_cost_pct(), 4)}
@@ -99,7 +102,8 @@ def evaluate(trades: Sequence[dict], boots: int = 2000, seed: int = 1) -> dict:
             s += sum(xs); c += len(xs)
         means.append(s / c)
     means.sort()
-    out["ci95_mean_net_pct"] = [means[int(0.025 * boots)], means[int(0.975 * boots) - 1]]
+    out["ci_alpha"] = ci_alpha
+    out["ci95_mean_net_pct"] = [means[int(ci_alpha / 2 * boots)], means[int((1 - ci_alpha / 2) * boots) - 1]]
     prof: Dict[str, float] = defaultdict(float)
     for t in trades:
         prof[t["symbol"]] += t["net_pct"]
@@ -111,7 +115,11 @@ def evaluate(trades: Sequence[dict], boots: int = 2000, seed: int = 1) -> dict:
         peak = max(peak, eq)
         dd = max(dd, peak - eq)
     out["max_drawdown_pct_points"] = dd
-    th = THRESHOLDS
+    th = dict(THRESHOLDS)
+    if min_trades is not None:
+        th["min_trades"] = min_trades
+    if min_sessions is not None:
+        th["min_sessions"] = min_sessions
     checks = {
         "min_trades": n >= th["min_trades"],
         "min_sessions": out["sessions"] >= th["min_sessions"],
