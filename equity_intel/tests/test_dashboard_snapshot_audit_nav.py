@@ -98,9 +98,9 @@ def test_the_link_href_is_url_quoted_and_the_page_it_points_to_works(db):
 def test_the_route_allowlist_is_the_known_list_and_navigation_added_no_route(client):
     rules = sorted(r.rule for r in client.application.url_map.iter_rules() if r.endpoint != "static")
     assert rules == ["/api/equity/candidates", "/api/equity/exceptions", "/api/equity/health", "/api/equity/scan-history",
-                     "/api/equity/sectors", "/api/equity/snapshot-audit", "/api/equity/snapshot-audit/symbol/<symbol>",
+                     "/api/equity/sectors", "/api/equity/signals", "/api/equity/snapshot-audit", "/api/equity/snapshot-audit/symbol/<symbol>",
                      "/api/equity/stock/<symbol>", "/api/equity/summary", "/equity",
-                     "/equity/exceptions", "/equity/snapshot-audit", "/equity/snapshot-audit/symbol/<symbol>",
+                     "/equity/exceptions", "/equity/signals", "/equity/snapshot-audit", "/equity/snapshot-audit/symbol/<symbol>",
                      "/equity/stock/<symbol>"]
     for rule in rules:
         assert client.post(rule.replace("<symbol>", "DEMOAAA")).status_code in (404, 405), rule

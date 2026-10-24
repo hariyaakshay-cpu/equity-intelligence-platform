@@ -31,7 +31,7 @@ from typing import Optional, Union
 
 from flask import Flask, jsonify, render_template, request
 
-from dashboard import aggregates, exceptions, health, queries, review_annotation, snapshot_audit, stock_detail
+from dashboard import aggregates, exceptions, health, queries, review_annotation, signals, snapshot_audit, stock_detail
 from equity_intel.config import IST
 from equity_intel.indicators.trend import exponential_moving_average
 from equity_intel.persistence import connection, db_path_guard
@@ -312,6 +312,30 @@ def create_app(demo: bool = False, db_path: Optional[Union[str, Path]] = None) -
             return render_template("stock_detail.html", **context)
         finally:
             conn.close()
+
+    @app.get("/equity/signals")
+    def signals_page():
+        """PROVISIONAL v0 daily signals, read-only. GET only."""
+        try:
+            conn = _open_checked_connection(app.config["DB_PATH"])
+        except _DatabaseUnavailable:
+            return _message_page("No scans yet", _no_scans_body(app.config["DEMO_MODE"])["message"])
+        except _DatabaseVersionMismatch as exc:
+            return _message_page("Database version mismatch",
+                                 _version_mismatch_body(app.config["DEMO_MODE"], exc.found_version)["message"])
+        except _DatabaseError as exc:
+            return _message_page("Database error", _database_error_body(app.config["DEMO_MODE"], exc.detail)["message"])
+        try:
+            body = signals.build(conn)
+        finally:
+            conn.close()
+        return render_template("signals.html", demo=app.config["DEMO_MODE"], banner_text=signals.BANNER, **body)
+
+    @app.get("/api/equity/signals")
+    @_guarded
+    def api_signals(conn):
+        """PROVISIONAL v0 daily signals as JSON. GET only."""
+        return jsonify({"demo": app.config["DEMO_MODE"], **signals.build(conn)})
 
     @app.get("/equity/exceptions")
     def exceptions_page():

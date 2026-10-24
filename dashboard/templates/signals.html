@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}Signals{% endblock %}
+{% block body %}
+<div class="card" id="header">
+  <h1>Daily signals <span class="note">PROVISIONAL v0</span></h1>
+  <p class="notice" id="provisional-notice">{{ notice }}</p>
+  {% if not available %}
+    <p id="no-scores">{{ message }}</p>
+  {% else %}
+  <p class="note">Scan <code>{{ meta.scan_id }}</code> &middot; data as of {{ meta.asof_date }} &middot; calendar {{ meta.calendar_status }}
+    &middot; scored {{ meta.scored_at }} &middot; {{ meta.label }}</p>
+  {% if outdated %}<p class="notice" id="outdated">Outdated: this scan's data is as of {{ meta.asof_date }}, the latest expected session is {{ expected_latest_session }} (weekday approximation, holidays unknown).</p>{% endif %}
+  <p class="note">{{ intraday_note }}</p>
+</div>
+
+<div class="card" id="counts">
+  <h2>Counts</h2>
+  <p>Scored <b>{{ counts.scored }}</b> &middot; with a full composite <b>{{ counts.with_composite }}</b> &middot;
+     candidates (composite &ge; {{ meta.candidate_cutoff }}) <b>{{ counts.candidates }}</b> &middot; watchlist = top {{ meta.watchlist_limit }}</p>
+  {% if exclusions %}<p class="note">Not eligible:
+    {% for e in exclusions %}{{ e.exclusion }} {{ e.n }}{% if not loop.last %} &middot; {% endif %}{% endfor %}</p>{% endif %}
+</div>
+
+{% for key, title, parts in (("short", "Short term", "momentum + volume + breakout"), ("medium", "Medium term", "trend + relative strength + 52-week distance")) %}
+<div class="card" id="horizon-{{ key }}">
+  <h2>{{ title }} <span class="note">{{ parts }}, % of its own maximum, cutoff {{ meta.candidate_cutoff }} (placeholder)</span></h2>
+  {% if horizons[key] %}
+  <div class="tablewrap"><table>
+    <thead><tr><th>#</th><th>Symbol</th><th>Score %</th><th>Close</th><th>RSI</th><th>RVOL</th><th>% below 52w high</th></tr></thead>
+    <tbody>
+    {% for c in horizons[key] %}
+      <tr{% if c.watchlist %} class="watchlist"{% endif %}><td class="num">{{ c.rank }}{% if c.watchlist %} *{% endif %}</td>
+        <td><a href="/equity/stock/{{ c.symbol }}">{{ c.symbol }}</a></td><td class="num"><b>{{ c.score }}</b></td>
+        <td class="num">{{ "%.2f"|format(c.close) if c.close is not none else "n/a" }}</td>
+        <td class="num">{{ "%.1f"|format(c.rsi) if c.rsi is not none else "n/a" }}</td>
+        <td class="num">{{ "%.2f"|format(c.relative_volume) if c.relative_volume is not none else "n/a" }}</td>
+        <td class="num">{{ "%.1f"|format(c.distance_from_high) if c.distance_from_high is not none else "n/a" }}</td></tr>
+    {% endfor %}
+    </tbody>
+  </table></div>
+  <p class="note">* = top {{ meta.watchlist_limit }}. The short/medium split is an owner-approved regrouping of the same components, not part of the B2 spec.</p>
+  {% else %}<p>No stock reaches the provisional cutoff for this horizon.</p>{% endif %}
+</div>
+{% endfor %}
+
+<div class="card" id="candidates">
+  <h2>Candidates <span class="note">ranked by composite, ties by symbol</span></h2>
+  {% if candidates %}
+  <div class="tablewrap"><table>
+    <thead><tr><th>#</th><th>Symbol</th><th>Score</th><th>Trend</th><th>Mom</th><th>RS</th><th>Vol</th><th>Struct</th><th>Close</th><th>RSI</th><th>RVOL</th><th>% below 52w high</th></tr></thead>
+    <tbody>
+    {% for c in candidates %}
+      <tr{% if c.watchlist %} class="watchlist"{% endif %}><td class="num">{{ c.rank }}{% if c.watchlist %} *{% endif %}</td>
+        <td><a href="/equity/stock/{{ c.symbol }}">{{ c.symbol }}</a></td><td class="num"><b>{{ c.composite }}</b></td>
+        <td class="num">{{ c.trend }}</td><td class="num">{{ c.momentum }}</td><td class="num">{{ c.relative_strength }}</td>
+        <td class="num">{{ c.volume }}</td><td class="num">{{ c.structure }}</td>
+        <td class="num">{{ "%.2f"|format(c.close) if c.close is not none else "n/a" }}</td>
+        <td class="num">{{ "%.1f"|format(c.rsi) if c.rsi is not none else "n/a" }}</td>
+        <td class="num">{{ "%.2f"|format(c.relative_volume) if c.relative_volume is not none else "n/a" }}</td>
+        <td class="num">{{ "%.1f"|format(c.distance_from_high) if c.distance_from_high is not none else "n/a" }}</td></tr>
+    {% endfor %}
+    </tbody>
+  </table></div>
+  <p class="note">* = on the top-{{ meta.watchlist_limit }} watchlist. Trend uses a provisional fifth test (EMA20 &gt; EMA50) that is an assumption.</p>
+  {% else %}<p id="no-candidates">No stock reaches the provisional cutoff in this scan.</p>{% endif %}
+  {% endif %}
+</div>
+{% endblock %}
