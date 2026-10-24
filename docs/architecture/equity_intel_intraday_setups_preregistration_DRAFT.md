@@ -63,7 +63,9 @@ Parameters are frozen at approval. Any change is an amendment made before the ne
 experiment, never after seeing results (ML spec 9). Each setup+version+parameter
 set is hashed and the hash is stored with every signal.
 
-## 4. Still open (cannot be answered by drafting)
+## 4. Open items (2026-10-25: owner delegated; D3, D7, D8, shadow N and max drawdown were DECIDED by Claude before any data was examined - see spec Section 3. Only the data probe remains, and it needs the owner's PC and token)
+
+Original list:
 
 - D3 liquidity cut-off (e.g. a turnover rule) - Akshay to set.
 - D7 cost model inputs: brokerage plan, taxes/charges, slippage assumption.
