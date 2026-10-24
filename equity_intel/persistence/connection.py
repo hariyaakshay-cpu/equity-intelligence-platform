@@ -66,6 +66,7 @@ CREATE TABLE IF NOT EXISTS e4_feature_sets (
  scan_id TEXT NOT NULL, symbol TEXT NOT NULL, last_date TEXT,
  ema_short REAL, ema_medium REAL, ema_long REAL, rsi REAL, roc REAL, relative_return REAL, relative_volume REAL,
  distance_from_high REAL, prior_high_long REAL, atr_percent REAL,
+ ema_medium_lag REAL, prior_high_short REAL, prior_high_medium REAL, close REAL,
  PRIMARY KEY (scan_id, symbol)
 );
 """
@@ -81,6 +82,10 @@ def connect(path: str | Path = CANONICAL_DB_PATH) -> sqlite3.Connection:
         connection.executescript(ACQUISITION_SCHEMA)
         if "relative_return" not in {r["name"] for r in connection.execute("PRAGMA table_info(e4_feature_sets)")}:
             connection.execute("ALTER TABLE e4_feature_sets ADD COLUMN relative_return REAL")
+        existing_e4 = {r["name"] for r in connection.execute("PRAGMA table_info(e4_feature_sets)")}
+        for column in ("ema_medium_lag", "prior_high_short", "prior_high_medium", "close"):
+            if column not in existing_e4:
+                connection.execute(f"ALTER TABLE e4_feature_sets ADD COLUMN {column} REAL")
         if "corporate_action_review_sha256" not in {r["name"] for r in connection.execute("PRAGMA table_info(e4_scan_runs)")}:
             connection.execute("ALTER TABLE e4_scan_runs ADD COLUMN corporate_action_review_sha256 TEXT")
         connection.commit()

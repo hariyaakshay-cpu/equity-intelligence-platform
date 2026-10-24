@@ -25,8 +25,8 @@ def compute_instrument(
 
     Returns (quality, features, detail). Flagged stocks stay in the universe;
     features whose lookback exceeds the post-break bar count come out None.
-    prior_high_short and ema_medium_lag are left None: the design fixes no
-    window/lag for them. relative_return is None unless both the instrument
+    ema_medium_lag, prior_high_short and prior_high_medium use the lag/windows
+    in the indicator config (provisional scoring v0). relative_return is None unless both the instrument
     and the benchmark have a bar on the window-start and window-end dates.
     """
     detail: dict = {"break_date_index": None, "break_ratio": None, "volume_usable": False}
@@ -44,6 +44,10 @@ def compute_instrument(
     def ema_last(period: int):
         series = exponential_moving_average(c, period)
         return series[-1] if series else None
+
+    def ema_lagged(period: int, lag: int):
+        series = exponential_moving_average(c, period)
+        return series[-1 - lag] if series and len(series) > lag else None
 
     recent_v = list(v[-cfg.volume_usable_window:])
     usable = sum(1 for x in recent_v if x and x > 0)
@@ -65,6 +69,10 @@ def compute_instrument(
         relative_return=rel, relative_volume=rvol,
         distance_from_high=distance_from_high(c[-1], high_window) if high_window else None,
         prior_high_long=high_window,
+        ema_medium_lag=ema_lagged(cfg.ema_medium, cfg.ema_lag_bars),
+        prior_high_short=rolling_high(h, cfg.prior_high_short_window, exclude_current=True),
+        prior_high_medium=rolling_high(h, cfg.prior_high_medium_window, exclude_current=True),
+        close=c[-1],
         atr_percent=atr_percent(average_true_range(h, l, c, cfg.atr_period), c[-1]) if n else None,
     )
     if n < cfg.minimum_history_bars:

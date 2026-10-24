@@ -129,9 +129,11 @@ def run_feature_scan(cfg: IndicatorConfig, *, db_path: str | Path | None = None,
                 if f is not None and status is not DataStatus.FAILED and not withhold:
                     connection.execute(
                         "INSERT INTO e4_feature_sets(scan_id,symbol,last_date,ema_short,ema_medium,ema_long,rsi,roc,relative_return,"
-                        "relative_volume,distance_from_high,prior_high_long,atr_percent) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)",
+                        "relative_volume,distance_from_high,prior_high_long,atr_percent,ema_medium_lag,prior_high_short,"
+                        "prior_high_medium,close) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
                         (scan_id, symbol, last_date, f.ema_short, f.ema_medium, f.ema_long, f.rsi, f.roc,
-                         f.relative_return, f.relative_volume, f.distance_from_high, f.prior_high_long, f.atr_percent))
+                         f.relative_return, f.relative_volume, f.distance_from_high, f.prior_high_long, f.atr_percent,
+                         f.ema_medium_lag, f.prior_high_short, f.prior_high_medium, f.close))
             covered = connection.execute("SELECT COUNT(*) FROM e4_data_quality_results WHERE scan_id=?", (scan_id,)).fetchone()[0]
             if covered != len(universe):
                 raise RuntimeError(f"data_quality_results covers {covered} of {len(universe)} universe members")

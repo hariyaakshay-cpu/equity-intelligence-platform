@@ -43,5 +43,7 @@ class FeatureSet:
     distance_from_high: Optional[float] = None
     prior_high_short: Optional[float] = None
     prior_high_long: Optional[float] = None
+    prior_high_medium: Optional[float] = None
+    close: Optional[float] = None
 
     atr_percent: Optional[float] = None

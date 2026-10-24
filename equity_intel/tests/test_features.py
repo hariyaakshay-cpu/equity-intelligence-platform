@@ -13,7 +13,7 @@ from equity_intel.features.config import IndicatorConfig
 from equity_intel.features.runner import run_feature_scan
 
 CFG = IndicatorConfig(ema_short=20, ema_medium=50, ema_long=200, rsi_period=14, roc_lookback=10, relative_return_lookback=60, rvol_window=20,
-                      high_window=252, atr_period=14, minimum_history_bars=252, minimum_universe_count=2, volume_usable_bars=15,
+                      high_window=252, ema_lag_bars=10, prior_high_short_window=20, prior_high_medium_window=50, atr_period=14, minimum_history_bars=252, minimum_universe_count=2, volume_usable_bars=15,
                       volume_usable_window=20, break_low_ratio=0.5, break_high_ratio=2.0)
 
 
@@ -34,7 +34,9 @@ def test_clean_series_is_valid_with_all_features():
     assert quality.status.value == "VALID" and quality.reason is None
     assert f.n_bars == 252 and f.w52_complete
     assert None not in (f.ema_short, f.ema_medium, f.ema_long, f.rsi, f.roc, f.relative_volume, f.atr_percent)
-    assert f.prior_high_short is None and f.ema_medium_lag is None and f.relative_return is None
+    assert f.relative_return is None  # no benchmark passed in this test
+    assert None not in (f.prior_high_short, f.prior_high_medium, f.ema_medium_lag, f.close)
+    assert f.close == closes[-1]
 
 
 def test_break_truncates_history_and_long_features_become_none():

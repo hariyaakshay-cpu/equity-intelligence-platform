@@ -21,6 +21,9 @@ class IndicatorConfig:
     relative_return_lookback: int
     rvol_window: int
     high_window: int
+    ema_lag_bars: int
+    prior_high_short_window: int
+    prior_high_medium_window: int
     atr_period: int
     minimum_history_bars: int
     minimum_universe_count: int
