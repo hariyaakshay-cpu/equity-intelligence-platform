@@ -1,0 +1,5 @@
+# Recorded 2026-10-30T05:19:42+00:00 BEFORE any round-4 result was computed.
+182632ac67d279d2fef7508a110c05322500d3e8b30d8d4832c68627b6ff13ae  docs/architecture/equity_intel_intraday_setups_v3_preregistration_DRAFT.md
+e520e02d91ff9c83886746929bf122eb63abc9db185dc1c05b384fabb3e0a8a4  equity_intel/intraday/round4.py
+4c800a5902fbd3d6e96360d9ec5fa4682a8475ea3b527ee57072ec54b5b8c3e2  scripts/equity_intraday_round4.py
+70df2c2b7c45abb8604f3ac5f693f4ac35dacc1edab7581fa0518d2daa462fe0  equity_intel/tests/test_intraday_round4.py

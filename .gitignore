@@ -16,3 +16,7 @@ data/equity_intel_demo.db
 data/*.bak*
 
 broker/
+
+# Fetched market-data caches (regenerable; 250MB+). Hash manifests, not the bytes, go in git.
+data/daily_history/
+data/intraday_cache/

@@ -1,0 +1,58 @@
+{
+  "R4_HIGHVOL_ORB_LONG": {
+    "trades": 826,
+    "sessions": 168,
+    "round_trip_cost_pct": 0.1824,
+    "mean_net_pct": -0.23147446892758092,
+    "win_rate": 0.4213075060532688,
+    "ci_alpha": 0.05,
+    "ci95_mean_net_pct": [
+      -0.45386570599874254,
+      -0.008985217245821315
+    ],
+    "top_symbol_profit_share": null,
+    "max_drawdown_pct_points": 220.77489118081053,
+    "checks": {
+      "min_trades": true,
+      "min_sessions": true,
+      "expectancy_positive": false,
+      "bootstrap_ci_above_zero": false,
+      "symbol_concentration": false,
+      "max_drawdown": false
+    },
+    "not_computed": [
+      "sector_concentration (no sector data wired)",
+      "walk-forward split (single full-period run)"
+    ],
+    "verdict": "FAIL",
+    "mean_gross_pct": -0.04906526892758101
+  },
+  "R4_GAP_VOLUME_LONG": {
+    "trades": 129,
+    "sessions": 76,
+    "round_trip_cost_pct": 0.1824,
+    "mean_net_pct": 0.13699641391914621,
+    "win_rate": 0.5271317829457365,
+    "ci_alpha": 0.05,
+    "ci95_mean_net_pct": [
+      -0.3711566548963589,
+      0.6929557840742533
+    ],
+    "top_symbol_profit_share": 1.1199096193200895,
+    "max_drawdown_pct_points": 25.92277807413699,
+    "checks": {
+      "min_trades": false,
+      "min_sessions": true,
+      "expectancy_positive": true,
+      "bootstrap_ci_above_zero": false,
+      "symbol_concentration": false,
+      "max_drawdown": false
+    },
+    "not_computed": [
+      "sector_concentration (no sector data wired)",
+      "walk-forward split (single full-period run)"
+    ],
+    "verdict": "FAIL",
+    "mean_gross_pct": 0.3194056139191462
+  }
+}

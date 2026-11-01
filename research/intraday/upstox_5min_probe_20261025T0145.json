@@ -1,0 +1,683 @@
+{
+  "probed_at": "2026-10-25T01:45:25.481869+05:30",
+  "bar": "5minute",
+  "window_end": "2026-10-22T20:15:25.481869+00:00",
+  "note": "weekday approximation only; NSE holidays unknown",
+  "probes": [
+    {
+      "label": "NSE_EQ|INE002A01018 historical 1d",
+      "ok": true,
+      "seconds": 0.24,
+      "value": {
+        "candle_count": 150,
+        "missing_timestamp": 0,
+        "first_bar": "2026-10-21T09:15:00+05:30",
+        "last_bar": "2026-10-22T15:25:00+05:30",
+        "utc_offsets_seen": [
+          5.5
+        ],
+        "duplicate_timestamps": 0,
+        "not_monotonic": 0,
+        "not_on_5min_grid": 0,
+        "outside_session": 0,
+        "forming_bars": 0,
+        "bad_ohlc": 0,
+        "zero_or_missing_volume": 4,
+        "sessions": 2,
+        "bars_per_session": {
+          "min": 75,
+          "median": 75,
+          "max": 75,
+          "expected": 75,
+          "sessions_short_of_expected": 0
+        },
+        "short_sessions": {}
+      },
+      "instrument_key": "NSE_EQ|INE002A01018",
+      "window_days": 1
+    },
+    {
+      "label": "NSE_EQ|INE002A01018 historical 5d",
+      "ok": true,
+      "seconds": 0.04,
+      "value": {
+        "candle_count": 225,
+        "missing_timestamp": 0,
+        "first_bar": "2026-10-19T09:15:00+05:30",
+        "last_bar": "2026-10-22T15:25:00+05:30",
+        "utc_offsets_seen": [
+          5.5
+        ],
+        "duplicate_timestamps": 0,
+        "not_monotonic": 0,
+        "not_on_5min_grid": 0,
+        "outside_session": 0,
+        "forming_bars": 0,
+        "bad_ohlc": 0,
+        "zero_or_missing_volume": 6,
+        "sessions": 3,
+        "bars_per_session": {
+          "min": 75,
+          "median": 75,
+          "max": 75,
+          "expected": 75,
+          "sessions_short_of_expected": 0
+        },
+        "short_sessions": {}
+      },
+      "instrument_key": "NSE_EQ|INE002A01018",
+      "window_days": 5
+    },
+    {
+      "label": "NSE_EQ|INE002A01018 historical 30d",
+      "ok": true,
+      "seconds": 0.08,
+      "value": {
+        "candle_count": 1575,
+        "missing_timestamp": 0,
+        "first_bar": "2026-09-22T09:15:00+05:30",
+        "last_bar": "2026-10-22T15:25:00+05:30",
+        "utc_offsets_seen": [
+          5.5
+        ],
+        "duplicate_timestamps": 0,
+        "not_monotonic": 0,
+        "not_on_5min_grid": 0,
+        "outside_session": 0,
+        "forming_bars": 0,
+        "bad_ohlc": 0,
+        "zero_or_missing_volume": 42,
+        "sessions": 21,
+        "bars_per_session": {
+          "min": 75,
+          "median": 75,
+          "max": 75,
+          "expected": 75,
+          "sessions_short_of_expected": 0
+        },
+        "short_sessions": {}
+      },
+      "instrument_key": "NSE_EQ|INE002A01018",
+      "window_days": 30
+    },
+    {
+      "label": "NSE_EQ|INE002A01018 historical 31d",
+      "ok": false,
+      "seconds": 0.03,
+      "error_type": "ProviderAPIError",
+      "error": "Upstox API returned HTTP 400",
+      "instrument_key": "NSE_EQ|INE002A01018",
+      "window_days": 31
+    },
+    {
+      "label": "NSE_EQ|INE002A01018 historical 90d",
+      "ok": false,
+      "seconds": 0.02,
+      "error_type": "ProviderAPIError",
+      "error": "Upstox API returned HTTP 400",
+      "instrument_key": "NSE_EQ|INE002A01018",
+      "window_days": 90
+    },
+    {
+      "label": "NSE_EQ|INE002A01018 historical 400d",
+      "ok": false,
+      "seconds": 0.02,
+      "error_type": "ProviderAPIError",
+      "error": "Upstox API returned HTTP 400",
+      "instrument_key": "NSE_EQ|INE002A01018",
+      "window_days": 400
+    },
+    {
+      "label": "NSE_EQ|INE002A01018 intraday endpoint",
+      "ok": true,
+      "seconds": 0.03,
+      "value": {
+        "raw_candles": 0,
+        "first_row": null,
+        "last_row": null
+      },
+      "instrument_key": "NSE_EQ|INE002A01018",
+      "window_days": "today"
+    },
+    {
+      "label": "NSE_EQ|INE467B01029 historical 1d",
+      "ok": true,
+      "seconds": 0.05,
+      "value": {
+        "candle_count": 150,
+        "missing_timestamp": 0,
+        "first_bar": "2026-10-21T09:15:00+05:30",
+        "last_bar": "2026-10-22T15:25:00+05:30",
+        "utc_offsets_seen": [
+          5.5
+        ],
+        "duplicate_timestamps": 0,
+        "not_monotonic": 0,
+        "not_on_5min_grid": 0,
+        "outside_session": 0,
+        "forming_bars": 0,
+        "bad_ohlc": 0,
+        "zero_or_missing_volume": 4,
+        "sessions": 2,
+        "bars_per_session": {
+          "min": 75,
+          "median": 75,
+          "max": 75,
+          "expected": 75,
+          "sessions_short_of_expected": 0
+        },
+        "short_sessions": {}
+      },
+      "instrument_key": "NSE_EQ|INE467B01029",
+      "window_days": 1
+    },
+    {
+      "label": "NSE_EQ|INE467B01029 historical 5d",
+      "ok": true,
+      "seconds": 0.03,
+      "value": {
+        "candle_count": 225,
+        "missing_timestamp": 0,
+        "first_bar": "2026-10-19T09:15:00+05:30",
+        "last_bar": "2026-10-22T15:25:00+05:30",
+        "utc_offsets_seen": [
+          5.5
+        ],
+        "duplicate_timestamps": 0,
+        "not_monotonic": 0,
+        "not_on_5min_grid": 0,
+        "outside_session": 0,
+        "forming_bars": 0,
+        "bad_ohlc": 0,
+        "zero_or_missing_volume": 6,
+        "sessions": 3,
+        "bars_per_session": {
+          "min": 75,
+          "median": 75,
+          "max": 75,
+          "expected": 75,
+          "sessions_short_of_expected": 0
+        },
+        "short_sessions": {}
+      },
+      "instrument_key": "NSE_EQ|INE467B01029",
+      "window_days": 5
+    },
+    {
+      "label": "NSE_EQ|INE467B01029 historical 30d",
+      "ok": true,
+      "seconds": 0.06,
+      "value": {
+        "candle_count": 1575,
+        "missing_timestamp": 0,
+        "first_bar": "2026-09-22T09:15:00+05:30",
+        "last_bar": "2026-10-22T15:25:00+05:30",
+        "utc_offsets_seen": [
+          5.5
+        ],
+        "duplicate_timestamps": 0,
+        "not_monotonic": 0,
+        "not_on_5min_grid": 0,
+        "outside_session": 0,
+        "forming_bars": 0,
+        "bad_ohlc": 0,
+        "zero_or_missing_volume": 42,
+        "sessions": 21,
+        "bars_per_session": {
+          "min": 75,
+          "median": 75,
+          "max": 75,
+          "expected": 75,
+          "sessions_short_of_expected": 0
+        },
+        "short_sessions": {}
+      },
+      "instrument_key": "NSE_EQ|INE467B01029",
+      "window_days": 30
+    },
+    {
+      "label": "NSE_EQ|INE467B01029 historical 31d",
+      "ok": false,
+      "seconds": 0.03,
+      "error_type": "ProviderAPIError",
+      "error": "Upstox API returned HTTP 400",
+      "instrument_key": "NSE_EQ|INE467B01029",
+      "window_days": 31
+    },
+    {
+      "label": "NSE_EQ|INE467B01029 historical 90d",
+      "ok": false,
+      "seconds": 0.02,
+      "error_type": "ProviderAPIError",
+      "error": "Upstox API returned HTTP 400",
+      "instrument_key": "NSE_EQ|INE467B01029",
+      "window_days": 90
+    },
+    {
+      "label": "NSE_EQ|INE467B01029 historical 400d",
+      "ok": false,
+      "seconds": 0.03,
+      "error_type": "ProviderAPIError",
+      "error": "Upstox API returned HTTP 400",
+      "instrument_key": "NSE_EQ|INE467B01029",
+      "window_days": 400
+    },
+    {
+      "label": "NSE_EQ|INE467B01029 intraday endpoint",
+      "ok": true,
+      "seconds": 0.03,
+      "value": {
+        "raw_candles": 0,
+        "first_row": null,
+        "last_row": null
+      },
+      "instrument_key": "NSE_EQ|INE467B01029",
+      "window_days": "today"
+    },
+    {
+      "label": "NSE_EQ|INE009A01021 historical 1d",
+      "ok": true,
+      "seconds": 0.04,
+      "value": {
+        "candle_count": 150,
+        "missing_timestamp": 0,
+        "first_bar": "2026-10-21T09:15:00+05:30",
+        "last_bar": "2026-10-22T15:25:00+05:30",
+        "utc_offsets_seen": [
+          5.5
+        ],
+        "duplicate_timestamps": 0,
+        "not_monotonic": 0,
+        "not_on_5min_grid": 0,
+        "outside_session": 0,
+        "forming_bars": 0,
+        "bad_ohlc": 0,
+        "zero_or_missing_volume": 4,
+        "sessions": 2,
+        "bars_per_session": {
+          "min": 75,
+          "median": 75,
+          "max": 75,
+          "expected": 75,
+          "sessions_short_of_expected": 0
+        },
+        "short_sessions": {}
+      },
+      "instrument_key": "NSE_EQ|INE009A01021",
+      "window_days": 1
+    },
+    {
+      "label": "NSE_EQ|INE009A01021 historical 5d",
+      "ok": true,
+      "seconds": 0.03,
+      "value": {
+        "candle_count": 225,
+        "missing_timestamp": 0,
+        "first_bar": "2026-10-19T09:15:00+05:30",
+        "last_bar": "2026-10-22T15:25:00+05:30",
+        "utc_offsets_seen": [
+          5.5
+        ],
+        "duplicate_timestamps": 0,
+        "not_monotonic": 0,
+        "not_on_5min_grid": 0,
+        "outside_session": 0,
+        "forming_bars": 0,
+        "bad_ohlc": 0,
+        "zero_or_missing_volume": 6,
+        "sessions": 3,
+        "bars_per_session": {
+          "min": 75,
+          "median": 75,
+          "max": 75,
+          "expected": 75,
+          "sessions_short_of_expected": 0
+        },
+        "short_sessions": {}
+      },
+      "instrument_key": "NSE_EQ|INE009A01021",
+      "window_days": 5
+    },
+    {
+      "label": "NSE_EQ|INE009A01021 historical 30d",
+      "ok": true,
+      "seconds": 0.07,
+      "value": {
+        "candle_count": 1575,
+        "missing_timestamp": 0,
+        "first_bar": "2026-09-22T09:15:00+05:30",
+        "last_bar": "2026-10-22T15:25:00+05:30",
+        "utc_offsets_seen": [
+          5.5
+        ],
+        "duplicate_timestamps": 0,
+        "not_monotonic": 0,
+        "not_on_5min_grid": 0,
+        "outside_session": 0,
+        "forming_bars": 0,
+        "bad_ohlc": 0,
+        "zero_or_missing_volume": 42,
+        "sessions": 21,
+        "bars_per_session": {
+          "min": 75,
+          "median": 75,
+          "max": 75,
+          "expected": 75,
+          "sessions_short_of_expected": 0
+        },
+        "short_sessions": {}
+      },
+      "instrument_key": "NSE_EQ|INE009A01021",
+      "window_days": 30
+    },
+    {
+      "label": "NSE_EQ|INE009A01021 historical 31d",
+      "ok": false,
+      "seconds": 0.02,
+      "error_type": "ProviderAPIError",
+      "error": "Upstox API returned HTTP 400",
+      "instrument_key": "NSE_EQ|INE009A01021",
+      "window_days": 31
+    },
+    {
+      "label": "NSE_EQ|INE009A01021 historical 90d",
+      "ok": false,
+      "seconds": 0.02,
+      "error_type": "ProviderAPIError",
+      "error": "Upstox API returned HTTP 400",
+      "instrument_key": "NSE_EQ|INE009A01021",
+      "window_days": 90
+    },
+    {
+      "label": "NSE_EQ|INE009A01021 historical 400d",
+      "ok": false,
+      "seconds": 0.03,
+      "error_type": "ProviderAPIError",
+      "error": "Upstox API returned HTTP 400",
+      "instrument_key": "NSE_EQ|INE009A01021",
+      "window_days": 400
+    },
+    {
+      "label": "NSE_EQ|INE009A01021 intraday endpoint",
+      "ok": true,
+      "seconds": 0.03,
+      "value": {
+        "raw_candles": 0,
+        "first_row": null,
+        "last_row": null
+      },
+      "instrument_key": "NSE_EQ|INE009A01021",
+      "window_days": "today"
+    },
+    {
+      "label": "NSE_EQ|INE040A01034 historical 1d",
+      "ok": true,
+      "seconds": 0.02,
+      "value": {
+        "candle_count": 150,
+        "missing_timestamp": 0,
+        "first_bar": "2026-10-21T09:15:00+05:30",
+        "last_bar": "2026-10-22T15:25:00+05:30",
+        "utc_offsets_seen": [
+          5.5
+        ],
+        "duplicate_timestamps": 0,
+        "not_monotonic": 0,
+        "not_on_5min_grid": 0,
+        "outside_session": 0,
+        "forming_bars": 0,
+        "bad_ohlc": 0,
+        "zero_or_missing_volume": 4,
+        "sessions": 2,
+        "bars_per_session": {
+          "min": 75,
+          "median": 75,
+          "max": 75,
+          "expected": 75,
+          "sessions_short_of_expected": 0
+        },
+        "short_sessions": {}
+      },
+      "instrument_key": "NSE_EQ|INE040A01034",
+      "window_days": 1
+    },
+    {
+      "label": "NSE_EQ|INE040A01034 historical 5d",
+      "ok": true,
+      "seconds": 0.03,
+      "value": {
+        "candle_count": 225,
+        "missing_timestamp": 0,
+        "first_bar": "2026-10-19T09:15:00+05:30",
+        "last_bar": "2026-10-22T15:25:00+05:30",
+        "utc_offsets_seen": [
+          5.5
+        ],
+        "duplicate_timestamps": 0,
+        "not_monotonic": 0,
+        "not_on_5min_grid": 0,
+        "outside_session": 0,
+        "forming_bars": 0,
+        "bad_ohlc": 0,
+        "zero_or_missing_volume": 6,
+        "sessions": 3,
+        "bars_per_session": {
+          "min": 75,
+          "median": 75,
+          "max": 75,
+          "expected": 75,
+          "sessions_short_of_expected": 0
+        },
+        "short_sessions": {}
+      },
+      "instrument_key": "NSE_EQ|INE040A01034",
+      "window_days": 5
+    },
+    {
+      "label": "NSE_EQ|INE040A01034 historical 30d",
+      "ok": true,
+      "seconds": 0.05,
+      "value": {
+        "candle_count": 1575,
+        "missing_timestamp": 0,
+        "first_bar": "2026-09-22T09:15:00+05:30",
+        "last_bar": "2026-10-22T15:25:00+05:30",
+        "utc_offsets_seen": [
+          5.5
+        ],
+        "duplicate_timestamps": 0,
+        "not_monotonic": 0,
+        "not_on_5min_grid": 0,
+        "outside_session": 0,
+        "forming_bars": 0,
+        "bad_ohlc": 0,
+        "zero_or_missing_volume": 42,
+        "sessions": 21,
+        "bars_per_session": {
+          "min": 75,
+          "median": 75,
+          "max": 75,
+          "expected": 75,
+          "sessions_short_of_expected": 0
+        },
+        "short_sessions": {}
+      },
+      "instrument_key": "NSE_EQ|INE040A01034",
+      "window_days": 30
+    },
+    {
+      "label": "NSE_EQ|INE040A01034 historical 31d",
+      "ok": false,
+      "seconds": 0.02,
+      "error_type": "ProviderAPIError",
+      "error": "Upstox API returned HTTP 400",
+      "instrument_key": "NSE_EQ|INE040A01034",
+      "window_days": 31
+    },
+    {
+      "label": "NSE_EQ|INE040A01034 historical 90d",
+      "ok": false,
+      "seconds": 0.03,
+      "error_type": "ProviderAPIError",
+      "error": "Upstox API returned HTTP 400",
+      "instrument_key": "NSE_EQ|INE040A01034",
+      "window_days": 90
+    },
+    {
+      "label": "NSE_EQ|INE040A01034 historical 400d",
+      "ok": false,
+      "seconds": 0.02,
+      "error_type": "ProviderAPIError",
+      "error": "Upstox API returned HTTP 400",
+      "instrument_key": "NSE_EQ|INE040A01034",
+      "window_days": 400
+    },
+    {
+      "label": "NSE_EQ|INE040A01034 intraday endpoint",
+      "ok": true,
+      "seconds": 0.02,
+      "value": {
+        "raw_candles": 0,
+        "first_row": null,
+        "last_row": null
+      },
+      "instrument_key": "NSE_EQ|INE040A01034",
+      "window_days": "today"
+    },
+    {
+      "label": "NSE_INDEX|Nifty 500 historical 1d",
+      "ok": true,
+      "seconds": 0.03,
+      "value": {
+        "candle_count": 150,
+        "missing_timestamp": 0,
+        "first_bar": "2026-10-21T09:15:00+05:30",
+        "last_bar": "2026-10-22T15:25:00+05:30",
+        "utc_offsets_seen": [
+          5.5
+        ],
+        "duplicate_timestamps": 0,
+        "not_monotonic": 0,
+        "not_on_5min_grid": 0,
+        "outside_session": 0,
+        "forming_bars": 0,
+        "bad_ohlc": 0,
+        "zero_or_missing_volume": 150,
+        "sessions": 2,
+        "bars_per_session": {
+          "min": 75,
+          "median": 75,
+          "max": 75,
+          "expected": 75,
+          "sessions_short_of_expected": 0
+        },
+        "short_sessions": {}
+      },
+      "instrument_key": "NSE_INDEX|Nifty 500",
+      "window_days": 1
+    },
+    {
+      "label": "NSE_INDEX|Nifty 500 historical 5d",
+      "ok": true,
+      "seconds": 0.04,
+      "value": {
+        "candle_count": 225,
+        "missing_timestamp": 0,
+        "first_bar": "2026-10-19T09:15:00+05:30",
+        "last_bar": "2026-10-22T15:25:00+05:30",
+        "utc_offsets_seen": [
+          5.5
+        ],
+        "duplicate_timestamps": 0,
+        "not_monotonic": 0,
+        "not_on_5min_grid": 0,
+        "outside_session": 0,
+        "forming_bars": 0,
+        "bad_ohlc": 0,
+        "zero_or_missing_volume": 225,
+        "sessions": 3,
+        "bars_per_session": {
+          "min": 75,
+          "median": 75,
+          "max": 75,
+          "expected": 75,
+          "sessions_short_of_expected": 0
+        },
+        "short_sessions": {}
+      },
+      "instrument_key": "NSE_INDEX|Nifty 500",
+      "window_days": 5
+    },
+    {
+      "label": "NSE_INDEX|Nifty 500 historical 30d",
+      "ok": true,
+      "seconds": 0.06,
+      "value": {
+        "candle_count": 1575,
+        "missing_timestamp": 0,
+        "first_bar": "2026-09-22T09:15:00+05:30",
+        "last_bar": "2026-10-22T15:25:00+05:30",
+        "utc_offsets_seen": [
+          5.5
+        ],
+        "duplicate_timestamps": 0,
+        "not_monotonic": 0,
+        "not_on_5min_grid": 0,
+        "outside_session": 0,
+        "forming_bars": 0,
+        "bad_ohlc": 0,
+        "zero_or_missing_volume": 1575,
+        "sessions": 21,
+        "bars_per_session": {
+          "min": 75,
+          "median": 75,
+          "max": 75,
+          "expected": 75,
+          "sessions_short_of_expected": 0
+        },
+        "short_sessions": {}
+      },
+      "instrument_key": "NSE_INDEX|Nifty 500",
+      "window_days": 30
+    },
+    {
+      "label": "NSE_INDEX|Nifty 500 historical 31d",
+      "ok": false,
+      "seconds": 0.03,
+      "error_type": "ProviderAPIError",
+      "error": "Upstox API returned HTTP 400",
+      "instrument_key": "NSE_INDEX|Nifty 500",
+      "window_days": 31
+    },
+    {
+      "label": "NSE_INDEX|Nifty 500 historical 90d",
+      "ok": false,
+      "seconds": 0.04,
+      "error_type": "ProviderAPIError",
+      "error": "Upstox API returned HTTP 400",
+      "instrument_key": "NSE_INDEX|Nifty 500",
+      "window_days": 90
+    },
+    {
+      "label": "NSE_INDEX|Nifty 500 historical 400d",
+      "ok": false,
+      "seconds": 0.03,
+      "error_type": "ProviderAPIError",
+      "error": "Upstox API returned HTTP 400",
+      "instrument_key": "NSE_INDEX|Nifty 500",
+      "window_days": 400
+    },
+    {
+      "label": "NSE_INDEX|Nifty 500 intraday endpoint",
+      "ok": true,
+      "seconds": 0.05,
+      "value": {
+        "raw_candles": 0,
+        "first_row": null,
+        "last_row": null
+      },
+      "instrument_key": "NSE_INDEX|Nifty 500",
+      "window_days": "today"
+    }
+  ]
+}

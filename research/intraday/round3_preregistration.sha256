@@ -1,0 +1,6 @@
+# Recorded 2026-10-28T02:19:51+05:30, BEFORE any round-3 result was computed.
+# Proves the design and code below were fixed before the DEV run. Git commit by the owner follows.
+2acec54e979f39e6ccfdaa7230d6cffbfd9e10f4092b249933ee06299441a026  docs/architecture/equity_intel_intraday_setups_v2_preregistration_DRAFT.md
+bd6c0dd8543314edb74370a5add6af1c3cae834992562bb1214d7b7fe33cf6a8  equity_intel/intraday/round3.py
+d8df079d1c723e52807741ed37380ca520c9706f76df8c057fefcd5a64572851  scripts/equity_intraday_round3.py
+2e72a7718720d8fa674a0fc760645f7990a2338a781309a0144138a5a8f44798  equity_intel/tests/test_intraday_round3.py

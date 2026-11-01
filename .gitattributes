@@ -1,1 +1,12 @@
 *.html text eol=lf
+
+# Hash-covered research artefacts: keep LF in the working tree so recorded
+# SHA-256 values stay valid after any checkout on any platform.
+docs/architecture/*preregistration*.md text eol=lf
+research/**/*.sha256 text eol=lf
+equity_intel/intraday/*.py text eol=lf
+equity_intel/tests/test_intraday_*.py text eol=lf
+equity_intel/scoring/provisional_v0.py text eol=lf
+equity_intel/scoring/components_v0.py text eol=lf
+scripts/equity_daily_*.py text eol=lf
+scripts/equity_intraday_*.py text eol=lf

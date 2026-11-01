@@ -1,0 +1,86 @@
+{
+  "R3_BREADTH_ORB_LONG": {
+    "trades": 482,
+    "sessions": 99,
+    "round_trip_cost_pct": 0.1824,
+    "mean_net_pct": -0.12616429018602343,
+    "win_rate": 0.4149377593360996,
+    "ci_alpha": 0.05,
+    "ci95_mean_net_pct": [
+      -0.29161335619638507,
+      0.04046648980667343
+    ],
+    "top_symbol_profit_share": null,
+    "max_drawdown_pct_points": 79.40284942464709,
+    "checks": {
+      "min_trades": true,
+      "min_sessions": true,
+      "expectancy_positive": false,
+      "bootstrap_ci_above_zero": false,
+      "symbol_concentration": false,
+      "max_drawdown": false
+    },
+    "not_computed": [
+      "sector_concentration (no sector data wired)",
+      "walk-forward split (single full-period run)"
+    ],
+    "verdict": "FAIL",
+    "mean_gross_pct": 0.05624490981397659
+  },
+  "R3_RS_LEADER_LONG": {
+    "trades": 614,
+    "sessions": 123,
+    "round_trip_cost_pct": 0.1824,
+    "mean_net_pct": -0.14841496672735233,
+    "win_rate": 0.4250814332247557,
+    "ci_alpha": 0.05,
+    "ci95_mean_net_pct": [
+      -0.3077714347303534,
+      0.004501744648395218
+    ],
+    "top_symbol_profit_share": null,
+    "max_drawdown_pct_points": 93.81088490949938,
+    "checks": {
+      "min_trades": true,
+      "min_sessions": true,
+      "expectancy_positive": false,
+      "bootstrap_ci_above_zero": false,
+      "symbol_concentration": false,
+      "max_drawdown": false
+    },
+    "not_computed": [
+      "sector_concentration (no sector data wired)",
+      "walk-forward split (single full-period run)"
+    ],
+    "verdict": "FAIL",
+    "mean_gross_pct": 0.033994233272647646
+  },
+  "R3_VOLUME_SURGE_LONG": {
+    "trades": 837,
+    "sessions": 168,
+    "round_trip_cost_pct": 0.1824,
+    "mean_net_pct": -0.26036900478042996,
+    "win_rate": 0.4002389486260454,
+    "ci_alpha": 0.05,
+    "ci95_mean_net_pct": [
+      -0.45571700321925446,
+      -0.0660525301925247
+    ],
+    "top_symbol_profit_share": null,
+    "max_drawdown_pct_points": 236.266613136452,
+    "checks": {
+      "min_trades": true,
+      "min_sessions": true,
+      "expectancy_positive": false,
+      "bootstrap_ci_above_zero": false,
+      "symbol_concentration": false,
+      "max_drawdown": false
+    },
+    "not_computed": [
+      "sector_concentration (no sector data wired)",
+      "walk-forward split (single full-period run)"
+    ],
+    "verdict": "FAIL",
+    "mean_gross_pct": -0.07795980478042985
+  }
+}

@@ -1,0 +1,83 @@
+{
+  "GAP_GO_LONG": {
+    "trades": 404,
+    "sessions": 137,
+    "round_trip_cost_pct": 0.1824,
+    "mean_net_pct": -0.08120552207025387,
+    "win_rate": 0.47029702970297027,
+    "ci_alpha": 0.05,
+    "ci95_mean_net_pct": [
+      -0.34707550752524735,
+      0.17827650372071788
+    ],
+    "top_symbol_profit_share": null,
+    "max_drawdown_pct_points": 76.16157651785349,
+    "checks": {
+      "min_trades": true,
+      "min_sessions": true,
+      "expectancy_positive": false,
+      "bootstrap_ci_above_zero": false,
+      "symbol_concentration": false,
+      "max_drawdown": false
+    },
+    "not_computed": [
+      "sector_concentration (no sector data wired)",
+      "walk-forward split (single full-period run)"
+    ],
+    "verdict": "FAIL"
+  },
+  "DIP_REVERSAL_LONG": {
+    "trades": 792,
+    "sessions": 184,
+    "round_trip_cost_pct": 0.1824,
+    "mean_net_pct": -0.2974457889601848,
+    "win_rate": 0.398989898989899,
+    "ci_alpha": 0.05,
+    "ci95_mean_net_pct": [
+      -0.47551060577444704,
+      -0.10699476408082238
+    ],
+    "top_symbol_profit_share": null,
+    "max_drawdown_pct_points": 251.29708383092276,
+    "checks": {
+      "min_trades": true,
+      "min_sessions": true,
+      "expectancy_positive": false,
+      "bootstrap_ci_above_zero": false,
+      "symbol_concentration": false,
+      "max_drawdown": false
+    },
+    "not_computed": [
+      "sector_concentration (no sector data wired)",
+      "walk-forward split (single full-period run)"
+    ],
+    "verdict": "FAIL"
+  },
+  "LATE_STRENGTH_LONG": {
+    "trades": 699,
+    "sessions": 165,
+    "round_trip_cost_pct": 0.1824,
+    "mean_net_pct": -0.11626274828591858,
+    "win_rate": 0.3905579399141631,
+    "ci_alpha": 0.05,
+    "ci95_mean_net_pct": [
+      -0.20766796861213982,
+      -0.02299277574133002
+    ],
+    "top_symbol_profit_share": null,
+    "max_drawdown_pct_points": 105.08381752696594,
+    "checks": {
+      "min_trades": true,
+      "min_sessions": true,
+      "expectancy_positive": false,
+      "bootstrap_ci_above_zero": false,
+      "symbol_concentration": false,
+      "max_drawdown": false
+    },
+    "not_computed": [
+      "sector_concentration (no sector data wired)",
+      "walk-forward split (single full-period run)"
+    ],
+    "verdict": "FAIL"
+  }
+}
