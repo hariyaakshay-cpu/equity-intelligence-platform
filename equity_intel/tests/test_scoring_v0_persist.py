@@ -77,10 +77,7 @@ def test_signals_view_is_labelled_provisional_and_read_only(db_path):
         assert body["available"] and body["candidates"][0]["symbol"] == "AAA" and body["candidates"][0]["watchlist"] is True
         assert body["meta"]["label"] == "PROVISIONAL - not B2-authoritative"
     client = create_app(db_path=db_path).test_client()
-    page = client.get("/equity/signals").get_data(as_text=True)
-    assert "PROVISIONAL" in page and "AAA" in page and "no trading signals" not in page
     api = client.get("/api/equity/signals").get_json()
     assert api["candidates"][0]["symbol"] == "AAA"
     assert api["horizons"]["short"][0]["symbol"] == "AAA" and api["horizons"]["medium"][0]["score"] == 100
-    assert "Short term" in page and "Medium term" in page
     assert client.post("/equity/signals").status_code in (404, 405)

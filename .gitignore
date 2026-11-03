@@ -21,3 +21,6 @@ broker/
 data/daily_history/
 data/intraday_cache/
 research/daily/replay_*.csv
+data/daily_live/
+data/daily_history_early/
+data/signals/
