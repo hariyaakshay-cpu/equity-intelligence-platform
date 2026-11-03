@@ -42,14 +42,16 @@ def main(argv=None) -> int:
     ap.add_argument("--chunk-days", type=int, default=180)
     ap.add_argument("--limit", type=int, default=0, help="only first N symbols (smoke test)")
     ap.add_argument("--refresh", action="store_true")
+    ap.add_argument("--end", type=date.fromisoformat, default=None, help="last date (default: now)")
+    ap.add_argument("--out-dir", type=Path, default=ROOT / "data" / "daily_history")
     a = ap.parse_args(argv)
     symbols = _symbols(ROOT / "data" / "equity_intel.db")
     if a.limit:
         symbols = symbols[:a.limit]
-    out_dir = ROOT / "data" / "daily_history"
+    out_dir = a.out_dir
     out_dir.mkdir(parents=True, exist_ok=True)
     provider = UpstoxProvider(Settings())
-    end = datetime.now(timezone.utc)
+    end = (datetime.combine(a.end, dtime.max, tzinfo=timezone.utc) if a.end else datetime.now(timezone.utc))
     start = datetime.combine(a.start, dtime.min, tzinfo=timezone.utc)
     for n, (sym, key) in enumerate(symbols, 1):
         path = out_dir / f"{sym}.csv"

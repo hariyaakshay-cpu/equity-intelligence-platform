@@ -28,15 +28,18 @@ def _read(p: Path):
 
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--split", choices=["dev", "holdout"], required=True)
+    ap.add_argument("--split", choices=["dev", "holdout", "early"], required=True)
     a = ap.parse_args(argv)
     outd = ROOT / "research" / "momentum"
     out = outd / f"result_{a.split}.json"
     if out.exists():
         print(f"{out} exists; results are final"); return 1
+    if a.split == "early":
+        hist = ROOT / "data" / "daily_history_early"
     if a.split == "holdout" and not json.loads((outd / "result_dev.json").read_text())["summary"]["dev_qualifies_for_holdout"]:
         print("DEV did not qualify; HOLDOUT is not run"); return 1
-    hist = ROOT / "data" / "daily_history"
+    if a.split != "early":
+        hist = ROOT / "data" / "daily_history"
     rows = []
     for p in sorted(hist.glob("*.csv")):
         if p.stem != "NIFTY500_INDEX":
@@ -45,11 +48,13 @@ def main(argv=None) -> int:
     idx = {d[k]: c[k + m.HOLD] / o[k + 1] - 1.0 for k in range(len(d) - m.HOLD)}
     if a.split == "dev":
         keep = lambda r: DEV[0] <= r["date"] <= DEV[1] and r["exit_date"] < HOLDOUT[0]
-    else:
+    elif a.split == "holdout":
         keep = lambda r: HOLDOUT[0] <= r["date"] <= HOLDOUT[1]
+    else:
+        keep = lambda r: r["exit_date"] <= "2021-09-30"
     s = m.summarize(m.cohorts(rows, keep, idx))
     res = {"split": a.split, "run_at_utc": datetime.now(timezone.utc).isoformat(timespec="seconds"),
-           "manifest": "research/momentum/manifest_2026-11-03.sha256", "summary": s}
+           "manifest": ("research/momentum/manifest_early_2026-11-04.sha256" if a.split == "early" else "research/momentum/manifest_2026-11-03.sha256"), "summary": s}
     outd.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(res, indent=1))
     print(json.dumps(res, indent=1))
