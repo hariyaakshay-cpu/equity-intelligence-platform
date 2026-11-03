@@ -15,7 +15,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
-from equity_intel.scoring.momentum_live import latest_list
+from equity_intel.scoring.momentum_live import MIN_COVERAGE, choose_asof, cut_to, latest_list
 
 
 def _read(p: Path):
@@ -38,11 +38,17 @@ def main(argv=None) -> int:
     idx = a.history_dir / "NIFTY500_INDEX.csv"
     if not idx.exists():
         print(f"{idx} missing: run the fetch command in this script's docstring first"); return 1
-    asof = _read(idx)[0][-1]
+    series = {p.stem: _read(p) for p in sorted(a.history_dir.glob("*.csv")) if p.stem != "NIFTY500_INDEX"}
+    asof = choose_asof([d[-1] for d, _o, _c, _v in series.values() if d])
+    newest = _read(idx)[0][-1]
+    if asof is None:
+        print("no date reaches the coverage floor; nothing written"); return 1
+    if asof != newest:
+        print(f"newest session {newest} is not yet published for {MIN_COVERAGE:.0%} of symbols; using {asof}")
     out = a.out_dir / f"momentum_12_1_{asof}.json"
     if out.exists():
         print(f"{out} already exists; not overwritten"); return 0
-    series = {p.stem: _read(p) for p in sorted(a.history_dir.glob("*.csv")) if p.stem != "NIFTY500_INDEX"}
+    series = cut_to(series, asof)
     body = latest_list(series, asof)
     body["generated_at_utc"] = datetime.now(timezone.utc).isoformat(timespec="seconds")
     body["history_dir"] = str(a.history_dir.relative_to(ROOT)) if a.history_dir.is_relative_to(ROOT) else str(a.history_dir)

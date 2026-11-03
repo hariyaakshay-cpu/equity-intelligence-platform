@@ -11,6 +11,29 @@ from typing import Dict, List, Sequence, Tuple
 
 from equity_intel.scoring import momentum_12_1 as rule
 
+MIN_COVERAGE = 0.95
+
+
+def choose_asof(last_dates: Sequence[str], min_coverage: float = MIN_COVERAGE):
+    """Latest date that at least min_coverage of the symbols have reached (a symbol whose last bar is on or after
+    the date counts). Guards against a vendor publishing the newest session for only part of the market."""
+    if not last_dates:
+        return None
+    for d in sorted(set(last_dates), reverse=True):
+        if sum(x >= d for x in last_dates) >= min_coverage * len(last_dates):
+            return d
+    return None
+
+
+def cut_to(series, asof: str):
+    """Each (dates, o, c, v) truncated to bars on or before asof."""
+    out = {}
+    for sym, (d, o, c, v) in series.items():
+        n = sum(x <= asof for x in d)
+        out[sym] = (d[:n], o[:n], c[:n], v[:n])
+    return out
+
+
 STATUS = "NOT VALIDATED - failed DEV test narrowly (3 Nov 2026) - research only - not trade advice"
 
 

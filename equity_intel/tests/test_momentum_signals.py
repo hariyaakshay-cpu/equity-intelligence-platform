@@ -64,3 +64,15 @@ def test_page_without_file_is_honest(tmp_path):
     page = app.test_client().get("/equity/signals")
     assert page.status_code == 200 and "No momentum list yet" in page.get_data(as_text=True)
     assert app.test_client().post("/equity/signals").status_code in (404, 405)
+
+
+def test_choose_asof_skips_partly_published_session():
+    lasts = ["2026-11-03"] * 287 + ["2026-11-02"] * 204
+    assert momentum_live.choose_asof(lasts) == "2026-11-02"
+    assert momentum_live.choose_asof(["2026-11-03"] * 96 + ["2026-11-02"] * 4) == "2026-11-03"
+    assert momentum_live.choose_asof([]) is None
+
+
+def test_cut_to_drops_bars_after_asof():
+    s = {"A": (["d1", "d2", "d3"], [1, 2, 3], [1, 2, 3], [1, 1, 1])}
+    assert momentum_live.cut_to(s, "d2")["A"] == (["d1", "d2"], [1, 2], [1, 2], [1, 1])
