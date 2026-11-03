@@ -1,0 +1,32 @@
+{
+ "split": "dev",
+ "run_at_utc": "2026-11-03T06:35:41+00:00",
+ "manifest": "research/momentum/manifest_2026-11-03.sha256",
+ "summary": {
+  "signal_dates": 702,
+  "first_date": "2022-10-07",
+  "last_date": "2025-08-04",
+  "mean_picks": 9.727920227920228,
+  "mean_gross_pct": 2.550994533034288,
+  "mean_net_pct": 2.200994533034288,
+  "mean_bench_pct": 2.2494292892820105,
+  "mean_net_excess_pct": -0.048434756247725266,
+  "mean_gross_excess_pct": 0.3015652437522747,
+  "mean_net_excess_vs_index_pct": 1.0433110009552906,
+  "share_dates_excess_positive": 0.51994301994302,
+  "bootstrap_lower_pct": -1.627174894732961,
+  "bootstrap_upper_pct": 1.531789682524872,
+  "top_symbol": "MAZDOCK",
+  "top_symbol_profit_share": null,
+  "max_drawdown_cum_excess_pct_points": 617.2799019479925,
+  "excluded_picks": 191,
+  "checks": {
+   "mean_net_excess_positive": false,
+   "bootstrap_lower_above_zero": false,
+   "min_signal_dates": true,
+   "symbol_concentration": false
+  },
+  "dev_qualifies_for_holdout": false,
+  "verdict": "FAIL"
+ }
+}
