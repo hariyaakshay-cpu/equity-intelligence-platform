@@ -1,0 +1,61 @@
+{
+ "split": "dev",
+ "run_at_utc": "2026-11-03T06:32:03+00:00",
+ "manifest": "research/daily/manifest_2026-11-03.sha256",
+ "lists": {
+  "short": {
+   "list": "short",
+   "hold_sessions": 5,
+   "signal_dates": 695,
+   "mean_picks": 8.76115107913669,
+   "mean_gross_pct": 0.12128060679181492,
+   "mean_net_pct": -0.22871939320818493,
+   "mean_bench_pct": 0.36358229404406817,
+   "mean_net_excess_pct": -0.592301687252254,
+   "mean_net_excess_vs_index_pct": -0.3932194971680042,
+   "share_dates_excess_positive": 0.39280575539568346,
+   "bootstrap_lower_pct": -0.8840238335430857,
+   "bootstrap_upper_pct": -0.3133701477866532,
+   "top_symbol": "RVNL",
+   "top_symbol_profit_share": null,
+   "max_drawdown_cum_excess_pct_points": 416.2013886179946,
+   "excluded_picks": 17,
+   "excluded_bench_rows": 328,
+   "checks": {
+    "mean_net_excess_positive": false,
+    "bootstrap_lower_above_zero": false,
+    "min_signal_dates": true,
+    "symbol_concentration": false
+   },
+   "dev_qualifies_for_holdout": false,
+   "verdict": "FAIL"
+  },
+  "medium": {
+   "list": "medium",
+   "hold_sessions": 20,
+   "signal_dates": 704,
+   "mean_picks": 9.96875,
+   "mean_gross_pct": 1.746598420638685,
+   "mean_net_pct": 1.3965984206386866,
+   "mean_bench_pct": 2.1278871669185366,
+   "mean_net_excess_pct": -0.7312887462798499,
+   "mean_net_excess_vs_index_pct": 0.29618772356547035,
+   "share_dates_excess_positive": 0.421875,
+   "bootstrap_lower_pct": -1.4674375454643107,
+   "bootstrap_upper_pct": -0.010505012273792028,
+   "top_symbol": "BSE",
+   "top_symbol_profit_share": null,
+   "max_drawdown_cum_excess_pct_points": 606.349772269595,
+   "excluded_picks": 22,
+   "excluded_bench_rows": 403,
+   "checks": {
+    "mean_net_excess_positive": false,
+    "bootstrap_lower_above_zero": false,
+    "min_signal_dates": true,
+    "symbol_concentration": false
+   },
+   "dev_qualifies_for_holdout": false,
+   "verdict": "FAIL"
+  }
+ }
+}
