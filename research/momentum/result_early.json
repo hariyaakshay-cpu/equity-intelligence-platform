@@ -1,0 +1,32 @@
+{
+ "split": "early",
+ "run_at_utc": "2026-11-05T19:51:25+00:00",
+ "manifest": "research/momentum/manifest_early_2026-11-04.sha256",
+ "summary": {
+  "signal_dates": 1698,
+  "first_date": "2014-10-14",
+  "last_date": "2021-08-31",
+  "mean_picks": 9.799764428739694,
+  "mean_gross_pct": 2.4841871262054345,
+  "mean_net_pct": 2.134187126205435,
+  "mean_bench_pct": 1.2537471976832377,
+  "mean_net_excess_pct": 0.8804399285221927,
+  "mean_gross_excess_pct": 1.2304399285221927,
+  "mean_net_excess_vs_index_pct": 1.1197340279895966,
+  "share_dates_excess_positive": 0.5530035335689046,
+  "bootstrap_lower_pct": 0.06293138185722008,
+  "bootstrap_upper_pct": 1.739825347624815,
+  "top_symbol": "ADANIGREEN",
+  "top_symbol_profit_share": 0.3044141429829589,
+  "max_drawdown_cum_excess_pct_points": 464.0370977771106,
+  "excluded_picks": 340,
+  "checks": {
+   "mean_net_excess_positive": true,
+   "bootstrap_lower_above_zero": true,
+   "min_signal_dates": true,
+   "symbol_concentration": false
+  },
+  "dev_qualifies_for_holdout": true,
+  "verdict": "FAIL"
+ }
+}
