@@ -55,6 +55,7 @@ def test_page_reads_newest_file_and_flags_stale(tmp_path):
     app.config["MOMENTUM_SIGNALS_DIR"] = tmp_path
     page = app.test_client().get("/equity/signals").get_data(as_text=True)
     assert "NOT VALIDATED" in page and "S109" in page and "JUMP" in page
+    assert "not an intraday signal" in page
     assert "Stop" not in page and "Target" not in page
 
 

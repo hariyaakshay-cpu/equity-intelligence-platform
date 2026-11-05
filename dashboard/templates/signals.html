@@ -78,7 +78,7 @@
       </table></div>
       {% else %}<p class="empty" id="no-picks">No list: fewer than {{ min_eligible }} stocks had enough data on {{ asof }}.</p>{% endif %}
       <p class="foot">Rule: rank by return from 12 months ago to 1 month ago, buy at the next day's open, hold {{ hold_sessions or 21 }} trading days.
-        No exit levels are given. It narrowly failed its first test (3 Nov 2026); a longer test is pending.
+        No exit levels are given. This is a once-a-month list, not an intraday signal: trading these names within the day is not the tested strategy. It narrowly failed its first test (3 Nov 2026); a longer test is pending.
         {% if corporate_action_flagged %}<span id="ca-flagged"><br>Left out (one-day move over &plusmn;30%, possibly a split or bonus): {{ corporate_action_flagged|join(", ") }}</span>{% endif %}</p>
     {% endif %}
   </div>
