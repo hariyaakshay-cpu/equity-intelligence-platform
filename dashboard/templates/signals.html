@@ -3,84 +3,120 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Equity Picks</title>
+<title>Equity Dashboard</title>
 <style>
   :root { --bg:#0d1117; --card:#161b22; --line:#30363d; --txt:#e6edf3; --mut:#8b949e;
           --blue:#58a6ff; --green:#3fb950; --yellow:#d29922; --red:#f85149; --purple:#bc8cff; }
   * { box-sizing:border-box; }
   body { margin:0; background:var(--bg); color:var(--txt); font:15px/1.5 system-ui,Segoe UI,Roboto,sans-serif; }
-  main { max-width:1100px; margin:0 auto; padding:28px 16px 40px; }
+  main { max-width:1200px; margin:0 auto; padding:28px 16px 40px; }
   h1 { text-align:center; color:var(--blue); font-size:32px; margin:0; }
-  .sub { text-align:center; color:var(--mut); margin:6px 0 4px; }
-  .pill { display:block; width:max-content; max-width:100%; margin:10px auto 0; padding:4px 14px; border-radius:20px;
-          background:#3b2a0b; color:#f0c765; font-size:13px; font-weight:600; text-align:center; }
-  .warn { background:#3d1515; color:#ffb3ae; border:1px solid #6e2b2b; border-radius:8px; padding:10px 14px; margin:18px 0 0; text-align:center; }
-  .cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:14px; margin:24px 0; }
-  .card { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:18px; text-align:center; }
-  .card .label { color:var(--mut); font-size:13px; font-weight:600; letter-spacing:.5px; text-transform:uppercase; }
-  .card .value { font-size:28px; font-weight:700; margin-top:6px; }
-  .section { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:18px; }
-  .section h2 { margin:0 0 12px; color:var(--blue); font-size:20px; }
+  .sub { text-align:center; color:var(--mut); margin:6px 0 0; }
+  .pill { display:inline-block; padding:3px 12px; border-radius:20px; background:#3b2a0b; color:#f0c765; font-size:12px; font-weight:600; }
+  .warn { background:#3d1515; color:#ffb3ae; border:1px solid #6e2b2b; border-radius:8px; padding:10px 14px; margin:16px 0 0; text-align:center; }
+  .cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:14px; margin:22px 0; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:16px; text-align:center; }
+  .label { color:var(--mut); font-size:12px; font-weight:600; letter-spacing:.5px; text-transform:uppercase; }
+  .value { font-size:26px; font-weight:700; margin-top:4px; }
+  .small { color:var(--mut); font-size:12px; margin-top:2px; }
+  .section { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:18px; margin-bottom:18px; }
+  .section h2 { margin:0; color:var(--blue); font-size:20px; }
+  .head { display:flex; flex-wrap:wrap; gap:8px 12px; align-items:center; margin-bottom:12px; }
+  .grid2 { display:grid; grid-template-columns:repeat(auto-fit,minmax(340px,1fr)); gap:16px; }
+  .box { border:1px solid var(--line); border-radius:8px; padding:12px; }
+  .box h3 { margin:0 0 8px; font-size:15px; }
   .tablewrap { overflow-x:auto; }
   table { width:100%; border-collapse:collapse; }
-  th { color:var(--mut); font-size:13px; text-align:left; padding:10px; border-bottom:1px solid var(--line); text-transform:uppercase; }
-  td { padding:12px 10px; border-bottom:1px solid #21262d; }
+  th { color:var(--mut); font-size:12px; text-align:left; padding:8px; border-bottom:1px solid var(--line); text-transform:uppercase; }
+  td { padding:9px 8px; border-bottom:1px solid #21262d; }
   td.num, th.num { text-align:right; font-variant-numeric:tabular-nums; }
-  td.rank { color:var(--mut); width:40px; }
+  td.rank { color:var(--mut); width:34px; }
   td.sym a { color:var(--txt); font-weight:700; text-decoration:none; }
   td.sym a:hover { color:var(--blue); }
   .green { color:var(--green); } .red { color:var(--red); } .yellow { color:var(--yellow); } .purple { color:var(--purple); } .blue { color:var(--blue); }
-  .foot { color:var(--mut); font-size:12px; margin-top:12px; }
-  .empty { text-align:center; color:var(--mut); padding:30px 0; }
-  a { color:var(--blue); }
-  @media (max-width:600px) { h1 { font-size:24px; } .card .value { font-size:22px; } td, th { padding:8px 6px; } }
+  .foot { color:var(--mut); font-size:12px; margin-top:10px; }
+  .empty { text-align:center; color:var(--mut); padding:24px 0; }
+  @media (max-width:600px) { h1 { font-size:24px; } .value { font-size:21px; } td, th { padding:7px 5px; } }
 </style>
 </head>
 <body>
 <main>
-  <h1>📈 Equity Momentum Picks</h1>
+  <h1>📊 Equity Dashboard</h1>
+  <p class="sub">Monthly momentum picks and a daily stock scan &nbsp;|&nbsp; read-only, no orders</p>
   {% if demo %}<p class="warn">DEMO DATA - NOT REAL</p>{% endif %}
 
-  {% if not available %}
-    <p class="pill" id="not-validated-notice">NOT VALIDATED &middot; research only, not trade advice</p>
-    <div class="section" style="margin-top:24px;"><p class="empty" id="no-signals">{{ message }}</p></div>
-  {% else %}
-    <p class="sub">List for <b>{{ asof }}</b> &nbsp;|&nbsp; built {{ generated_at_utc[:16]|replace("T", " ") }} UTC</p>
-    <p class="pill" id="not-validated-notice">NOT VALIDATED &middot; research only, not trade advice</p>
-    {% if stale %}<p class="warn" id="stale">This list is {{ age_days }} days old. Refresh prices before using it.</p>{% endif %}
+  {% set sc = scan or {} %}
+  <div class="cards">
+    <div class="card"><div class="label">Data</div>
+      {% if available %}<div class="value {{ 'red' if stale else 'green' }}">{{ ('Old (' ~ age_days ~ ' days)') if stale else 'Up to date' }}</div>
+      <div class="small">as of {{ asof }}</div>{% else %}<div class="value red">None</div>{% endif %}</div>
+    <div class="card"><div class="label">Momentum picks</div><div class="value green">{{ picks|length if available else 0 }}</div><div class="small">hold ~1 month</div></div>
+    <div class="card"><div class="label">Stocks scanned</div><div class="value purple">{{ sc.liquid or 0 }}</div><div class="small">liquid, of {{ sc.scanned or 0 }}</div></div>
+    <div class="card"><div class="label">Volume surges</div><div class="value yellow">{{ (sc.volume or [])|length }}</div><div class="small">1.5x+ normal volume</div></div>
+  </div>
 
-    <div class="cards">
-      <div class="card"><div class="label">Data</div><div class="value {{ 'red' if stale else 'green' }}">{{ ('Old (' ~ age_days ~ ' days)') if stale else 'Up to date' }}</div><div style="color:var(--mut);font-size:12px;margin-top:4px;">as of {{ asof }}</div></div>
-      <div class="card"><div class="label">Picks</div><div class="value green">{{ picks|length }}</div></div>
-      <div class="card"><div class="label">Hold for</div><div class="value yellow">{{ hold_sessions or 21 }} days</div></div>
-      <div class="card"><div class="label">Stocks checked</div><div class="value purple">{{ eligible }}</div></div>
-    </div>
-
-    <div class="section" id="momentum-list">
-      <h2>Today's list</h2>
+  <!-- Section 1: monthly momentum -->
+  <div class="section" id="momentum-list">
+    <div class="head"><h2>Monthly momentum picks</h2>
+      <span class="pill" id="not-validated-notice">NOT VALIDATED &middot; research only, not trade advice</span></div>
+    {% if not available %}
+      <p class="empty" id="no-signals">{{ message }}</p>
+    {% else %}
+      {% if stale %}<p class="warn" id="stale">This list is {{ age_days }} days old. Refresh prices before using it.</p>{% endif %}
       {% if picks %}
       <div class="tablewrap"><table>
         <thead><tr><th>#</th><th>Stock</th><th class="num">Close</th><th class="num">12-month return</th><th class="num">Daily value traded</th></tr></thead>
         <tbody>
         {% for p in picks %}
-          <tr>
-            <td class="rank">{{ p.rank }}</td>
+          <tr><td class="rank">{{ p.rank }}</td>
             <td class="sym"><a href="/equity/stock/{{ p.symbol }}">{{ p.symbol }}</a></td>
             <td class="num">₹{{ "{:,.2f}".format(p.close) }}</td>
             <td class="num {{ 'green' if p.score_pct >= 0 else 'red' }}"><b>{{ "%+.1f"|format(p.score_pct) }}%</b></td>
-            <td class="num">₹{{ "%.0f"|format(p.traded_value_cr) }} cr</td>
-          </tr>
+            <td class="num">₹{{ "%.0f"|format(p.traded_value_cr) }} cr</td></tr>
         {% endfor %}
         </tbody>
       </table></div>
-      {% else %}<p class="empty" id="no-picks">No list today: fewer than {{ min_eligible }} stocks had enough data on {{ asof }}.</p>{% endif %}
-      <p class="foot">How it works: rank stocks by their return from 12 months ago to 1 month ago, buy at the next day's open,
-        hold {{ hold_sessions or 21 }} trading days. No exit levels are given. This rule narrowly failed its first test (3 Nov 2026); a longer test is pending.
-        {% if corporate_action_flagged %}<span id="ca-flagged"><br>Left out (one-day move over &plusmn;30%, possibly a split or bonus):
-        {{ corporate_action_flagged|join(", ") }}</span>{% endif %}</p>
-    </div>
-  {% endif %}
+      {% else %}<p class="empty" id="no-picks">No list: fewer than {{ min_eligible }} stocks had enough data on {{ asof }}.</p>{% endif %}
+      <p class="foot">Rule: rank by return from 12 months ago to 1 month ago, buy at the next day's open, hold {{ hold_sessions or 21 }} trading days.
+        No exit levels are given. It narrowly failed its first test (3 Nov 2026); a longer test is pending.
+        {% if corporate_action_flagged %}<span id="ca-flagged"><br>Left out (one-day move over &plusmn;30%, possibly a split or bonus): {{ corporate_action_flagged|join(", ") }}</span>{% endif %}</p>
+    {% endif %}
+  </div>
 
+  <!-- Section 2: daily stock scan -->
+  <div class="section" id="stock-scan">
+    <div class="head"><h2>Stock scan</h2>
+      <span class="pill">numbers only &middot; no buy/sell calls</span>
+      {% if sc.asof %}<span class="small">last close {{ sc.asof }} &middot; stocks trading &ge; ₹{{ "%.0f"|format(sc.min_traded_cr) }} cr/day</span>{% endif %}</div>
+    {% if not sc.available %}
+      <p class="empty" id="no-scan">{{ sc.message or "No scan data." }}</p>
+    {% else %}
+    <div class="grid2">
+      {% for key, title, cls in [("gainers", "🟢 Top gainers", "green"), ("losers", "🔴 Top losers", "red"), ("volume", "🔥 Volume surge", "yellow"), ("near_high", "⛰️ Near 52-week high", "blue")] %}
+      <div class="box">
+        <h3 class="{{ cls }}">{{ title }}</h3>
+        {% if sc[key] %}
+        <div class="tablewrap"><table>
+          <thead><tr><th>Stock</th><th class="num">Close</th><th class="num">Change</th><th class="num">Volume</th><th class="num">RSI</th><th class="num">From high</th></tr></thead>
+          <tbody>
+          {% for m in sc[key] %}
+            <tr><td class="sym"><a href="/equity/stock/{{ m.symbol }}">{{ m.symbol }}</a></td>
+              <td class="num">₹{{ "{:,.2f}".format(m.close) }}</td>
+              <td class="num {{ 'green' if m.change_pct >= 0 else 'red' }}">{{ "%+.1f"|format(m.change_pct) }}%</td>
+              <td class="num">{{ "%.1f"|format(m.rvol) ~ "x" if m.rvol is not none else "-" }}</td>
+              <td class="num">{{ "%.0f"|format(m.rsi) if m.rsi is not none else "-" }}</td>
+              <td class="num">{{ "%.1f"|format(m.from_high_pct) }}%</td></tr>
+          {% endfor %}
+          </tbody>
+        </table></div>
+        {% else %}<p class="empty">None today.</p>{% endif %}
+      </div>
+      {% endfor %}
+    </div>
+    <p class="foot">Volume = today's volume vs its 20-day average. RSI = 14-day. From high = distance from the 52-week high.
+      Built from the last daily close, not live prices. None of the intraday setups tested so far passed after costs, so this scan makes no buy/sell call.</p>
+    {% endif %}
+  </div>
 </main>
 </body>
 </html>
