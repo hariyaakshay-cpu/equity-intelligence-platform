@@ -1,38 +1,87 @@
-{% extends "base.html" %}
-{% block title %}Signals{% endblock %}
-{% block body %}
-<div class="card" id="header">
-  <h1>Daily signals <span class="note">12-1 month momentum</span></h1>
-  <p class="notice" id="not-validated-notice">NOT VALIDATED. This rule failed its DEV test narrowly on 3 Nov 2026
-    (beat the average liquid stock by +0.30% per month before costs, -0.05% after an assumed 0.35% cost; the
-    uncertainty range was wide). A replication on 2014-2021 is pending. Research only, not trade advice.
-    No target and no stop-loss are given: the tested rule is buy at the next open and hold {{ hold_sessions or 21 }} sessions.</p>
-  {% if not available %}
-    <p id="no-signals">{{ message }}</p>
-  {% else %}
-  <p class="note">Data as of <b>{{ asof }}</b> &middot; file <code>{{ file }}</code> &middot; generated {{ generated_at_utc }}
-    &middot; eligible {{ eligible }} (min {{ min_eligible }}) &middot; skipped: stale {{ skipped_stale }},
-    short history {{ skipped_short_history }}, illiquid {{ skipped_illiquid }}</p>
-  {% if stale %}<p class="notice" id="stale">Stale: data is {{ age_days }} days old. Refresh with the two commands in
-    scripts/equity_momentum_signals.py before using this list.</p>{% endif %}
-</div>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Equity Picks</title>
+<style>
+  :root { --bg:#0d1117; --card:#161b22; --line:#30363d; --txt:#e6edf3; --mut:#8b949e;
+          --blue:#58a6ff; --green:#3fb950; --yellow:#d29922; --red:#f85149; --purple:#bc8cff; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--txt); font:15px/1.5 system-ui,Segoe UI,Roboto,sans-serif; }
+  main { max-width:1100px; margin:0 auto; padding:28px 16px 40px; }
+  h1 { text-align:center; color:var(--blue); font-size:32px; margin:0; }
+  .sub { text-align:center; color:var(--mut); margin:6px 0 4px; }
+  .pill { display:block; width:max-content; max-width:100%; margin:10px auto 0; padding:4px 14px; border-radius:20px;
+          background:#3b2a0b; color:#f0c765; font-size:13px; font-weight:600; text-align:center; }
+  .warn { background:#3d1515; color:#ffb3ae; border:1px solid #6e2b2b; border-radius:8px; padding:10px 14px; margin:18px 0 0; text-align:center; }
+  .cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:14px; margin:24px 0; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:18px; text-align:center; }
+  .card .label { color:var(--mut); font-size:13px; font-weight:600; letter-spacing:.5px; text-transform:uppercase; }
+  .card .value { font-size:28px; font-weight:700; margin-top:6px; }
+  .section { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:18px; }
+  .section h2 { margin:0 0 12px; color:var(--blue); font-size:20px; }
+  .tablewrap { overflow-x:auto; }
+  table { width:100%; border-collapse:collapse; }
+  th { color:var(--mut); font-size:13px; text-align:left; padding:10px; border-bottom:1px solid var(--line); text-transform:uppercase; }
+  td { padding:12px 10px; border-bottom:1px solid #21262d; }
+  td.num, th.num { text-align:right; font-variant-numeric:tabular-nums; }
+  td.rank { color:var(--mut); width:40px; }
+  td.sym a { color:var(--txt); font-weight:700; text-decoration:none; }
+  td.sym a:hover { color:var(--blue); }
+  .green { color:var(--green); } .red { color:var(--red); } .yellow { color:var(--yellow); } .purple { color:var(--purple); } .blue { color:var(--blue); }
+  .foot { color:var(--mut); font-size:12px; margin-top:12px; }
+  .empty { text-align:center; color:var(--mut); padding:30px 0; }
+  a { color:var(--blue); }
+  @media (max-width:600px) { h1 { font-size:24px; } .card .value { font-size:22px; } td, th { padding:8px 6px; } }
+</style>
+</head>
+<body>
+<main>
+  <h1>📈 Equity Momentum Picks</h1>
+  {% if demo %}<p class="warn">DEMO DATA - NOT REAL</p>{% endif %}
 
-<div class="card" id="momentum-list">
-  <h2>Top {{ top_n }} <span class="note">ranked by return from 12 months ago to 1 month ago, ties by symbol</span></h2>
-  {% if picks %}
-  <div class="tablewrap"><table>
-    <thead><tr><th>#</th><th>Symbol</th><th>12-1 return %</th><th>Close</th><th>Median traded value (Rs cr, 20d)</th></tr></thead>
-    <tbody>
-    {% for p in picks %}
-      <tr><td class="num">{{ p.rank }}</td><td><a href="/equity/stock/{{ p.symbol }}">{{ p.symbol }}</a></td>
-        <td class="num"><b>{{ "%.1f"|format(p.score_pct) }}</b></td><td class="num">{{ "%.2f"|format(p.close) }}</td>
-        <td class="num">{{ "%.0f"|format(p.traded_value_cr) }}</td></tr>
-    {% endfor %}
-    </tbody>
-  </table></div>
-  {% else %}<p id="no-picks">No list: fewer than {{ min_eligible }} eligible stocks on {{ asof }}.</p>{% endif %}
-  {% if corporate_action_flagged %}<p class="note" id="ca-flagged">Left out (a one-day move beyond &plusmn;30% in the
-    last year, possibly an unadjusted corporate action): {{ corporate_action_flagged|join(", ") }}</p>{% endif %}
+  {% if not available %}
+    <p class="pill" id="not-validated-notice">NOT VALIDATED &middot; research only, not trade advice</p>
+    <div class="section" style="margin-top:24px;"><p class="empty" id="no-signals">{{ message }}</p></div>
+  {% else %}
+    <p class="sub">List for <b>{{ asof }}</b> &nbsp;|&nbsp; built {{ generated_at_utc[:16]|replace("T", " ") }} UTC</p>
+    <p class="pill" id="not-validated-notice">NOT VALIDATED &middot; research only, not trade advice</p>
+    {% if stale %}<p class="warn" id="stale">This list is {{ age_days }} days old. Refresh prices before using it.</p>{% endif %}
+
+    <div class="cards">
+      <div class="card"><div class="label">Data as of</div><div class="value blue">{{ asof }}</div></div>
+      <div class="card"><div class="label">Picks</div><div class="value green">{{ picks|length }}</div></div>
+      <div class="card"><div class="label">Hold for</div><div class="value yellow">{{ hold_sessions or 21 }} days</div></div>
+      <div class="card"><div class="label">Stocks checked</div><div class="value purple">{{ eligible }}</div></div>
+    </div>
+
+    <div class="section" id="momentum-list">
+      <h2>Today's list</h2>
+      {% if picks %}
+      <div class="tablewrap"><table>
+        <thead><tr><th>#</th><th>Stock</th><th class="num">Close</th><th class="num">12-month return</th><th class="num">Daily value traded</th></tr></thead>
+        <tbody>
+        {% for p in picks %}
+          <tr>
+            <td class="rank">{{ p.rank }}</td>
+            <td class="sym"><a href="/equity/stock/{{ p.symbol }}">{{ p.symbol }}</a></td>
+            <td class="num">₹{{ "{:,.2f}".format(p.close) }}</td>
+            <td class="num {{ 'green' if p.score_pct >= 0 else 'red' }}"><b>{{ "%+.1f"|format(p.score_pct) }}%</b></td>
+            <td class="num">₹{{ "%.0f"|format(p.traded_value_cr) }} cr</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table></div>
+      {% else %}<p class="empty" id="no-picks">No list today: fewer than {{ min_eligible }} stocks had enough data on {{ asof }}.</p>{% endif %}
+      <p class="foot">How it works: rank stocks by their return from 12 months ago to 1 month ago, buy at the next day's open,
+        hold {{ hold_sessions or 21 }} trading days. No exit levels are given. This rule narrowly failed its first test (3 Nov 2026); a longer test is pending.
+        {% if corporate_action_flagged %}<span id="ca-flagged"><br>Left out (one-day move over &plusmn;30%, possibly a split or bonus):
+        {{ corporate_action_flagged|join(", ") }}</span>{% endif %}</p>
+    </div>
   {% endif %}
-</div>
-{% endblock %}
+
+  <p class="foot" style="text-align:center;margin-top:18px;"><a href="/equity">Full equity_intel dashboard</a></p>
+</main>
+</body>
+</html>
