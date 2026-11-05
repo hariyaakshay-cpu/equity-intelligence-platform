@@ -50,7 +50,7 @@
     {% if stale %}<p class="warn" id="stale">This list is {{ age_days }} days old. Refresh prices before using it.</p>{% endif %}
 
     <div class="cards">
-      <div class="card"><div class="label">Data as of</div><div class="value blue">{{ asof }}</div></div>
+      <div class="card"><div class="label">Data</div><div class="value {{ 'red' if stale else 'green' }}">{{ ('Old (' ~ age_days ~ ' days)') if stale else 'Up to date' }}</div><div style="color:var(--mut);font-size:12px;margin-top:4px;">as of {{ asof }}</div></div>
       <div class="card"><div class="label">Picks</div><div class="value green">{{ picks|length }}</div></div>
       <div class="card"><div class="label">Hold for</div><div class="value yellow">{{ hold_sessions or 21 }} days</div></div>
       <div class="card"><div class="label">Stocks checked</div><div class="value purple">{{ eligible }}</div></div>
@@ -81,7 +81,6 @@
     </div>
   {% endif %}
 
-  <p class="foot" style="text-align:center;margin-top:18px;">Technical data checks (only needed when debugging): <a href="/equity">/equity</a></p>
 </main>
 </body>
 </html>
