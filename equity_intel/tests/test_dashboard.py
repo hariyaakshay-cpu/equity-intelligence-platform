@@ -280,8 +280,8 @@ def test_demo_banner_shown_only_in_demo_mode(db_path):
     _build_fixture_db(db_path)
     real_client = create_app(demo=False, db_path=db_path).test_client()
     demo_client = create_app(demo=True, db_path=db_path).test_client()
-    assert b"DEMO DATA" not in real_client.get("/equity").data
-    assert b"DEMO DATA" in demo_client.get("/equity").data
+    assert b"DEMO DATA" not in real_client.get("/equity/technical").data
+    assert b"DEMO DATA" in demo_client.get("/equity/technical").data
 
 
 def test_dashboard_connection_is_read_only(db_path):
@@ -316,7 +316,7 @@ def test_every_api_route_returns_200_and_no_scans_yet_for_a_missing_db(db_path):
 
 def test_equity_page_shows_no_scans_yet_message_for_a_missing_db(db_path):
     client = create_app(demo=False, db_path=db_path).test_client()
-    res = client.get("/equity")
+    res = client.get("/equity/technical")
     assert res.status_code == 200
     assert b"No scans have been recorded yet." in res.data
 
@@ -356,7 +356,7 @@ def test_equity_page_shows_version_mismatch_message(db_path):
         conn.close()
 
     client = create_app(demo=False, db_path=db_path).test_client()
-    res = client.get("/equity")
+    res = client.get("/equity/technical")
     assert res.status_code == 200
     assert b"version mismatch" in res.data.lower()
 
@@ -402,7 +402,7 @@ def test_every_api_route_returns_200_and_database_error_for_a_corrupt_file(db_pa
 def test_equity_page_shows_database_error_message_for_a_corrupt_file(db_path):
     db_path.write_bytes(b"\x00\x01this is not a sqlite database\xff\xfe" * 50)
     client = create_app(demo=False, db_path=db_path).test_client()
-    res = client.get("/equity")
+    res = client.get("/equity/technical")
     assert res.status_code == 200
     assert b"database error" in res.data.lower()
     assert b"no scans have been recorded yet" not in res.data.lower()

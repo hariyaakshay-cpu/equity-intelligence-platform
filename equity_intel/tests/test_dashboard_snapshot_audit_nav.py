@@ -22,7 +22,7 @@ def _get(client, url):
 
 
 def test_the_main_page_tab_bar_has_a_plain_snapshot_audit_link_after_exceptions(client):
-    text = _get(client, "/equity")[1]
+    text = _get(client, "/equity/technical")[1]
     nav = text.split("<nav>")[1].split("</nav>")[0]
     link = re.search(r'<a class="navlink" id="nav-snapshot-audit" href="/equity/snapshot-audit">Snapshot Audit</a>', nav)
     assert link and nav.index('id="nav-exceptions"') < link.start()
@@ -43,7 +43,7 @@ def test_every_stage_1_page_header_links_to_exceptions_and_snapshot_audit(client
 
 
 def test_the_header_and_tab_bar_links_reach_a_working_snapshot_audit_page(client):
-    for url in ("/equity", "/equity/stock/DEMOAAA", "/equity/exceptions", "/equity/snapshot-audit"):
+    for url in ("/equity/technical", "/equity/stock/DEMOAAA", "/equity/exceptions", "/equity/snapshot-audit"):
         href = re.search(r'<a [^>]*id="nav-snapshot-audit"[^>]*href="([^"]+)"|<a [^>]*href="([^"]+)"[^>]*id="nav-snapshot-audit"', _get(client, url)[1])
         target = href.group(1) or href.group(2)
         res, text = _get(client, target)
@@ -101,7 +101,7 @@ def test_the_route_allowlist_is_the_known_list_and_navigation_added_no_route(cli
                      "/api/equity/sectors", "/api/equity/signals", "/api/equity/snapshot-audit", "/api/equity/snapshot-audit/symbol/<symbol>",
                      "/api/equity/stock/<symbol>", "/api/equity/summary", "/equity",
                      "/equity/exceptions", "/equity/signals", "/equity/snapshot-audit", "/equity/snapshot-audit/symbol/<symbol>",
-                     "/equity/stock/<symbol>"]
+                     "/equity/stock/<symbol>", "/equity/technical"]
     for rule in rules:
         assert client.post(rule.replace("<symbol>", "DEMOAAA")).status_code in (404, 405), rule
 

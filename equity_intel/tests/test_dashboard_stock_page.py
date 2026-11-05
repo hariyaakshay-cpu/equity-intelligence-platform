@@ -49,7 +49,7 @@ def test_banner_text_on_stock_page(client, symbol):
 def test_banner_text_on_404_and_on_the_original_equity_page(client):
     res, html = _page(client, "NOPE")
     assert res.status_code == 404 and BANNER_TEXT in html
-    assert BANNER_TEXT in client.get("/equity").get_data(as_text=True)
+    assert BANNER_TEXT in client.get("/equity/technical").get_data(as_text=True)
 
 
 def test_unknown_symbol_is_a_404_page_not_a_stack_trace(client):
@@ -240,7 +240,7 @@ def test_stale_symbol_page_shows_older_data_through_than_run_session(client):
 def test_demo_banner_states_the_fixed_demo_dates_on_every_demo_page(client):
     # the note's dates must match the seed's constants (the app cannot import the seed script)
     assert (BAR_DATES[0], SESSION_DATE) == ("2026-09-23", "2026-09-25")
-    for url in ("/equity", "/equity/stock/DEMOAAA", "/equity/stock/NOPE"):
+    for url in ("/equity/technical", "/equity/stock/DEMOAAA", "/equity/stock/NOPE"):
         html = client.get(url).get_data(as_text=True)
         assert "Demo dates are fixed: Wed 2026-09-23 to Fri 2026-09-25" in html, url
         assert "OUTDATED state is therefore expected" in html, url

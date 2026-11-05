@@ -267,7 +267,7 @@ def reason_fields(prefix: str, layer: str, text) -> dict:
 REASON_TEXT_NOTE = ("Only a short code is shown here, not the recorded text. "
                     "The full recorded text is on this symbol's Stock Detail page.")
 ABORT_TEXT_NOTE = ("Only the leading code is shown here, not the rest of the recorded text. "
-                   "The full recorded text is in the Audit / Provenance section of the /equity page.")
+                   "The full recorded text is in the Audit / Provenance section of the /equity/technical page.")
 
 # scan_runs.abort_reason is written only by scan_run.mark_stale_running_as_interrupted (scan_run.py:79), abort_scan_run
 # (:141) and abort_scan_run_if_running (:160). The values passed in are these constants: scan_run.py:26 INTERRUPTED,

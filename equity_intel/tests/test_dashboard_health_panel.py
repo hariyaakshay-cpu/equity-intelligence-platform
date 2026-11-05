@@ -25,7 +25,7 @@ from equity_intel.tests.test_dashboard_freshness_queries import _add_e4_scan
 from equity_intel.tests.test_dashboard_health import NOW, _complete, _two_layer_db_with_reasons
 from equity_intel.tests.test_dashboard_snapshot_audit_queries import _make_run
 
-PAGE = "/equity"
+PAGE = "/equity/technical"
 API = "/api/equity/health"
 TEMPLATE = Path(health.__file__).resolve().parent / "templates" / "health_panel.html"
 HOSTILE = '<script>alert(1)</script>"\'&<img src=x onerror=alert(2)>'

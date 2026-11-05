@@ -13,7 +13,7 @@ def _get(client, url):
 
 
 def test_the_main_page_nav_has_a_real_exceptions_link_not_a_script_button(client):
-    text = _get(client, "/equity")[1]
+    text = _get(client, "/equity/technical")[1]
     nav = text.split("<nav>")[1].split("</nav>")[0]
     assert LINK.search(nav) and 'id="nav-exceptions"' in nav
     assert "<button" not in nav.split('id="nav-exceptions"')[1].split("<span")[0]  # the link itself is a plain anchor
@@ -30,7 +30,7 @@ def test_the_stage_1_header_links_to_exceptions_on_every_stage_1_page(client):
 
 
 def test_following_the_link_from_the_main_page_reaches_a_working_exceptions_page(client):
-    href = re.search(r'<a class="navlink" id="nav-exceptions" href="([^"]+)"', _get(client, "/equity")[1]).group(1)
+    href = re.search(r'<a class="navlink" id="nav-exceptions" href="([^"]+)"', _get(client, "/equity/technical")[1]).group(1)
     res, text = _get(client, href)
     assert res.status_code == 200 and 'id="results"' in text and "Exceptions" in text
     assert "DEMO DATA - NOT REAL" in text  # the demo database, never the real one

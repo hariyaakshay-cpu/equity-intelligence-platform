@@ -14,7 +14,7 @@ import pytest
 from dashboard.app import create_app
 from equity_intel.persistence import connection, db_path_guard
 
-API, PAGE = "/api/equity/health", "/equity"
+API, PAGE = "/api/equity/health", "/equity/technical"
 FRIDAY_EVENING = datetime(2026, 9, 25, 19, 0, 0)           # after the 18:00 IST cutoff: the expected session is Friday 2026-09-25
 MONDAY_EVENING = datetime(2026, 9, 28, 19, 0, 0)           # the expected session is Monday 2026-09-28
 SENTENCE = ("The E4 as-of date 2026-09-24 is 1 calendar day(s) (1 weekday(s); weekdays ignore market holidays) older than the "

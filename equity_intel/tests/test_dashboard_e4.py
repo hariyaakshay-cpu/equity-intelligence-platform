@@ -84,5 +84,5 @@ def test_stock_endpoint_includes_e4_features(db_path):
 
 def test_page_renders_with_e4_support(db_path):
     _build_fixture_db(db_path)
-    response = create_app(demo=False, db_path=db_path).test_client().get("/equity")
+    response = create_app(demo=False, db_path=db_path).test_client().get("/equity/technical")
     assert response.status_code == 200 and b"E4 indicators" in response.data

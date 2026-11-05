@@ -145,7 +145,7 @@ def test_new_views_add_no_routes_and_no_write_methods(populated):
                      "/api/equity/sectors", "/api/equity/signals", "/api/equity/snapshot-audit", "/api/equity/snapshot-audit/symbol/<symbol>",
                      "/api/equity/stock/<symbol>", "/api/equity/summary", "/equity",
                      "/equity/exceptions", "/equity/signals", "/equity/snapshot-audit", "/equity/snapshot-audit/symbol/<symbol>",
-                     "/equity/stock/<symbol>"]  # Stage 1 stock page, Phase 2 exceptions page and API, Phase 3 snapshot audit, Phase 4 health API (GET only)
+                     "/equity/stock/<symbol>", "/equity/technical"]  # Stage 1 stock page, Phase 2 exceptions page and API, Phase 3 snapshot audit, Phase 4 health API (GET only)
     for rule in rules:
         assert populated.post(rule.replace("<symbol>", "AAA")).status_code in (404, 405)
 
@@ -163,7 +163,7 @@ def test_e4_feature_objects_carry_close_and_window_high(populated):
 
 
 def test_research_and_gated_tabs_are_static_and_show_no_model_output(populated):
-    page = populated.get("/equity").get_data(as_text=True)
+    page = populated.get("/equity/technical").get_data(as_text=True)
     assert "SPECIFICATION / DATA PREPARATION" in page and "GATED" in page and "NOT RUN" in page
     assert "RESEARCH" in page and "Trade Research" in page
     lowered = page.lower()

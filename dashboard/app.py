@@ -265,8 +265,9 @@ def create_app(demo: bool = False, db_path: Optional[Union[str, Path]] = None) -
         now = clock() if clock is not None else datetime.now(IST)
         return health.build(conn, now, health.read_db_file_info(app.config["DB_PATH"]))
 
-    @app.get("/equity")
+    @app.get("/equity/technical")
     def equity_page():
+        """Technical data-trust page (scan layers, health, provenance). Moved here from /equity, which now shows the simple picks page."""
         db_message = None
         health_panel = None
         try:
@@ -314,6 +315,7 @@ def create_app(demo: bool = False, db_path: Optional[Union[str, Path]] = None) -
         finally:
             conn.close()
 
+    @app.get("/equity")
     @app.get("/equity/signals")
     def signals_page():
         """12-1 momentum list (NOT VALIDATED, no target / stop-loss), read from data/signals JSON. GET only."""
