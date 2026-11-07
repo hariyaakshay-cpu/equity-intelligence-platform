@@ -34,9 +34,15 @@ def sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def text_sha256(path: Path) -> str:
+    """sha256 with CRLF normalised to LF, so Git's Windows line endings
+    don't make an unchanged pre-registration look changed."""
+    return hashlib.sha256(path.read_bytes().replace(b"\r\n", b"\n")).hexdigest()
+
+
 def check_prereg() -> str:
     expected = PREREG_HASH.read_text(encoding="utf-8").split()[0]
-    actual = sha256(PREREG)
+    actual = text_sha256(PREREG)
     if actual != expected:
         raise SystemExit(f"pre-registration changed: {actual} != {expected}")
     return actual
