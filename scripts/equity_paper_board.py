@@ -44,6 +44,7 @@ QUOTE_URL = "https://api.upstox.com/v2/market-quote/quotes"
 INDEX = "NIFTY500_INDEX"
 POLL_SECONDS = 300
 FADE_FINAL, FIRST_QUOTES, CLOSE_MARK = time(9, 0), time(9, 16), time(15, 31)
+HOLIDAY_CHECK = time(9, 30)
 TRADE_FIELDS = ["date", "symbol", "amt_cr", "materiality", "status", "entry_open", "high", "low",
                 "exit_price", "exit_source", "gross_pct", "net_pct", "reason"]
 EQ_TYPES = {"EQ", "BE", "SM", "ST", "BZ"}
@@ -190,6 +191,18 @@ def main(argv=None) -> int:
                 today_trades = [t for t in trades if t["date"] == str(today)]
                 syms = sorted(set(liquid) | {t["symbol"] for t in today_trades})
                 quotes = fetch_quotes(token, [keys[s] for s in syms if s in keys], key_to_symbol)
+                quotes = {s: q for s, q in quotes.items() if q.get("last_trade_date") == today}
+                if not quotes and now.time() >= HOLIDAY_CHECK:
+                    state["notes"].append("No stock has traded today by 09:30: market closed (holiday?). "
+                                          "Board stopped; today's fade alerts are void.")
+                    for t in today_trades:
+                        if t["status"] in ("WAITING_OPEN", "OPEN"):
+                            t.update(status="VOID", reason="market closed today")
+                    write_trades(trades)
+                    state["trades_today"] = today_trades
+                    state["updated"] = datetime.now(IST).strftime("%H:%M:%S")
+                    write_state(state, today)
+                    return 0
                 state["surges"] = pb.surges(quotes, base, now.replace(tzinfo=None))
                 state["surges_asof"] = now.strftime("%H:%M:%S")
                 for t in today_trades:

@@ -11,7 +11,7 @@ PAPER ONLY, NOT VALIDATED. Two panels:
 """
 from __future__ import annotations
 
-from datetime import date, datetime, time
+from datetime import date, datetime, time, timedelta, timezone
 from statistics import median
 
 import pandas as pd
@@ -27,6 +27,7 @@ SURGE_FIRST_MINUTES = 15        # no surge ratio before 09:30 (too noisy)
 SURGE_TOP = 15
 MARKET_OPEN, MARKET_CLOSE = time(9, 15), time(15, 30)
 SESSION_MINUTES = 375
+IST = timezone(timedelta(hours=5, minutes=30))
 
 
 def fade_candidates(ann: pd.DataFrame, today: date, sessions: list[date], daily: dict,
@@ -157,7 +158,8 @@ def parse_upstox_quotes(payload: dict, key_to_symbol: dict) -> dict:
 
     Entries are mapped back by their `instrument_token` (e.g. NSE_EQ|INE...), not by
     the reply's own key. prev_close = last_price - net_change. Unknown or malformed
-    entries are skipped.
+    entries are skipped. last_trade_date = IST date of `last_trade_time` (epoch ms),
+    None if absent - used to tell a trading day from a holiday.
     """
     out = {}
     for entry in (payload or {}).get("data", {}).values():
@@ -168,10 +170,14 @@ def parse_upstox_quotes(payload: dict, key_to_symbol: dict) -> dict:
             ohlc = entry.get("ohlc") or {}
             ltp = float(entry["last_price"])
             net = entry.get("net_change")
+            ltt = entry.get("last_trade_time")
+            ltd = (datetime.fromtimestamp(int(ltt) / 1000, IST).date()
+                   if ltt not in (None, "") and str(ltt).isdigit() else None)
             out[sym] = {"ltp": ltp, "volume": int(entry.get("volume") or 0),
                         "open": float(ohlc.get("open") or 0), "high": float(ohlc.get("high") or 0),
                         "low": float(ohlc.get("low") or 0),
-                        "prev_close": round(ltp - float(net), 4) if net is not None else None}
+                        "prev_close": round(ltp - float(net), 4) if net is not None else None,
+                        "last_trade_date": ltd}
         except (KeyError, TypeError, ValueError):
             continue
     return out

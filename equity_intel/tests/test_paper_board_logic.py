@@ -124,10 +124,11 @@ def test_scorecard_counts_closed_trades_only():
 def test_parse_upstox_quotes_maps_by_instrument_token():
     payload = {"status": "success", "data": {
         "NSE_EQ:KEC": {"instrument_token": "NSE_EQ|INE389H01022", "last_price": 314.85, "volume": 812345,
-                       "net_change": -4.15, "ohlc": {"open": 318.0, "high": 319.5, "low": 312.1, "close": 314.85}},
+                       "net_change": -4.15, "ohlc": {"open": 318.0, "high": 319.5, "low": 312.1, "close": 314.85},
+                       "last_trade_time": "1794995998260"},
         "NSE_EQ:XYZ": {"instrument_token": "NSE_EQ|UNKNOWN", "last_price": 1.0},
         "NSE_EQ:BAD": {"instrument_token": "NSE_EQ|INE000000000", "last_price": "n/a"}}}
     q = pb.parse_upstox_quotes(payload, {"NSE_EQ|INE389H01022": "KEC", "NSE_EQ|INE000000000": "BAD"})
     assert list(q) == ["KEC"]
     assert q["KEC"] == {"ltp": 314.85, "volume": 812345, "open": 318.0, "high": 319.5, "low": 312.1,
-                        "prev_close": pytest.approx(319.0)}
+                        "prev_close": pytest.approx(319.0), "last_trade_date": date(2026, 11, 18)}

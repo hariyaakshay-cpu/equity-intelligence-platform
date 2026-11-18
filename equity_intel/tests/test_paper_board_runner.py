@@ -47,8 +47,10 @@ def env(tmp_path, monkeypatch):
                               "exchdisstime": datetime(2026, 11, 18, 19, 0), "event_ts": datetime(2026, 11, 18, 19, 0),
                               "ts_source": "exchdisstime", "attachment": None, "text": TEXT, "raw_file": "x"}])
     monkeypatch.setattr(run, "fetch_announcements", fake_ann)
-    quotes = {"KEC": {"ltp": 296.0, "volume": 900_000, "open": 302.0, "high": 303.0, "low": 295.0, "prev_close": 300.0},
-              "BEL": {"ltp": 401.0, "volume": 40_000_000, "open": 400.0, "high": 402.0, "low": 399.0, "prev_close": 400.0}}
+    quotes = {"KEC": {"ltp": 296.0, "volume": 900_000, "open": 302.0, "high": 303.0, "low": 295.0, "prev_close": 300.0,
+                      "last_trade_date": TODAY},
+              "BEL": {"ltp": 401.0, "volume": 40_000_000, "open": 400.0, "high": 402.0, "low": 399.0, "prev_close": 400.0,
+                      "last_trade_date": TODAY}}
     monkeypatch.setattr(run, "fetch_quotes", lambda token, keys, k2s: quotes)
     return out
 
@@ -110,3 +112,19 @@ def test_next_morning_remarks_trades_with_the_official_daily_bar(env, monkeypatc
     t = [r for r in csv.DictReader(open(env / "trades.csv")) if r["date"] == "2026-11-19"][0]
     assert t["status"] == "CLOSED" and t["exit_source"] == "official_close"
     assert float(t["net_pct"]) == pytest.approx(((302 - 297) / 302 - 0.005) * 100, abs=1e-3)
+
+
+def test_holiday_no_trades_today_voids_the_alert_and_stops(env, monkeypatch):
+    stale = {"KEC": {"ltp": 296.0, "volume": 900_000, "open": 302.0, "high": 303.0, "low": 295.0, "prev_close": 300.0,
+                     "last_trade_date": date(2026, 11, 18)}}
+    monkeypatch.setattr(run, "fetch_quotes", lambda token, keys, k2s: stale)
+    _at(monkeypatch, 9, 5)
+    run.main(["--once"])
+    _at(monkeypatch, 9, 20)
+    run.main(["--once"])                                     # before 09:30: just waits, no fill from stale quotes
+    assert json.loads((env / "2026-11-19.json").read_text())["trades_today"][0]["status"] == "WAITING_OPEN"
+    _at(monkeypatch, 9, 35)
+    run.main(["--once"])
+    st = json.loads((env / "2026-11-19.json").read_text())
+    assert st["trades_today"][0]["status"] == "VOID" and "holiday" in st["notes"][-1]
+    assert st["surges"] == []
