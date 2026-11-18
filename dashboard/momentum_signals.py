@@ -7,7 +7,7 @@ from datetime import date
 from pathlib import Path
 from typing import Optional
 
-BANNER = "12-1 momentum - NOT VALIDATED (failed DEV test narrowly, 3 Nov 2026) - research only - not trade advice"
+BANNER = "12-1 momentum - FAILED TEST, NOT VALIDATED (failed 2022-2025 and 2014-2021; study closed) - reference only - not trade advice"
 STALE_DAYS = 4
 
 

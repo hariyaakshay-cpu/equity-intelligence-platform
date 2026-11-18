@@ -42,7 +42,7 @@
 <body>
 <main>
   <h1>📊 Equity Dashboard</h1>
-  <p class="sub">Monthly momentum picks and a daily stock scan &nbsp;|&nbsp; read-only, no orders</p>
+  <p class="sub">Momentum list (failed test, reference only) and a daily stock scan &nbsp;|&nbsp; read-only, no orders</p>
   {% if demo %}<p class="warn">DEMO DATA - NOT REAL</p>{% endif %}
 
   {% set sc = scan or {} %}
@@ -50,15 +50,15 @@
     <div class="card"><div class="label">Data</div>
       {% if available %}<div class="value {{ 'red' if stale else 'green' }}">{{ ('Old (' ~ age_days ~ ' days)') if stale else 'Up to date' }}</div>
       <div class="small">as of {{ asof }}</div>{% else %}<div class="value red">None</div>{% endif %}</div>
-    <div class="card"><div class="label">Momentum picks</div><div class="value green">{{ picks|length if available else 0 }}</div><div class="small">hold ~1 month</div></div>
+    <div class="card"><div class="label">Momentum list</div><div class="value">{{ picks|length if available else 0 }}</div><div class="small">failed test &middot; reference only</div></div>
     <div class="card"><div class="label">Stocks scanned</div><div class="value purple">{{ sc.liquid or 0 }}</div><div class="small">liquid, of {{ sc.scanned or 0 }}</div></div>
     <div class="card"><div class="label">Volume surges</div><div class="value yellow">{{ (sc.volume or [])|length }}</div><div class="small">1.5x+ normal volume</div></div>
   </div>
 
   <!-- Section 1: monthly momentum -->
   <div class="section" id="momentum-list">
-    <div class="head"><h2>Monthly momentum picks</h2>
-      <span class="pill" id="not-validated-notice">NOT VALIDATED &middot; research only, not trade advice</span></div>
+    <div class="head"><h2>Monthly momentum list (failed test)</h2>
+      <span class="pill" id="not-validated-notice">FAILED TEST &middot; NOT VALIDATED &middot; reference only, not a signal</span></div>
     {% if not available %}
       <p class="empty" id="no-signals">{{ message }}</p>
     {% else %}
