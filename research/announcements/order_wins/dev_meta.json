@@ -1,0 +1,31 @@
+{
+  "phase": "dev",
+  "prereg_sha256": "8d9c96972985dbad53f386eb7fb4bb660e8791a451a8a004ffeebf7057107ed5",
+  "shares_file": "research\\announcements\\order_wins\\shares_mcap17112026\\shares.csv",
+  "shares_sha256": "68b6e9a5d27364e0a2861184144ae0ceb6f12649d5d088af444e4309f9530c89",
+  "run_ts": "2026-11-18T14:21:45",
+  "raw_dirs": [
+    "D:\\Algo\\Equity - intraday\\research\\announcements\\coverage_20261108T133738\\raw",
+    "D:\\Algo\\Equity - intraday\\research\\announcements\\coverage_20261112T121455\\raw",
+    "D:\\Algo\\Equity - intraday\\research\\announcements\\coverage_20261108T012112\\raw",
+    "D:\\Algo\\Equity - intraday\\research\\announcements\\coverage_20261118T121832\\raw",
+    "D:\\Algo\\Equity - intraday\\research\\announcements\\coverage_20261118T121845\\raw"
+  ],
+  "order_wins": 2518,
+  "units": 1594,
+  "symbols": 354,
+  "symbols_with_prices": 293,
+  "drops": {
+    "illiquid": 568,
+    "no_price_file": 177,
+    "H20:no_exit_session": 7,
+    "missing_entry_row": 2,
+    "locked_entry": 9,
+    "H5:no_exit_session": 3,
+    "H5:missing_exit_row": 1,
+    "H20:missing_exit_row": 1,
+    "no_entry_session": 4,
+    "overlap": 606
+  },
+  "dev_pass": 0
+}
