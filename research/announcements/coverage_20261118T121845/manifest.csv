@@ -1,0 +1,2 @@
+day,http_status,n_records,n_symbols,raw_file,sha256,error,retrieved_ts
+2017-05-15,200,262,162,NSE_ALL_2017-05-15.json,14473833af96d66f4c51bd3df34e7e91a12b3dfed825a88e3690eceb8f8dbc39,,2026-11-18T12:18:46

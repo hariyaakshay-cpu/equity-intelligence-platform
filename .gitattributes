@@ -10,3 +10,5 @@ equity_intel/scoring/provisional_v0.py text eol=lf
 equity_intel/scoring/components_v0.py text eol=lf
 scripts/equity_daily_*.py text eol=lf
 scripts/equity_intraday_*.py text eol=lf
+# Order-win v2.1 shares source: sha256 frozen in the pre-registration; keep bytes exact.
+research/announcements/order_wins/mcap/*.csv -text

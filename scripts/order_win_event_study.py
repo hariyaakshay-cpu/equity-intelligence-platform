@@ -26,9 +26,8 @@ import pandas as pd  # noqa: E402
 from equity_intel.announcements import event_study as es  # noqa: E402
 from equity_intel.announcements import order_wins as ow  # noqa: E402
 
-PREREG = ROOT / "docs" / "architecture" / "order_win_event_study_preregistration.md"
-PREREG_HASH = ROOT / "research" / "announcements" / "order_win_prereg_2026-11-08.sha256"
-RAW_DIRS = sorted((ROOT / "research" / "announcements").glob("coverage_*/raw"))
+PREREG = ROOT / "docs" / "architecture" / "order_win_event_study_preregistration_v2_1.md"
+PREREG_HASH = ROOT / "research" / "announcements" / "order_win_prereg_v2_1_2026-11-18.sha256"
 UNIVERSE_DIRS = [ROOT / "data" / "daily_history_early", ROOT / "data" / "daily_history"]
 PRICE_DIRS = UNIVERSE_DIRS + [ROOT / "data" / "daily_history_orders"]
 OUT = ROOT / "research" / "announcements" / "order_wins"
@@ -46,13 +45,27 @@ def check_prereg() -> str:
     return actual
 
 
+# The --all-days runs that make up the data named in the pre-registration
+# ("2012-2020 and 2021-2026 runs"), plus the 2026-11-18 re-fetch of the four
+# trading sessions missing from the 2012-2018 run. Listed explicitly: the
+# earlier "manifest with > 1000 rows" rule silently dropped both 2012-2020 runs.
+FULL_RUNS = (
+    "coverage_20261108T133738",  # 2012-01-02 .. 2018-09-13 (manifest_reconstructed.csv)
+    "coverage_20261112T121455",  # 2018-09-14 .. 2020-12-31
+    "coverage_20261108T012112",  # 2021-01-01 .. 2026-10-30
+    "coverage_20261118T121832",  # re-fetch 2014-09-22 .. 2014-09-24 (NSE returned 0 records)
+    "coverage_20261118T121845",  # re-fetch 2017-05-15
+)
+
+
 def full_runs() -> list[Path]:
-    """Raw dirs from --all-days runs only (manifest with > 1000 days)."""
+    """Raw dirs of the runs in FULL_RUNS; stops if any is missing."""
     keep = []
-    for d in RAW_DIRS:
-        man = d.parent / "manifest.csv"
-        if man.exists() and sum(1 for _ in open(man, encoding="utf-8")) > 1000:
-            keep.append(d)
+    for name in FULL_RUNS:
+        d = ROOT / "research" / "announcements" / name / "raw"
+        if not d.is_dir():
+            raise SystemExit(f"missing announcement download: {d}")
+        keep.append(d)
     return keep
 
 

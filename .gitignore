@@ -29,3 +29,7 @@ data/signals/
 # (per-day sha256) goes in git, not the bytes.
 research/announcements/*/raw/
 research/announcements/event_study_v1/dev_observations.csv
+# Order-win price cache (regenerable from Upstox) and the two shares runs that
+# NSE refused with HTTP 403 (recorded in the v2.1 pre-registration).
+data/daily_history_orders/
+research/announcements/order_wins/shares_20261118T*/
