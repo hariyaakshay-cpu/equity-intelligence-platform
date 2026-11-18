@@ -1,0 +1,45 @@
+{
+  "prereg_sha256": "e5f6c6cdac61ebf21c72e1c6d6778b80df3f486eb5469302d0c37c3378e536d8",
+  "shares_sha256": "68b6e9a5d27364e0a2861184144ae0ceb6f12649d5d088af444e4309f9530c89",
+  "run_ts": "2026-11-18T14:37:16",
+  "v21_build": {
+    "raw_dirs": [
+      "D:\\Algo\\Equity - intraday\\research\\announcements\\coverage_20261108T133738\\raw",
+      "D:\\Algo\\Equity - intraday\\research\\announcements\\coverage_20261112T121455\\raw",
+      "D:\\Algo\\Equity - intraday\\research\\announcements\\coverage_20261108T012112\\raw",
+      "D:\\Algo\\Equity - intraday\\research\\announcements\\coverage_20261118T121832\\raw",
+      "D:\\Algo\\Equity - intraday\\research\\announcements\\coverage_20261118T121845\\raw"
+    ],
+    "order_wins": 2518,
+    "units": 1594,
+    "symbols": 354,
+    "symbols_with_prices": 293,
+    "drops": {
+      "illiquid": 568,
+      "no_price_file": 177,
+      "H20:no_exit_session": 7,
+      "missing_entry_row": 2,
+      "locked_entry": 9,
+      "H5:no_exit_session": 3,
+      "H5:missing_exit_row": 1,
+      "H20:missing_exit_row": 1,
+      "no_entry_session": 4,
+      "overlap": 606
+    }
+  },
+  "fade_drops": {
+    "not_eq_series": 6
+  },
+  "result": {
+    "n": 166,
+    "sessions": 154,
+    "symbols": 59,
+    "mean_net_short_abn_pct": 0.5083714579718362,
+    "mean_net_short_raw_pct": 0.5425441938001352,
+    "lower_bound_pct": 0.1550776740788469,
+    "max_symbol_share": 0.5523785902500625,
+    "win_rate_net_short_raw": 0.6144578313253012,
+    "big_moves": 0,
+    "verdict": "FAIL"
+  }
+}
