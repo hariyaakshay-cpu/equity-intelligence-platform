@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Equity Dashboard</title>
+{% if board and board.live %}<meta http-equiv="refresh" content="60">{% endif %}
 <style>
   :root { --bg:#0d1117; --card:#161b22; --line:#30363d; --txt:#e6edf3; --mut:#8b949e;
           --blue:#58a6ff; --green:#3fb950; --yellow:#d29922; --red:#f85149; --purple:#bc8cff; }
@@ -53,6 +54,68 @@
     <div class="card"><div class="label">Momentum list</div><div class="value">{{ picks|length if available else 0 }}</div><div class="small">failed test &middot; reference only</div></div>
     <div class="card"><div class="label">Stocks scanned</div><div class="value purple">{{ sc.liquid or 0 }}</div><div class="small">liquid, of {{ sc.scanned or 0 }}</div></div>
     <div class="card"><div class="label">Volume surges</div><div class="value yellow">{{ (sc.volume or [])|length }}</div><div class="small">1.5x+ normal volume</div></div>
+  </div>
+
+  {% set bd = board or {} %}
+  <!-- Section 0: live intraday paper board -->
+  <div class="section" id="paper-board">
+    <div class="head"><h2>Live intraday paper board</h2>
+      <span class="pill" id="paper-notice">PAPER ONLY &middot; NOT VALIDATED &middot; no orders</span>
+      {% if bd.available %}<span class="small">{{ 'LIVE' if bd.live else ('last run ' ~ bd.date) }} &middot; updated {{ bd.updated }}{% if bd.live %} &middot; page refreshes every minute{% endif %}</span>{% endif %}</div>
+    {% if not bd.available %}
+      <p class="empty" id="no-board">{{ bd.message or "No paper board data." }}</p>
+    {% else %}
+      {% for n in bd.notes or [] %}<p class="warn">{{ n }}</p>{% endfor %}
+      {% if bd.errors %}<p class="warn" id="board-errors">Last errors: {{ bd.errors[-3:]|join(" | ") }}</p>{% endif %}
+      {% set scd = bd.scorecard or {} %}
+      <div class="cards">
+        <div class="card"><div class="label">Fade alerts today</div><div class="value yellow">{{ (bd.fade.alerts if bd.is_today else [])|length }}</div><div class="small">{{ 'final (09:00 cut-off)' if bd.fade.final else 'preliminary until 09:00' }}</div></div>
+        <div class="card"><div class="label">Paper trades so far</div><div class="value">{{ scd.trades or 0 }}</div><div class="small">{% if scd.trades %}since {{ scd.first }}{% else %}none closed yet{% endif %}</div></div>
+        <div class="card"><div class="label">Win rate</div><div class="value">{{ ("%.0f"|format(scd.win_rate * 100) ~ "%") if scd.trades else "-" }}</div><div class="small">after 0.50% costs</div></div>
+        <div class="card"><div class="label">Average per trade</div><div class="value {{ 'green' if (scd.avg_net_pct or 0) > 0 else 'red' if scd.trades else '' }}">{{ ("%+.2f"|format(scd.avg_net_pct) ~ "%") if scd.trades else "-" }}</div><div class="small">net of costs; needs weeks of data</div></div>
+      </div>
+      <div class="grid2">
+        <div class="box" id="fade-box">
+          <h3 class="yellow">Order-win fade (paper short at open, cover at close)</h3>
+          {% if bd.trades_today %}
+          <div class="tablewrap"><table>
+            <thead><tr><th>Stock</th><th class="num">Order</th><th class="num">% of mcap</th><th>Status</th><th class="num">Open</th><th class="num">Result</th></tr></thead>
+            <tbody>
+            {% for t in bd.trades_today %}
+              {% set res = t.net_pct if t.status == 'CLOSED' else t.live_net_pct %}
+              <tr><td class="sym"><a href="/equity/stock/{{ t.symbol }}">{{ t.symbol }}</a></td>
+                <td class="num">₹{{ "%.0f"|format(t.amt_cr|float) }} cr</td>
+                <td class="num">{{ "%.1f"|format(t.materiality|float * 100) }}%</td>
+                <td>{{ {'WAITING_OPEN': 'waiting for 09:15 open', 'OPEN': 'paper short open', 'CLOSED': 'closed', 'VOID': 'void'}.get(t.status, t.status) }}</td>
+                <td class="num">{{ ("₹" ~ "{:,.2f}".format(t.entry_open|float)) if t.entry_open not in (none, "") else "-" }}</td>
+                <td class="num {{ 'green' if res not in (none, '') and res|float > 0 else 'red' if res not in (none, '') else '' }}">{{ ("%+.2f"|format(res|float) ~ "%") if res not in (none, "") else "-" }}</td></tr>
+            {% endfor %}
+            </tbody>
+          </table></div>
+          {% else %}<p class="empty" id="no-fade">No order-win fade alert today. They are rare (about one a week).</p>{% endif %}
+          {% set dropped = (bd.fade.considered or [])|rejectattr("kept")|list %}
+          {% if dropped %}<p class="foot">Order wins today that did not qualify: {% for c in dropped %}{{ c.symbol }} ({{ c.reason }}){{ ", " if not loop.last }}{% endfor %}</p>{% endif %}
+        </div>
+        <div class="box" id="surge-box">
+          <h3 class="yellow">🔥 Live volume surges {% if bd.surges_asof %}<span class="small">as of {{ bd.surges_asof }}</span>{% endif %}</h3>
+          {% if bd.surges and bd.is_today %}
+          <div class="tablewrap"><table>
+            <thead><tr><th>Stock</th><th class="num">Price</th><th class="num">Change</th><th class="num">Volume vs normal</th></tr></thead>
+            <tbody>
+            {% for s in bd.surges %}
+              <tr><td class="sym"><a href="/equity/stock/{{ s.symbol }}">{{ s.symbol }}</a></td>
+                <td class="num">₹{{ "{:,.2f}".format(s.ltp) }}</td>
+                <td class="num {{ 'green' if (s.change_pct or 0) >= 0 else 'red' }}">{{ ("%+.1f"|format(s.change_pct) ~ "%") if s.change_pct is not none else "-" }}</td>
+                <td class="num"><b>{{ "%.1f"|format(s.ratio) }}x</b></td></tr>
+            {% endfor %}
+            </tbody>
+          </table></div>
+          {% else %}<p class="empty" id="no-surges">{{ 'No surges yet (starts 09:30).' if bd.is_today else 'Shown during market hours.' }}</p>{% endif %}
+        </div>
+      </div>
+      <p class="foot">Fade rule: order win &ge; 5% of market cap filed before 09:00, liquid, EQ series. It failed its test (55% of the profit came from one stock), so this board measures it live on paper; it is not a recommendation.
+        Volume surge = volume so far &divide; (20-day median daily volume &times; share of the session elapsed), liquid stocks only &ndash; a watchlist, not a buy/sell call.</p>
+    {% endif %}
   </div>
 
   <!-- Section 1: monthly momentum -->

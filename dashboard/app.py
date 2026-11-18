@@ -31,7 +31,7 @@ from typing import Optional, Union
 
 from flask import Flask, jsonify, render_template, request
 
-from dashboard import aggregates, exceptions, health, momentum_signals, queries, review_annotation, signals, snapshot_audit, stock_detail, stock_scan
+from dashboard import aggregates, exceptions, health, momentum_signals, paper_board, queries, review_annotation, signals, snapshot_audit, stock_detail, stock_scan
 from equity_intel.config import IST
 from equity_intel.indicators.trend import exponential_moving_average
 from equity_intel.persistence import connection, db_path_guard
@@ -214,6 +214,7 @@ def create_app(demo: bool = False, db_path: Optional[Union[str, Path]] = None) -
     app.config["DEMO_MODE"] = bool(demo)
     app.config.setdefault("MOMENTUM_SIGNALS_DIR", Path(__file__).resolve().parents[1] / "data" / "signals")
     app.config.setdefault("DAILY_LIVE_DIR", Path(__file__).resolve().parents[1] / "data" / "daily_live")
+    app.config.setdefault("PAPER_BOARD_DIR", Path(__file__).resolve().parents[1] / "data" / "paper_board")
     if db_path is not None:
         app.config["DB_PATH"] = db_path
     else:
@@ -322,7 +323,9 @@ def create_app(demo: bool = False, db_path: Optional[Union[str, Path]] = None) -
         """12-1 momentum list (NOT VALIDATED, no target / stop-loss), read from data/signals JSON. GET only."""
         body = momentum_signals.build(app.config["MOMENTUM_SIGNALS_DIR"])
         scan = stock_scan.build(app.config["DAILY_LIVE_DIR"])
-        return render_template("signals.html", demo=app.config["DEMO_MODE"], banner_text=momentum_signals.BANNER, scan=scan, **body)
+        board = paper_board.build(app.config["PAPER_BOARD_DIR"])
+        return render_template("signals.html", demo=app.config["DEMO_MODE"], banner_text=momentum_signals.BANNER, scan=scan,
+                               board=board, **body)
 
     @app.get("/api/equity/signals")
     @_guarded

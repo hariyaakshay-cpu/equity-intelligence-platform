@@ -33,3 +33,6 @@ research/announcements/event_study_v1/dev_observations.csv
 # NSE refused with HTTP 403 (recorded in the v2.1 pre-registration).
 data/daily_history_orders/
 research/announcements/order_wins/shares_20261118T*/
+
+# Live paper board runtime data (state JSON, paper trades, raw announcements): local only.
+data/paper_board/
