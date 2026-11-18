@@ -24,3 +24,8 @@ research/daily/replay_*.csv
 data/daily_live/
 data/daily_history_early/
 data/signals/
+
+# Raw NSE announcement downloads (~1.1GB, regenerable). Each run's manifest.csv
+# (per-day sha256) goes in git, not the bytes.
+research/announcements/*/raw/
+research/announcements/event_study_v1/dev_observations.csv

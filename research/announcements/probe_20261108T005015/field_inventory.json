@@ -1,0 +1,167 @@
+{
+  "NSE": {
+    "an_dt": {
+      "count": 166,
+      "examples": [
+        "09-May-2012 16:17:00",
+        "07-May-2012 11:34:00",
+        "05-May-2012 11:51:00"
+      ]
+    },
+    "attFileSize": {
+      "count": 166,
+      "examples": [
+        "None",
+        "495.16 KB",
+        "250.61 KB"
+      ]
+    },
+    "attchmntFile": {
+      "count": 166,
+      "examples": [
+        "https://nsearchives.nseindia.com/corporate/Reliance_PR_09052012.zip",
+        "https://nsearchives.nseindia.com/corporate/Reliance_bb_07052012.zip",
+        "https://nsearchives.nseindia.com/corporate/Reliance_mr_05052012.zip"
+      ]
+    },
+    "attchmntText": {
+      "count": 166,
+      "examples": [
+        "Reliance Industries Limited has informed the Exchange regarding a Media Release ",
+        "DSP Merrill Lynch Limited and Citigroup Global Markets India Private Limited has",
+        "Reliance Industries Limited has informed the Exchange regarding Media Release da"
+      ]
+    },
+    "bflag": {
+      "count": 166,
+      "examples": [
+        "None"
+      ]
+    },
+    "csvName": {
+      "count": 166,
+      "examples": [
+        "None"
+      ]
+    },
+    "desc": {
+      "count": 166,
+      "examples": [
+        "Press Release",
+        "Buyback",
+        "Allotment of Securities"
+      ]
+    },
+    "difference": {
+      "count": 166,
+      "examples": [
+        "-",
+        "00:00:07",
+        "00:00:10"
+      ]
+    },
+    "dt": {
+      "count": 166,
+      "examples": [
+        "09052012161700",
+        "07052012113400",
+        "05052012115100"
+      ]
+    },
+    "exchdisstime": {
+      "count": 166,
+      "examples": [
+        "-",
+        "14-May-2021 19:41:20",
+        "13-May-2021 22:53:46"
+      ]
+    },
+    "fileSize": {
+      "count": 166,
+      "examples": [
+        "-",
+        "495.16 KB",
+        "250.61 KB"
+      ]
+    },
+    "hasXbrl": {
+      "count": 166,
+      "examples": [
+        "False",
+        "True"
+      ]
+    },
+    "old_new": {
+      "count": 166,
+      "examples": [
+        "None"
+      ]
+    },
+    "orgid": {
+      "count": 166,
+      "examples": [
+        "None"
+      ]
+    },
+    "seq_id": {
+      "count": 166,
+      "examples": [
+        "None",
+        "9259",
+        "1510405"
+      ]
+    },
+    "smIndustry": {
+      "count": 166,
+      "examples": [
+        "Refineries",
+        "Computers - Software",
+        "Engineering"
+      ]
+    },
+    "sm_isin": {
+      "count": 166,
+      "examples": [
+        "INE002A01018",
+        "INE467B01029",
+        "INE018A01030"
+      ]
+    },
+    "sm_name": {
+      "count": 166,
+      "examples": [
+        "Reliance Industries Limited",
+        "Tata Consultancy Services Limited",
+        "Larsen & Toubro Limited"
+      ]
+    },
+    "sort_date": {
+      "count": 166,
+      "examples": [
+        "2012-05-09 16:17:00",
+        "2012-05-07 11:34:00",
+        "2012-05-05 11:51:00"
+      ]
+    },
+    "symbol": {
+      "count": 166,
+      "examples": [
+        "RELIANCE",
+        "TCS",
+        "LT"
+      ]
+    },
+    "voiceSummary": {
+      "count": 166,
+      "examples": [
+        "None"
+      ]
+    },
+    "voiceUrl": {
+      "count": 166,
+      "examples": [
+        "None"
+      ]
+    }
+  }
+}
