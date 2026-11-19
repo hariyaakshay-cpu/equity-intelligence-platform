@@ -6,6 +6,7 @@
 $ErrorActionPreference = "Continue"
 Set-Location $PSScriptRoot
 $py = Join-Path $PSScriptRoot ".venv\Scripts\python.exe"
+$env:PYTHONUNBUFFERED = "1"   # write log lines as they happen, not at exit
 New-Item -ItemType Directory -Force -Path (Join-Path $PSScriptRoot "logs") | Out-Null
 $log = Join-Path $PSScriptRoot ("logs\paper_board_" + (Get-Date -Format "yyyy-MM-dd") + ".log")
 "=== $(Get-Date -Format s) daily price refresh" | Out-File $log -Append -Encoding utf8

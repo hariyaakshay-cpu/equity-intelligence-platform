@@ -5,7 +5,11 @@ $script = Join-Path $PSScriptRoot "start_paper_board.ps1"
 $action = New-ScheduledTaskAction -Execute "powershell.exe" -WorkingDirectory $PSScriptRoot `
     -Argument "-NoProfile -ExecutionPolicy Bypass -File `"$script`""
 $trigger = New-ScheduledTaskTrigger -Weekly -DaysOfWeek Monday,Tuesday,Wednesday,Thursday,Friday -At "08:40"
-$settings = New-ScheduledTaskSettingsSet -StartWhenAvailable -WakeToRun -ExecutionTimeLimit (New-TimeSpan -Hours 8) -MultipleInstances IgnoreNew
+# Defaults would block the task on battery and kill it when unplugged; a laptop must be allowed both.
+$settings = New-ScheduledTaskSettingsSet -StartWhenAvailable -WakeToRun -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries `
+    -DontStopOnIdleEnd -ExecutionTimeLimit (New-TimeSpan -Hours 8) -MultipleInstances IgnoreNew
 Register-ScheduledTask -TaskName "Equity Paper Board" -Action $action -Trigger $trigger -Settings $settings `
     -Description "Live intraday PAPER board (not validated, no orders). Equity - intraday repo." -Force | Out-Null
-Get-ScheduledTask -TaskName "Equity Paper Board" | Select-Object TaskName, State, @{n="Next run"; e={(Get-ScheduledTaskInfo $_).NextRunTime}}
+$t = Get-ScheduledTask -TaskName "Equity Paper Board"
+$t | Select-Object TaskName, State, @{n="Next run"; e={(Get-ScheduledTaskInfo $_).NextRunTime}},
+    @{n="Runs on battery"; e={-not $_.Settings.DisallowStartIfOnBatteries}}, @{n="Wakes PC"; e={$_.Settings.WakeToRun}}
