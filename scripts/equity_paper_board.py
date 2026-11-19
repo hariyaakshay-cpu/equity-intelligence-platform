@@ -1,7 +1,8 @@
 """Live intraday PAPER board (NOT VALIDATED) - run on your PC on market days. No orders.
 
-    python scripts/equity_paper_board.py           # runs the day, exits after 15:31 IST
-    python scripts/equity_paper_board.py --once    # one cycle now, then exit (testing)
+    python scripts/equity_paper_board.py                  # runs the day, exits after 15:31 IST
+    python scripts/equity_paper_board.py --once           # one cycle now, then exit (testing)
+    python scripts/equity_paper_board.py --telegram-test  # send one Telegram test message, then exit
 
 Before 09:00: fetches NSE announcements since the previous session and lists
 order-win fade alerts (frozen order-win rules, see equity_intel/paper_board/logic.py).
@@ -10,6 +11,10 @@ surges; each fade alert becomes a paper short at the official open. At 15:31:
 paper covers at the last price; the next run re-marks them with the official
 close from data/daily_live. Writes data/paper_board/<date>.json (read by the
 dashboard) and data/paper_board/trades.csv. Read-only on NSE and Upstox.
+
+Telegram (signals only, never orders): with TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID in
+.env it also sends the start, fade-alert, new-surge, warning, holiday and 15:31 summary
+messages (equity_intel/paper_board/notify.py); data/paper_board/<date>.sent.json stops repeats.
 """
 from __future__ import annotations
 
@@ -32,10 +37,12 @@ sys.path.insert(0, str(ROOT / "scripts"))
 
 from announcement_coverage_fetch import NSE_API, nse_session  # noqa: E402
 from config.settings import Settings  # noqa: E402
+from equity_intel.alerts import telegram_v0  # noqa: E402
 from equity_intel.announcements import event_study as es  # noqa: E402
 from equity_intel.config import IST  # noqa: E402
 from equity_intel.paper_board import daily_update as du  # noqa: E402
 from equity_intel.paper_board import logic as pb  # noqa: E402
+from equity_intel.paper_board import notify as nt  # noqa: E402
 
 DAILY = ROOT / "data" / "daily_live"
 OUT = ROOT / "data" / "paper_board"
@@ -134,10 +141,90 @@ def write_state(state: dict, today: date) -> None:
     os.replace(tmp, path)
 
 
+class Telegram:
+    """The board's Telegram sender (text only). Off unless TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID are set.
+
+    `sent` (data/paper_board/<date>.sent.json) records what went out today, so a restart
+    never repeats a message. A failed send is recorded once per kind of failure, retried
+    next cycle, and never stops the board.
+    """
+
+    def __init__(self, settings, path: Path, err):
+        self.token = getattr(settings, "TELEGRAM_BOT_TOKEN", None)
+        self.chat_id = getattr(settings, "TELEGRAM_CHAT_ID", None)
+        self.on = bool(self.token and self.chat_id)
+        self.path, self.err, self.failing = path, err, None
+        self.sent = nt.empty_sent()
+        if path.exists():
+            try:
+                self.sent.update(json.loads(path.read_text(encoding="utf-8")))
+            except (OSError, ValueError) as exc:  # unreadable record: start fresh rather than stop the board
+                err("telegram", exc)
+
+    def send(self, text) -> bool:
+        if not (self.on and text):
+            return False
+        try:
+            telegram_v0.send(text, token=self.token, chat_id=self.chat_id)
+        except Exception as exc:  # recorded once per kind, never hidden, never fatal
+            if type(exc).__name__ != self.failing:
+                self.failing = type(exc).__name__
+                self.err("telegram", exc)
+            return False
+        self.failing = None
+        return True
+
+    def save(self) -> None:
+        tmp = self.path.with_suffix(".tmp")
+        tmp.write_text(json.dumps(self.sent, indent=2), encoding="utf-8")
+        os.replace(tmp, self.path)
+
+
+def notify(tg: Telegram, state: dict, today: date, quotes_on: bool, closing: bool) -> None:
+    """Send what is new this cycle; mark it sent only once Telegram has accepted it."""
+    if not tg.on:
+        return
+    s = tg.sent
+    if not s["start"] and tg.send(nt.start_message(state, quotes_on)):
+        s["start"] = True
+    if state["fade"]["final"] and not s["fade"]:
+        msg = nt.fade_message(state["fade"]["alerts"], today, final=True)
+        if msg is None or tg.send(msg):
+            s["fade"] = True
+    new = nt.new_surges(state["surges"], s)
+    if new and tg.send(nt.surge_message(new, state["surges_asof"])):
+        s["surges"] += [r["symbol"] for r in new]
+    errs = nt.new_errors([e for e in state["errors"] if " telegram: " not in e], s)
+    if errs and tg.send(nt.warning_message(errs)):
+        s["errors"] += nt.error_keys(errs)
+    if closing and not s["summary"] and tg.send(nt.summary_message(state, s)):
+        s["summary"] = True
+    tg.save()
+
+
+def telegram_test(settings) -> int:
+    token, chat = getattr(settings, "TELEGRAM_BOT_TOKEN", None), getattr(settings, "TELEGRAM_CHAT_ID", None)
+    if not (token and chat):
+        print("Telegram is off: add TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID to .env first.")
+        return 1
+    text = f"{nt.BANNER}\nTest message: the equity paper board can reach you ({datetime.now(IST):%Y-%m-%d %H:%M} IST)."
+    try:
+        ok = telegram_v0.send(text, token=token, chat_id=chat).get("ok")
+    except Exception as exc:  # e.g. HTTP 401 wrong token, HTTP 400 chat not found
+        detail = exc.read().decode(errors="replace")[:300] if hasattr(exc, "read") else ""
+        print(f"Telegram test failed: {type(exc).__name__}: {exc} {detail}".rstrip())
+        return 1
+    print(f"Telegram test sent: {ok}")
+    return 0 if ok else 1
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--once", action="store_true", help="one cycle now, then exit")
+    ap.add_argument("--telegram-test", action="store_true", help="send one Telegram test message, then exit")
     a = ap.parse_args(argv)
+    if a.telegram_test:
+        return telegram_test(Settings())
     now = datetime.now(IST)
     today = now.date()
     if today.weekday() >= 5:
@@ -168,6 +255,10 @@ def main(argv=None) -> int:
 
     def err(where, exc):
         state["errors"] = (state["errors"] + [f"{datetime.now(IST):%H:%M:%S} {where}: {type(exc).__name__}: {str(exc)[:160]}"])[-10:]
+
+    tg = Telegram(settings, OUT / f"{today}.sent.json", err)
+    if not tg.on:
+        print("Telegram off: add TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID to .env to get the messages.")
 
     while True:
         now = datetime.now(IST)
@@ -203,6 +294,9 @@ def main(argv=None) -> int:
                     write_trades(trades)
                     state["trades_today"] = today_trades
                     state["updated"] = datetime.now(IST).strftime("%H:%M:%S")
+                    if not tg.sent["holiday"] and tg.send(nt.holiday_message(today)):
+                        tg.sent["holiday"] = True
+                        tg.save()
                     write_state(state, today)
                     return 0
                 state["surges"] = pb.surges(quotes, base, now.replace(tzinfo=None))
@@ -225,6 +319,7 @@ def main(argv=None) -> int:
         state["trades_today"] = [t for t in trades if t["date"] == str(today)]
         state["scorecard"] = pb.scorecard(trades)
         state["updated"] = datetime.now(IST).strftime("%H:%M:%S")
+        notify(tg, state, today, quotes_on=bool(token), closing=now.time() >= CLOSE_MARK)
         write_state(state, today)
         print(f"{state['updated']} fade alerts {len(state['fade']['alerts'])} "
               f"(final {state['fade']['final']}), surges {len(state['surges'])}, errors {len(state['errors'])}")

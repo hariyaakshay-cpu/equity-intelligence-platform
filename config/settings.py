@@ -28,3 +28,6 @@ class Settings(BaseSettings):
     # Read-only Upstox Analytics Token (Developer Apps > Analytics tab, valid one year, cannot place orders).
     # Used by the paper board for live quotes so no daily login is needed; falls back to UPSTOX_ACCESS_TOKEN.
     UPSTOX_ANALYTICS_TOKEN: str | None = None
+    # Telegram bot for the paper board's signal messages (text only, never orders); set both or neither.
+    TELEGRAM_BOT_TOKEN: str | None = None
+    TELEGRAM_CHAT_ID: str | None = None

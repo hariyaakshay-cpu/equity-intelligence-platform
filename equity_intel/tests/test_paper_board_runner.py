@@ -1,4 +1,4 @@
-"""Smoke test of scripts/equity_paper_board.py with fake NSE/Upstox fetches and a fake clock (tmp dirs only)."""
+"""Smoke test of scripts/equity_paper_board.py with fake NSE/Upstox/Telegram calls and a fake clock (tmp dirs only)."""
 import csv
 import json
 import sys
@@ -27,7 +27,17 @@ def _days(n=30):
 
 
 @pytest.fixture
-def env(tmp_path, monkeypatch):
+def messages(monkeypatch):
+    """Telegram on with a fake sender in every runner test: nothing reaches the network or your phone."""
+    sent = []
+    monkeypatch.setenv("TELEGRAM_BOT_TOKEN", "test-token")
+    monkeypatch.setenv("TELEGRAM_CHAT_ID", "1")
+    monkeypatch.setattr(run.telegram_v0, "send", lambda text, **kw: sent.append(text) or {"ok": True})
+    return sent
+
+
+@pytest.fixture
+def env(tmp_path, monkeypatch, messages):
     daily = tmp_path / "daily_live"
     daily.mkdir()
     for sym, c, v in [("NIFTY500_INDEX", 23800, 0), ("KEC", 300.0, 1_000_000), ("BEL", 400.0, 30_000_000)]:
@@ -114,7 +124,7 @@ def test_next_morning_remarks_trades_with_the_official_daily_bar(env, monkeypatc
     assert float(t["net_pct"]) == pytest.approx(((302 - 297) / 302 - 0.005) * 100, abs=1e-3)
 
 
-def test_holiday_no_trades_today_voids_the_alert_and_stops(env, monkeypatch):
+def test_holiday_no_trades_today_voids_the_alert_and_stops(env, monkeypatch, messages):
     stale = {"KEC": {"ltp": 296.0, "volume": 900_000, "open": 302.0, "high": 303.0, "low": 295.0, "prev_close": 300.0,
                      "last_trade_date": date(2026, 11, 18)}}
     monkeypatch.setattr(run, "fetch_quotes", lambda token, keys, k2s: stale)
@@ -128,6 +138,7 @@ def test_holiday_no_trades_today_voids_the_alert_and_stops(env, monkeypatch):
     st = json.loads((env / "2026-11-19.json").read_text())
     assert st["trades_today"][0]["status"] == "VOID" and "holiday" in st["notes"][-1]
     assert st["surges"] == []
+    assert sum("market closed (holiday?)" in m for m in messages) == 1
 
 
 def test_stale_daily_prices_are_flagged_and_block_fade_alerts(env, monkeypatch):
@@ -139,3 +150,58 @@ def test_stale_daily_prices_are_flagged_and_block_fade_alerts(env, monkeypatch):
     st = json.loads((env / "2026-11-19.json").read_text())
     assert st["prices_stale"] and st["data_asof"] == "2026-11-17" and "previous session 2026-11-18" in st["notes"][0]
     assert st["fade"]["alerts"] == [] and st["fade"]["considered"][0]["reason"] == "no close for the previous session"
+
+
+def _kinds(messages):
+    return [m.splitlines()[1].split(" ")[0] for m in messages]      # line 2 = the message type
+
+
+def test_telegram_sends_each_event_once(env, monkeypatch, messages):
+    _at(monkeypatch, 9, 5)
+    run.main(["--once"])                                     # start message + KEC fade alert
+    _at(monkeypatch, 10, 0)
+    run.main(["--once"])                                     # BEL and KEC surge
+    run.main(["--once"])                                     # same minute again: nothing new
+    _at(monkeypatch, 15, 35)
+    run.main(["--once"])                                     # day summary
+    assert _kinds(messages) == ["Board", "FADE", "New", "Day"]
+    assert all(m.startswith("PAPER - NOT VALIDATED") for m in messages)
+    assert "KEC: order Rs 1,200 cr" in messages[1]
+    assert "BEL: 11.1x" in messages[2] and "KEC: 7.5x" in messages[2]
+    assert "Fade KEC: net +1.49%" in messages[3]
+    sent = json.loads((env / "2026-11-19.sent.json").read_text())
+    assert sent["start"] and sent["fade"] and sent["summary"] and sent["surges"] == ["BEL", "KEC"]
+
+
+def test_a_failed_send_is_recorded_once_retried_and_never_stops_the_board(env, monkeypatch, messages):
+    def down(text, **kw):
+        raise OSError("network down")
+    monkeypatch.setattr(run.telegram_v0, "send", down)
+    _at(monkeypatch, 9, 5)
+    assert run.main(["--once"]) == 0
+    st = json.loads((env / "2026-11-19.json").read_text())
+    assert [e.split(" ", 1)[1] for e in st["errors"]] == ["telegram: OSError: network down"]
+    assert not json.loads((env / "2026-11-19.sent.json").read_text())["start"]
+    monkeypatch.setattr(run.telegram_v0, "send", lambda text, **kw: messages.append(text) or {"ok": True})
+    _at(monkeypatch, 9, 10)
+    run.main(["--once"])
+    assert _kinds(messages) == ["Board", "FADE"]             # retried, not lost
+
+
+def test_a_repeating_board_error_is_sent_once(env, monkeypatch, messages):
+    def broken(prev, today, folder):
+        raise ConnectionError("NSE reset")
+    monkeypatch.setattr(run, "fetch_announcements", broken)
+    _at(monkeypatch, 9, 5)
+    run.main(["--once"])
+    _at(monkeypatch, 9, 10)
+    run.main(["--once"])
+    warnings = [m for m in messages if "Board warning" in m]
+    assert len(warnings) == 1 and "announcements: ConnectionError: NSE reset" in warnings[0]
+
+
+def test_telegram_test_flag(env, monkeypatch, messages):
+    assert run.main(["--telegram-test"]) == 0
+    assert len(messages) == 1 and "Test message" in messages[0]
+    monkeypatch.setenv("TELEGRAM_BOT_TOKEN", "")
+    assert run.main(["--telegram-test"]) == 1 and len(messages) == 1
