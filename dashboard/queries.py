@@ -9,6 +9,7 @@ INSERT/UPDATE/DELETE anywhere.
 from __future__ import annotations
 
 import json
+import statistics
 from datetime import date, datetime, time, timedelta, timezone
 from typing import Optional
 
@@ -121,23 +122,38 @@ def get_latest_e4_scan(conn) -> Optional[dict]:
     return scan
 
 
-def get_e4_features(conn, e4_scan_id: str, symbols: list[str]) -> dict[str, dict]:
+def get_e4_features(
+    conn, e4_scan_id: str, symbols: list[str], acquisition_run_id: Optional[str] = None
+) -> dict[str, dict]:
     """Raw E4 indicator values for `symbols`, keyed by symbol. A symbol with
     no feature row (e.g. FAILED or no stored history) is simply absent;
-    missing values stay None and are never defaulted to zero."""
+    missing values stay None and are never defaulted to zero.
+
+    Also returns `window_high` (the high-window high used for the distance)
+    and, when `acquisition_run_id` is given and its observations exist, the
+    `close` on the feature row's last_date from that acquisition run."""
     if not symbols:
         return {}
     marks = ",".join("?" for _ in symbols)
     columns = ", ".join(f"f.{c}" for c in E4_FEATURE_COLUMNS)
+    if acquisition_run_id is not None and _has_table(conn, "acquired_observations"):
+        close_sql = (
+            "(SELECT MAX(o.close) FROM acquired_observations o "
+            "WHERE o.run_id = ? AND o.symbol = f.symbol AND o.trading_date = f.last_date)"
+        )
+        close_params = [acquisition_run_id]
+    else:
+        close_sql, close_params = "NULL", []
     rows = _fetch_all_dicts(
         conn,
         f"""
-        SELECT f.symbol, f.last_date, {columns}, q.break_date, q.break_ratio
+        SELECT f.symbol, f.last_date, {columns}, f.prior_high_long AS window_high,
+               {close_sql} AS close, q.break_date, q.break_ratio
         FROM e4_feature_sets f
         LEFT JOIN e4_data_quality_results q ON q.scan_id = f.scan_id AND q.symbol = f.symbol
         WHERE f.scan_id = ? AND f.symbol IN ({marks})
         """,
-        [e4_scan_id, *symbols],
+        [*close_params, e4_scan_id, *symbols],
     )
     return {row.pop("symbol"): row for row in rows}
 
@@ -205,6 +221,17 @@ def summarize_run(run: dict) -> dict:
     return result
 
 
+# Scanner filters/sort over E4 columns -- whitelisted, never interpolated from user input.
+E4_RANGE_FILTERS = {"rsi": "f.rsi", "rvol": "f.relative_volume", "dist": "f.distance_from_high"}
+SORT_COLUMNS = {
+    "symbol": "s.symbol",
+    "company_name": "s.company_name",
+    "sector": "s.sector",
+    "symbol_data_status": "s.symbol_data_status",
+    **{name: f"f.{name}" for name in E4_FEATURE_COLUMNS},
+}
+
+
 def get_candidates(
     conn,
     run_id: str,
@@ -213,39 +240,87 @@ def get_candidates(
     q: Optional[str] = None,
     status: Optional[str] = None,
     flag: Optional[str] = None,
+    *,
+    sector: Optional[str] = None,
+    ranges: Optional[dict] = None,
+    sort: Optional[str] = None,
+    sort_dir: str = "asc",
+    e4_scan_id: Optional[str] = None,
 ):
-    conditions = ["scan_run_id = ?"]
+    """One page of symbol results. `ranges` maps a key of E4_RANGE_FILTERS
+    to (lo, hi) (either may be None). Filtering or sorting on an E4 column
+    needs `e4_scan_id`; a symbol with no value for a filtered column is
+    excluded by that filter (the API reports the filters it applied)."""
+    ranges = {k: v for k, v in (ranges or {}).items() if v and (v[0] is not None or v[1] is not None)}
+    if sort is not None and sort not in SORT_COLUMNS:
+        raise ValueError(f"unknown sort column: {sort!r}")
+    if sort_dir not in ("asc", "desc"):
+        raise ValueError(f"unknown sort direction: {sort_dir!r}")
+    needs_e4 = bool(ranges) or (sort is not None and sort in E4_FEATURE_COLUMNS)
+    if needs_e4 and e4_scan_id is None:
+        raise ValueError("E4 indicator filters/sorting need a COMPLETE E4 indicator scan, and none exists")
+
+    conditions = ["s.scan_run_id = ?"]
     params: list = [run_id]
 
     if q:
-        conditions.append("(symbol LIKE ? OR company_name LIKE ?)")
+        conditions.append("(s.symbol LIKE ? OR s.company_name LIKE ?)")
         like = f"%{q}%"
         params.extend([like, like])
     if status:
         if status not in STATUS_VALUES:
             raise ValueError(f"unknown status filter: {status!r}")
-        conditions.append("symbol_data_status = ?")
+        conditions.append("s.symbol_data_status = ?")
         params.append(status)
     if flag:
         if flag not in FLAG_COLUMNS:
             raise ValueError(f"unknown flag filter: {flag!r}")
-        conditions.append(f"{FLAG_COLUMNS[flag]} = 1")
+        conditions.append(f"s.{FLAG_COLUMNS[flag]} = 1")
+    if sector:
+        if sector == "UNKNOWN":
+            conditions.append("s.sector IS NULL")
+        else:
+            conditions.append("s.sector = ?")
+            params.append(sector)
+    for key, (lo, hi) in ranges.items():
+        if key not in E4_RANGE_FILTERS:
+            raise ValueError(f"unknown range filter: {key!r}")
+        column = E4_RANGE_FILTERS[key]
+        if lo is not None:
+            conditions.append(f"{column} >= ?")
+            params.append(lo)
+        if hi is not None:
+            conditions.append(f"{column} <= ?")
+            params.append(hi)
+
+    join = ""
+    join_params: list = []
+    if e4_scan_id is not None:
+        join = "LEFT JOIN e4_feature_sets f ON f.scan_id = ? AND f.symbol = s.symbol"
+        join_params = [e4_scan_id]
 
     where = " AND ".join(conditions)
     total = conn.execute(
-        f"SELECT COUNT(*) FROM symbol_scan_results WHERE {where}", params
+        f"SELECT COUNT(*) FROM symbol_scan_results s {join} WHERE {where}", [*join_params, *params]
     ).fetchone()[0]
+
+    if sort is not None:
+        column = SORT_COLUMNS[sort]
+        direction = "DESC" if sort_dir == "desc" else "ASC"
+        order = f"({column} IS NULL), {column} {direction}, s.symbol"
+    else:
+        order = "s.symbol"
 
     offset = (page - 1) * page_size
     rows = _fetch_all_dicts(
         conn,
         f"""
-        SELECT * FROM symbol_scan_results
+        SELECT s.* FROM symbol_scan_results s {join}
         WHERE {where}
-        ORDER BY symbol
+        ORDER BY {order}
         LIMIT ? OFFSET ?
         """,
-        [*params, page_size, offset],
+        [*join_params, *params, page_size, offset],
     )
     return total, rows
 
@@ -285,7 +360,8 @@ def get_candles(conn, run_id: str, symbol: str, limit: int = 90) -> list[dict]:
     return _fetch_all_dicts(
         conn,
         """
-        SELECT trading_date, source, open, high, low, close, volume, candle_validation_status
+        SELECT trading_date, source, open, high, low, close, volume, candle_validation_status,
+               content_hash, fetched_at_ist
         FROM price_fetch_snapshots
         WHERE scan_run_id = ? AND symbol = ?
         ORDER BY trading_date DESC

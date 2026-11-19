@@ -253,6 +253,54 @@ No scan-launch buttons. No watchlist editing. No snapshot comparison view
 (deferred to V1.1). Indexed queries and pagination only — never all
 snapshot rows loaded into the browser.
 
+### 10.1 Amendment (2026-10-03, approved by Akshay): descriptive E4 views
+
+The dashboard now has six tabs: Command Center, Scanner, Market X-Ray, Stock
+Intelligence, Data Quality, Audit / Provenance. This amendment changes no
+route and adds none; read-only access and the `BLOCKED_B2` rules are unchanged.
+
+- **Routes.** Exactly the six above remain (`/equity`, `/api/equity/summary`,
+  `/candidates`, `/sectors`, `/stock/<symbol>`, `/scan-history`). Every one is
+  GET-only; a test asserts the route set and that POST is refused on each.
+- **`/candidates` optional query parameters:** `sector`, `rsi_min/max`,
+  `rvol_min/max`, `dist_min/max` (percent below the high-window high),
+  `sort` (whitelisted column) and `sort_dir` (`asc`/`desc`). Anything else, a
+  non-finite number, or an E4 filter/sort with no COMPLETE E4 scan returns 400.
+  Sorting is applied in SQL before pagination, so it holds across pages.
+- **New response fields.** `/summary`: `e4_scan`, `breadth`, `data_quality`,
+  `safety`. `/sectors`: `e4_scan`, `strength`. `/stock/<symbol>`: `chart`,
+  `data_quality`, `provenance`; candle rows also carry `content_hash` and
+  `fetched_at_ist`.
+- **Two different runs.** Scan-run data (`symbol_scan_results`, status,
+  flags, sector, candle snapshots) belongs to the scan run (`run_id`).
+  Indicator values, breadth and the chart belong to the latest COMPLETE E4
+  scan and its `acquisition_run_id`: chart bars and the close used for the
+  "above EMA" counts are read from `acquired_observations` of that
+  acquisition run, not from the scan run's snapshots. The UI labels both ids
+  and warns when the E4 as-of date differs from the scan run's latest closed
+  session. If the acquisition run's rows are missing, those figures show as
+  unavailable; they are never guessed.
+- **Missing values.** A missing indicator is `NULL`/`–`, never zero. Every
+  share is reported as count and denominator (symbols with a value). An
+  indicator filter excludes symbols without a value for that indicator, and
+  the page says so; Data Quality lists the reason for each.
+- **Data Quality** lists every symbol with at least one scan or E4 warning,
+  each with its recorded reason. Nothing is silently excluded.
+- **No ranking or scoring.** No rank, composite, score, band, cutoff or
+  signal is derived. Breadth, histograms and sector medians are descriptive
+  counts; sectors are alphabetical unless the user clicks a column header;
+  colour shading shows magnitude only.
+- **No trading outputs.** No entry, stop loss, target, risk/reward, position
+  sizing, P&L, paper trades, or broker/order functionality. B2 scoring and a
+  trade-plan layer each need their own approved specification first.
+- **Navigation layers (2026-10-03).** Market &amp; Data (the six tabs above),
+  Research (ML Research: static status, see the ML research specification
+  section 10) and Gated (Trade Research: static list of `GATED` items). The
+  last two carry no data and no values. `/summary` additionally returns
+  `history` (measured depth of the E4 acquisition run). `/candidates` and
+  `/stock` E4 feature objects additionally carry `close` (from the E4
+  acquisition run) and `window_high` (the high-window high).
+
 ## 11. What this document supersedes in `equity_scanner_v1_design.md`, and why
 
 Recorded 2026-09-27, per Akshay's explicit Phase-0 answers:

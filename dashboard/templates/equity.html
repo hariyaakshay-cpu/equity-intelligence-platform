@@ -2,32 +2,85 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>equity_intel dashboard</title>
 <style>
-  body { font-family: system-ui, sans-serif; margin: 0; padding: 0; background: #f4f5f7; color: #1a1a1a; }
-  header { background: #14213d; color: white; padding: 12px 20px; }
-  header h1 { margin: 0; font-size: 18px; }
-  .demo-banner { background: #b91c1c; color: white; text-align: center; font-weight: bold;
-                 padding: 10px; font-size: 16px; letter-spacing: 0.5px; }
-  .blocked-banner { background: #92400e; color: white; padding: 8px 20px; font-size: 13px; }
-  .outdated-banner { background: #b45309; color: white; padding: 8px 20px; font-size: 13px; }
-  nav { display: flex; gap: 4px; padding: 10px 20px; background: white; border-bottom: 1px solid #ddd; }
-  nav button { padding: 8px 14px; border: 1px solid #ccc; background: #eee; cursor: pointer; border-radius: 4px; }
-  nav button.active { background: #14213d; color: white; border-color: #14213d; }
-  main { padding: 20px; }
-  section { display: none; }
-  section.active { display: block; }
-  table { border-collapse: collapse; width: 100%; background: white; }
-  th, td { border: 1px solid #ddd; padding: 6px 10px; text-align: left; font-size: 13px; }
-  th { background: #f0f0f0; }
-  .card { background: white; border: 1px solid #ddd; border-radius: 6px; padding: 16px; margin-bottom: 16px; }
-  .flag { display: inline-block; padding: 2px 6px; margin-right: 4px; border-radius: 3px;
-          background: #fde68a; font-size: 11px; }
-  .running-stale { color: #b91c1c; font-weight: bold; }
-  input, select { padding: 6px; margin-right: 6px; }
-  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
-  .e4-note { font-size: 12px; color: #444; }
-  .e4-warn { background: #fde68a; padding: 6px 10px; border-radius: 4px; font-size: 12px; }
+  :root { --bg:#0d0f12; --panel:#15181d; --panel2:#1c2027; --line:#2a2f38; --txt:#dfe3ea; --mut:#8a93a3;
+          --acc:#4f8cff; --up:#3fb67a; --down:#e0575b; --warn:#d9a441; }
+  * { box-sizing: border-box; }
+  body { font-family: system-ui, "Segoe UI", sans-serif; margin:0; background:var(--bg); color:var(--txt); font-size:13px; }
+  .safety { background:#1a1405; border-bottom:1px solid #4a3a10; color:#e9c46a; padding:7px 24px; font-size:12px; letter-spacing:.4px;
+            display:flex; flex-wrap:wrap; gap:6px 22px; align-items:center; font-weight:600; }
+  .safety span b { color:#fff; }
+  .demo-banner { background:#b91c1c; color:#fff; text-align:center; font-weight:bold; padding:10px; letter-spacing:.5px; }
+  .outdated-banner { background:#7c4a0b; color:#fff; padding:8px 24px; font-size:13px; }
+  header { padding:14px 24px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--line); }
+  header h1 { margin:0; font-size:17px; letter-spacing:.4px; }
+  header .sub { color:var(--mut); font-size:12px; }
+  nav { display:flex; gap:2px; padding:0 24px; background:var(--panel); border-bottom:1px solid var(--line); position:sticky; top:0; z-index:5; overflow-x:auto; }
+  .navgroup { align-self:center; font-size:10px; letter-spacing:1.2px; text-transform:uppercase; color:#5d6676; padding:0 8px 0 18px; white-space:nowrap; }
+  .navgroup:first-child { padding-left:0; }
+  nav button.gated { color:#6b7280; }
+  .gate { display:inline-block; padding:1px 8px; border-radius:3px; background:#23262d; color:#9aa3b2; border:1px dashed #3a404b; font-size:11px; font-weight:600; letter-spacing:.4px; }
+  nav button { padding:12px 16px; border:0; border-bottom:2px solid transparent; background:none; color:var(--mut); cursor:pointer; font-size:13px; white-space:nowrap; }
+  nav button:hover { color:var(--txt); }
+  nav button.active { color:#fff; border-bottom-color:var(--acc); }
+  main { padding:22px 24px; max-width:1560px; margin:auto; }
+  section { display:none; } section.active { display:block; }
+  .card { background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:16px; margin-bottom:16px; }
+  .card h3 { margin:0 0 12px; font-size:11px; color:var(--mut); text-transform:uppercase; letter-spacing:1px; font-weight:600; }
+  .note { color:var(--mut); font-size:12px; line-height:1.5; }
+  .kpis { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; margin-bottom:16px; }
+  .kpi { background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:14px; }
+  .kpi .v { font-size:26px; font-weight:600; font-variant-numeric:tabular-nums; }
+  .kpi .l { color:var(--mut); font-size:11px; margin-top:3px; }
+  .kpi .s { color:var(--mut); font-size:11px; margin-top:2px; }
+  .grid2 { display:grid; grid-template-columns:repeat(auto-fit,minmax(380px,1fr)); gap:16px; }
+  .bar-row { display:flex; align-items:center; gap:8px; margin:5px 0; font-size:12px; }
+  .bar-row .name { width:150px; color:var(--mut); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; flex:none; }
+  .bar-row .bar { flex:1; background:var(--panel2); height:12px; border-radius:3px; overflow:hidden; display:flex; }
+  .bar-row .bar i { display:block; height:100%; }
+  .bar-row .n { min-width:96px; text-align:right; font-variant-numeric:tabular-nums; color:var(--mut); }
+  .legend span { margin-right:14px; font-size:11px; color:var(--mut); }
+  .legend b { display:inline-block; width:9px; height:9px; border-radius:2px; margin-right:5px; }
+  .toolbar { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:12px; align-items:center; }
+  .toolbar label { color:var(--mut); font-size:11px; display:flex; align-items:center; gap:4px; }
+  input, select { padding:7px 9px; background:var(--panel2); color:var(--txt); border:1px solid var(--line); border-radius:5px; font-size:13px; }
+  input.small { width:66px; }
+  button.btn { padding:7px 13px; background:var(--acc); color:#fff; border:0; border-radius:5px; cursor:pointer; font-size:13px; }
+  button.btn:disabled { opacity:.35; cursor:default; }
+  button.btn.ghost { background:var(--panel2); color:var(--txt); border:1px solid var(--line); }
+  .tablewrap { overflow-x:auto; border-radius:6px; border:1px solid var(--line); }
+  table { border-collapse:collapse; width:100%; }
+  th, td { padding:7px 10px; text-align:left; font-size:12.5px; border-bottom:1px solid var(--line); vertical-align:top; }
+  th { background:var(--panel2); color:var(--mut); font-weight:600; white-space:nowrap; user-select:none; }
+  th.sortable { cursor:pointer; } th.sortable:hover { color:var(--txt); }
+  tbody tr:hover { background:#1a1f27; }
+  tr.click { cursor:pointer; }
+  td.num, th.num { text-align:right; font-variant-numeric:tabular-nums; }
+  .flag { display:inline-block; padding:1px 7px; margin:0 4px 2px 0; border-radius:3px; background:#3a2d0e; color:#e9c46a; font-size:11px; }
+  .pill { display:inline-block; padding:1px 7px; border-radius:3px; font-size:11px; font-weight:600; }
+  .pill.VALID { background:#123524; color:#6fd3a0; } .pill.STALE { background:#3a2d0e; color:#e9c46a; }
+  .pill.FAILED { background:#3d1518; color:#f08a8d; } .pill.INSUFFICIENT_HISTORY { background:#14284d; color:#8db8ff; }
+  .up { color:var(--up); } .down { color:var(--down); }
+  .pager { display:flex; align-items:center; gap:8px; margin-top:12px; flex-wrap:wrap; color:var(--mut); font-size:12px; }
+  .pager input { width:70px; }
+  .running-stale { color:#f08a8d; font-weight:bold; }
+  .e4-warn { background:#3a2d0e; color:#e9c46a; padding:3px 9px; border-radius:4px; font-size:12px; display:inline-block; margin-top:4px; }
+  .err { color:#f08a8d; }
+  .chip { display:inline-block; padding:3px 10px; margin:0 6px 6px 0; border-radius:12px; border:1px solid var(--line); background:var(--panel2); cursor:pointer; font-size:12px; color:var(--txt); }
+  .chip.on { background:var(--acc); border-color:var(--acc); color:#fff; }
+  .kv { display:grid; grid-template-columns:200px 1fr; gap:5px 14px; font-size:12.5px; }
+  .kv div:nth-child(odd) { color:var(--mut); } .kv div:nth-child(even) { word-break:break-all; }
+  .warnlist { margin:0; padding-left:18px; } .warnlist li { margin:2px 0; }
+  .warnlist code { color:#e9c46a; }
+  svg text { fill:var(--mut); font-size:10px; }
+  .heat td { font-variant-numeric:tabular-nums; text-align:right; }
+  @media (max-width:640px) {
+    .kv { grid-template-columns:1fr; gap:0; } .kv div:nth-child(even) { margin-bottom:8px; }
+    main { padding:14px 12px; } header, .safety, nav { padding-left:12px; padding-right:12px; }
+    .grid2 { grid-template-columns:1fr; }
+  }
 </style>
 </head>
 <body>
@@ -37,57 +90,137 @@
 {% if db_message %}
 <div class="outdated-banner">{{ db_message }}</div>
 {% endif %}
-<header><h1>equity_intel dashboard (read-only)</h1></header>
+<div class="safety" id="safety-bar">
+  <span>MODE: <b>PAPER / RESEARCH ONLY</b></span>
+  <span>BROKER EXECUTION: <b>DISABLED</b></span>
+  <span>ORDER ROUTES: <b>NONE</b></span>
+  <span>WRITE ROUTES: <b>NONE</b></span>
+  <span>B2 SCORING / COMPOSITE: <b>BLOCKED</b></span>
+  <span>TRADE SIGNALS, ENTRY / SL / TARGET, SIZING, P&amp;L: <b>NOT IMPLEMENTED</b></span>
+</div>
+<header>
+  <div><h1>equity_intel dashboard</h1><div class="sub">read-only &middot; descriptive views of stored scan data</div></div>
+  <div class="sub" id="hdr-run"></div>
+</header>
 <nav>
-  <button data-section="overview" class="active">Overview</button>
-  <button data-section="explorer">Stock Explorer</button>
-  <button data-section="details">Stock Details</button>
-  <button data-section="history">Scan History</button>
+  <span class="navgroup">Market &amp; Data</span>
+  <button data-section="overview" class="active">Command Center</button>
+  <button data-section="explorer">Scanner</button>
+  <button data-section="xray">Market X-Ray</button>
+  <button data-section="details">Stock Intelligence</button>
+  <button data-section="quality">Data Quality</button>
+  <button data-section="audit">Audit / Provenance</button>
+  <span class="navgroup">Research</span>
+  <button data-section="research">ML Research</button>
+  <span class="navgroup">Gated</span>
+  <button data-section="trade" class="gated">Trade Research</button>
 </nav>
 <main>
-  <section id="overview" class="active">
-    <div id="overview-content" class="card">Loading...</div>
-  </section>
+  <section id="overview" class="active"><div id="overview-content">Loading...</div></section>
 
   <section id="explorer">
     <div class="card">
-      <input id="explorer-q" placeholder="search symbol or company">
-      <select id="explorer-status">
-        <option value="">all statuses</option>
-        <option value="VALID">VALID</option>
-        <option value="INSUFFICIENT_HISTORY">INSUFFICIENT_HISTORY</option>
-        <option value="STALE">STALE</option>
-        <option value="FAILED">FAILED</option>
-      </select>
-      <select id="explorer-flag">
-        <option value="">all flags</option>
-        <option value="history_gaps">history_gaps</option>
-        <option value="corporate_action_review">corporate_action_review</option>
-        <option value="price_break_detected">price_break_detected</option>
-        <option value="non_eq_series">non_eq_series</option>
-      </select>
-      <button id="explorer-search">Search</button>
-      <p id="explorer-note"></p>
-      <div id="explorer-table"></div>
-      <div id="explorer-pager"></div>
+      <div class="toolbar">
+        <input id="explorer-q" placeholder="search symbol or company">
+        <select id="explorer-status">
+          <option value="">all statuses</option><option value="VALID">VALID</option>
+          <option value="INSUFFICIENT_HISTORY">INSUFFICIENT_HISTORY</option><option value="STALE">STALE</option><option value="FAILED">FAILED</option>
+        </select>
+        <select id="explorer-flag">
+          <option value="">all flags</option><option value="history_gaps">history_gaps</option>
+          <option value="corporate_action_review">corporate_action_review</option>
+          <option value="price_break_detected">price_break_detected</option><option value="non_eq_series">non_eq_series</option>
+        </select>
+        <select id="explorer-sector"><option value="">all sectors</option></select>
+        <select id="explorer-size" title="rows per page">
+          <option value="25">25 / page</option><option value="50">50 / page</option>
+          <option value="100">100 / page</option><option value="200">200 / page</option>
+        </select>
+      </div>
+      <div class="toolbar">
+        <label>RSI <input class="small" id="f-rsi_min" placeholder="min"> <input class="small" id="f-rsi_max" placeholder="max"></label>
+        <label>RVOL <input class="small" id="f-rvol_min" placeholder="min"> <input class="small" id="f-rvol_max" placeholder="max"></label>
+        <label>% below high <input class="small" id="f-dist_min" placeholder="min"> <input class="small" id="f-dist_max" placeholder="max"></label>
+        <button class="btn" id="explorer-search">Apply</button>
+        <button class="btn ghost" id="explorer-reset">Reset</button>
+      </div>
+      <div id="sort-chips" style="margin-bottom:8px"></div>
+      <p id="explorer-note" class="note"></p>
+      <div id="explorer-table" class="tablewrap"></div>
+      <div id="explorer-pager" class="pager"></div>
     </div>
   </section>
+
+  <section id="xray"><div id="xray-content">Loading...</div></section>
 
   <section id="details">
     <div class="card">
-      <input id="details-symbol" placeholder="symbol, e.g. DEMOAAA">
-      <button id="details-load">Load</button>
-      <div id="details-content"></div>
+      <div class="toolbar">
+        <input id="details-symbol" placeholder="symbol, e.g. RELIANCE">
+        <button class="btn" id="details-load">Load</button>
+      </div>
+      <div id="details-content" class="note">Pick a symbol, or click a row in the Scanner or Data Quality tab.</div>
     </div>
   </section>
 
-  <section id="history">
-    <div id="history-content" class="card">Loading...</div>
+  <section id="quality"><div id="quality-content">Loading...</div></section>
+
+  <section id="audit"><div id="audit-content">Loading...</div></section>
+
+  <!-- Research (status only): static text, no route, no model output of any kind. -->
+  <section id="research">
+    <div class="card">
+      <h3>ML Research &mdash; status</h3>
+      <div class="kv">
+        <div>status</div><div><span class="gate">SPECIFICATION / DATA PREPARATION</span></div>
+        <div>specification</div><div>draft, not approved (docs/architecture/equity_intel_ml_research_spec.md)</div>
+        <div>current historical depth</div><div id="ml-depth">not available (no completed scan loaded)</div>
+        <div>required for the next stage</div><div>additional historical data, then a data-quality audit (see the specification, section 8)</div>
+        <div>model outputs shown here</div><div>none. No predictions, probabilities, metrics or rankings exist.</div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Model ladder</h3>
+      <div class="tablewrap"><table><thead><tr><th>tier</th><th>model</th><th>status</th></tr></thead><tbody>
+        <tr><td>0</td><td>Historical baseline</td><td><span class="gate">NOT RUN</span></td></tr>
+        <tr><td>1</td><td>Logistic regression</td><td><span class="gate">NOT RUN</span></td></tr>
+        <tr><td>2</td><td>Tree-based models</td><td><span class="gate">GATED</span></td></tr>
+        <tr><td>3</td><td>Neural network</td><td><span class="gate">GATED</span></td></tr>
+        <tr><td>4</td><td>Temporal / deep learning</td><td><span class="gate">GATED</span></td></tr>
+      </tbody></table></div>
+      <p class="note">A tier opens only after its data requirement is met and the preceding tier passes its evidence gate.</p>
+    </div>
+    <div class="grid2">
+      <div class="card"><h3>Model evaluation</h3><p class="note"><span class="gate">NOT AVAILABLE</span> No experiment has been run, so there is nothing to evaluate. Results appear only after a pre-registered offline experiment exists.</p></div>
+      <div class="card"><h3>Feature analysis</h3><p class="note"><span class="gate">NOT AVAILABLE</span> No dataset version or experiment exists yet.</p></div>
+    </div>
+    <p class="note">Research only. Not a trading recommendation. Nothing on this tab is read from the database except the stored-history measurement above.</p>
+  </section>
+
+  <section id="trade">
+    <div class="card">
+      <h3>Trade Research &mdash; gated</h3>
+      <p class="note">Each item needs its own approved specification (B2 scoring first, then a trade-plan methodology). None is implemented; no values exist behind these labels.</p>
+      <div class="tablewrap"><table><tbody>
+        <tr><td>B2 score</td><td><span class="gate">GATED</span></td></tr>
+        <tr><td>Entry</td><td><span class="gate">GATED</span></td></tr>
+        <tr><td>Stop loss</td><td><span class="gate">GATED</span></td></tr>
+        <tr><td>Target 1 / 2 / 3</td><td><span class="gate">GATED</span></td></tr>
+        <tr><td>Risk / reward</td><td><span class="gate">GATED</span></td></tr>
+        <tr><td>Position size</td><td><span class="gate">GATED</span></td></tr>
+      </tbody></table></div>
+      <p class="note">A stock having interesting characteristics (the tabs on the left) is not a trade setup. The two stay separate.</p>
+    </div>
   </section>
 </main>
 
 <script>
-const explorerState = { page: 1, page_size: 25 };
+const explorerState = { page: 1, page_size: 25, total_pages: 1, sort: null, sort_dir: 'asc', e4: null, rows: [] };
+const FILTER_IDS = ['rsi_min', 'rsi_max', 'rvol_min', 'rvol_max', 'dist_min', 'dist_max'];
+const STATUS_COLORS = { VALID: '#3fb67a', STALE: '#d9a441', FAILED: '#e0575b', INSUFFICIENT_HISTORY: '#4f8cff' };
+const EMA_COLORS = { short: '#d9a441', medium: '#4f8cff', long: '#b57bee' };
+let summaryData = null;
+let qualityFilter = null;
 
 function el(tag, attrs, children) {
   const node = document.createElement(tag);
@@ -95,45 +228,58 @@ function el(tag, attrs, children) {
   (children || []).forEach(c => node.appendChild(typeof c === 'string' ? document.createTextNode(c) : c));
   return node;
 }
+function esc(v) { return String(v === null || v === undefined ? '' : v).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+function isMsg(d) { return d.status === 'no_scans_yet' || d.status === 'version_mismatch' || d.status === 'database_error'; }
+function num(v, d) { return v === null || v === undefined ? '–' : Number(v).toFixed(d === undefined ? 2 : d); }
 
-document.querySelectorAll('nav button').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('main section').forEach(s => s.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById(btn.dataset.section).classList.add('active');
-  });
-});
-
-async function loadOverview() {
-  const res = await fetch('/api/equity/summary');
-  const data = await res.json();
-  const box = document.getElementById('overview-content');
-  if (data.status === 'no_scans_yet' || data.status === 'version_mismatch' || data.status === 'database_error') {
-    box.textContent = data.message;
-    return;
-  }
-  if (!data.run) {
-    box.textContent = data.message || 'no data';
-    return;
-  }
-  const run = data.run;
-  let html = '';
-  if (data.outdated) html += '<div class="outdated-banner">OUTDATED (approximate: market holidays not known)</div>';
-  html += '<div class="blocked-banner">SCORING_STATUS: ' + run.scoring_status + ' - no ranking is available</div>';
-  html += '<p><b>Run:</b> ' + run.run_id + ' &middot; started ' + run.started_at + ' &middot; finished ' + (run.finished_at || '-') + '</p>';
-  html += '<p><b>Calendar:</b> ' + (run.calendar_source || '-') + ' (' + (run.calendar_verification || '-') + ')</p>';
-  html += '<p><b>Symbols:</b> requested ' + run.requested_symbols + ', successful ' + run.successful_symbols + ', failed ' + run.failed_symbols + '</p>';
-  if (run.status_counts) {
-    html += '<p><b>Status counts:</b> ' + Object.entries(run.status_counts).map(([k, v]) => k + '=' + v).join(', ') + '</p>';
-  }
-  if (run.flag_counts) {
-    html += '<p><b>Flag counts:</b> ' + Object.entries(run.flag_counts).map(([k, v]) => k + '=' + v).join(', ') + '</p>';
-  }
-  box.innerHTML = html;
+function showSection(name) {
+  document.querySelectorAll('nav button').forEach(b => b.classList.toggle('active', b.dataset.section === name));
+  document.querySelectorAll('main section').forEach(s => s.classList.toggle('active', s.id === name));
 }
+document.querySelectorAll('nav button').forEach(btn => btn.addEventListener('click', () => showSection(btn.dataset.section)));
 
-// E4 indicator columns: [key, label(config), decimals]. Values come from the latest COMPLETE E4 scan.
+// ---------- shared widgets ----------
+function kpi(value, label, sub) {
+  return '<div class="kpi"><div class="v">' + esc(value) + '</div><div class="l">' + esc(label) + '</div>' + (sub ? '<div class="s">' + esc(sub) + '</div>' : '') + '</div>';
+}
+function shareText(s) { return s.pct === null ? '–' : s.pct + '%'; }
+function shareSub(s) { return s.count + ' of ' + s.of + ' with a value'; }
+function barRow(name, frac, color, right) {
+  return '<div class="bar-row"><div class="name" title="' + esc(name) + '">' + esc(name) + '</div><div class="bar"><i style="width:' +
+    Math.max(0, Math.min(100, frac * 100)) + '%;background:' + color + '"></i></div><div class="n">' + esc(right) + '</div></div>';
+}
+function histogram(items, color, labelFn) {
+  const max = Math.max(1, ...items.map(i => i.count));
+  return items.map(i => barRow(labelFn(i), i.count / max, color, String(i.count))).join('');
+}
+function donut(counts) {
+  const entries = Object.entries(counts || {}).filter(([, v]) => v > 0);
+  const total = entries.reduce((a, [, v]) => a + v, 0) || 1;
+  const R = 46, C = 2 * Math.PI * R;
+  let off = 0, arcs = '';
+  entries.forEach(([k, v]) => {
+    const len = (v / total) * C;
+    arcs += '<circle r="' + R + '" cx="60" cy="60" fill="none" stroke="' + (STATUS_COLORS[k] || '#888') + '" stroke-width="16" stroke-dasharray="' + len + ' ' + (C - len) + '" stroke-dashoffset="' + (-off) + '" transform="rotate(-90 60 60)"/>';
+    off += len;
+  });
+  const legend = entries.map(([k, v]) => '<span><b style="background:' + (STATUS_COLORS[k] || '#888') + '"></b>' + esc(k) + ' ' + v + '</span>').join('<br>');
+  return '<div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap"><svg width="120" height="120">' + arcs +
+    '<text x="60" y="58" text-anchor="middle" style="font-size:20px;fill:#dfe3ea;font-weight:600">' + total + '</text>' +
+    '<text x="60" y="74" text-anchor="middle">symbols</text></svg><div class="legend" style="line-height:1.9">' + legend + '</div></div>';
+}
+function e4NoteText(e4) {
+  if (!e4) return null;
+  return 'E4 indicators: scan ' + e4.scan_id + ', as of ' + e4.asof_date + ' (provisional, not B2-authoritative; calendar ' +
+    e4.calendar_status + '). Missing values are shown as –, never zero.';
+}
+// Two different runs feed this page: say which is which, every time E4-derived numbers are shown.
+function e4Warn(e4) {
+  if (!e4) return '';
+  let html = '<div class="note" style="margin-top:6px">Scan run: <b>' + esc(e4.run_id || '–') + '</b> (status, flags, sector) &middot; E4 scan: <b>' + esc(e4.scan_id) +
+    '</b> (indicators) &middot; Price history source: E4 acquisition run <b>' + esc(e4.acquisition_run_id) + '</b> (chart bars, close used for EMA breadth)</div>';
+  if (!e4.as_of_matches_run) html += '<div class="e4-warn">E4 indicators are as of ' + esc(e4.asof_date) + ', but the latest closed session of this scan run is ' + esc(e4.run_latest_closed_session || 'unknown') + '.</div>';
+  return html;
+}
 function e4Columns(cfg) {
   cfg = cfg || {};
   return [
@@ -144,152 +290,432 @@ function e4Columns(cfg) {
     ['atr_percent', 'ATR ' + cfg.atr_period + ' %', 2],
   ];
 }
+function warningsHtml(warnings) {
+  return '<ul class="warnlist">' + warnings.map(w => '<li><code>' + esc(w.code) + '</code> ' + esc(w.message) + '</li>').join('') + '</ul>';
+}
+function goDetails(symbol) {
+  document.getElementById('details-symbol').value = symbol;
+  showSection('details');
+  loadDetails();
+}
+
+// ---------- Command Center ----------
+async function loadOverview() {
+  const box = document.getElementById('overview-content');
+  const res = await fetch('/api/equity/summary');
+  const data = await res.json();
+  if (isMsg(data)) { box.textContent = data.message; return; }
+  if (!data.run) { box.textContent = data.message || 'no data'; return; }
+  summaryData = data;
+  const run = data.run, sc = run.status_counts || {}, dq = data.data_quality, b = data.breadth;
+  document.getElementById('hdr-run').textContent = 'run ' + run.run_id + ' · ' + (run.finished_at || run.started_at);
+  let html = '';
+  if (data.outdated) html += '<div class="outdated-banner" style="border-radius:6px;margin-bottom:14px">OUTDATED (approximate: market holidays not known)</div>';
+  const lg = b ? b.above_ema.long : null, hp = b ? b.high_proximity : null;
+  html += '<div class="kpis">' +
+    kpi(b ? b.symbols_with_features : run.requested_symbols, 'universe', run.requested_symbols + ' requested · ' + (run.failed_symbols ?? '–') + ' failed') +
+    kpi(dq.symbols_without_warning + ' / ' + dq.symbols_total, 'data health', dq.symbols_with_warnings + ' with a warning') +
+    kpi(lg ? shareText(lg) : '–', lg ? 'above EMA ' + lg.period : 'above EMA (no E4 scan)', lg ? shareSub(lg) : '') +
+    kpi(hp ? hp.buckets[0].count : '–', hp ? 'within ' + hp.buckets[0].hi + '% of the ' + hp.window + '-bar high' : '52-week high', hp ? 'of ' + hp.of + ' with a value; a histogram bucket, not a signal' : '') +
+    kpi(run.latest_closed_session || '–', 'latest closed session', 'calendar: ' + (run.calendar_verification || '–')) +
+    '</div>';
+  html += '<div class="grid2"><div class="card"><h3>Data health</h3>' + donut(sc) +
+    '<p class="note" style="margin-top:10px">Warnings by type: ' + (Object.keys(dq.warning_counts).length ?
+      Object.entries(dq.warning_counts).map(([k, v]) => '<a href="#" class="chip" data-dq="' + esc(k) + '">' + esc(k) + ' ' + v + '</a>').join('') : 'none') + '</p></div>';
+  if (b) {
+    const a = b.above_ema;
+    html += '<div class="card"><h3>E4 breadth &mdash; close above EMA</h3>' +
+      ['short', 'medium', 'long'].map(k => barRow('EMA ' + a[k].period, (a[k].pct || 0) / 100, '#4f8cff', shareText(a[k]) + '  (' + a[k].count + '/' + a[k].of + ')')).join('') +
+      barRow('ROC ' + b.roc.lookback + ' > 0', (b.roc.positive.pct || 0) / 100, '#3fb67a', shareText(b.roc.positive) + '  (' + b.roc.positive.count + '/' + b.roc.positive.of + ')') +
+      '<p class="note">Denominators count only symbols with a stored value; the rest are listed in Data Quality.</p>' + e4Warn(data.e4_scan) + '</div>';
+    html += '<div class="card"><h3>RSI ' + b.rsi.period + ' distribution <span class="note">(median ' + num(b.rsi.median, 1) + ', n=' + b.rsi.of + ')</span></h3>' +
+      histogram(b.rsi.histogram, '#4f8cff', i => i.lo + '–' + i.hi) + '</div>';
+    html += '<div class="card"><h3>Distance below ' + b.high_proximity.window + '-bar high <span class="note">(median ' +
+      num(b.high_proximity.median_distance_pct, 1) + '%, n=' + b.high_proximity.of + ')</span></h3>' +
+      histogram(b.high_proximity.buckets, '#b57bee', i => i.hi === null ? '≥ ' + i.lo + '%' : i.lo + '–' + i.hi + '%') +
+      (b.high_proximity.no_value ? '<p class="note">' + b.high_proximity.no_value + ' symbol(s) have no high-window value (see Data Quality).</p>' : '') + '</div>';
+  } else {
+    html += '<div class="card"><h3>E4 breadth</h3><p class="note">No COMPLETE E4 indicator scan found; run scripts/equity_e4_scan.py or the E4 feature scan.</p></div>';
+  }
+  html += '</div>';
+  html += '<div class="card"><h3>Sector overview <span class="note" style="text-transform:none;letter-spacing:0">% of each sector above EMA ' + (b ? b.above_ema.medium.period : '') + ' &middot; alphabetical, not a ranking</span></h3><div id="sector-overview" class="note">' + (b ? 'Loading...' : 'No COMPLETE E4 indicator scan found.') + '</div></div>';
+  html += '<div class="card"><h3>Last run</h3><div class="kv"><div>run</div><div>' + esc(run.run_id) + ' (' + esc(run.scan_label) + ')</div><div>started</div><div>' + esc(run.started_at) +
+    '</div><div>finished</div><div>' + esc(run.finished_at || '–') + '</div><div>universe</div><div>' + esc(run.universe_version || '–') +
+    '</div><div>git commit</div><div>' + esc(run.git_commit || '–') + (run.git_dirty ? ' (dirty tree)' : '') + '</div></div></div>';
+  box.innerHTML = html;
+  box.querySelectorAll('[data-dq]').forEach(a => a.addEventListener('click', e => { e.preventDefault(); qualityFilter = a.dataset.dq; renderQuality(); showSection('quality'); }));
+  renderQuality(); renderAudit(); renderResearchDepth(data.history);
+  if (b) {
+    try {
+      const sres = await fetch('/api/equity/sectors?run_id=' + encodeURIComponent(run.run_id));
+      const sdata = await sres.json();
+      document.getElementById('sector-overview').innerHTML = (sdata.strength || []).map(s =>
+        barRow(s.sector, (s.above_ema_medium.pct || 0) / 100, '#4f8cff', shareText(s.above_ema_medium) + '  (' + s.above_ema_medium.count + '/' + s.above_ema_medium.of + ')')).join('') || 'no sector data';
+    } catch (e) { document.getElementById('sector-overview').textContent = 'sector data unavailable'; }
+  }
+}
+function renderResearchDepth(h) {
+  const box = document.getElementById('ml-depth');
+  if (!box) return;
+  box.textContent = h ? h.sessions + ' sessions (' + h.first_date + ' to ' + h.last_date + '), ' + h.symbols + ' symbols' +
+    (h.benchmark_sessions !== undefined ? ', benchmark ' + h.benchmark_sessions + ' sessions' : '') + ' (measured from the E4 acquisition run)' : 'unknown (no E4 acquisition data)';
+}
+
+// ---------- Market X-Ray ----------
+const heatState = { key: 'sector', dir: 1 };
+function heatCell(value, kind, maxAbs) {
+  if (value === null || value === undefined) return '<td style="color:var(--mut)">–</td>';
+  let bg = 'transparent';
+  if (kind === 'sign') bg = (value >= 0 ? 'rgba(63,182,122,' : 'rgba(224,87,91,') + (Math.min(Math.abs(value) / (maxAbs || 1), 1) * 0.55) + ')';
+  if (kind === 'pct') bg = 'rgba(79,140,255,' + (value / 100 * 0.55) + ')';
+  if (kind === 'dist') bg = 'rgba(181,123,238,' + (Math.max(0, 1 - Math.min(value, 30) / 30) * 0.5) + ')';
+  return '<td style="background:' + bg + '">' + Number(value).toFixed(kind === 'pct' ? 1 : 2) + '</td>';
+}
+function renderXray(strength, b, e4) {
+  const box = document.getElementById('xray-content');
+  if (!b || !strength) { box.innerHTML = '<div class="card note">No COMPLETE E4 indicator scan found, so there is nothing to describe yet.</div>'; return; }
+  const a = b.above_ema;
+  let html = '<div class="kpis">' + ['short', 'medium', 'long'].map(k => kpi(shareText(a[k]), 'above EMA ' + a[k].period, shareSub(a[k]))).join('') +
+    kpi(b.high_proximity.buckets[0].count, 'within ' + b.high_proximity.buckets[0].hi + '% of the ' + b.high_proximity.window + '-bar high', 'of ' + b.high_proximity.of + ' with a value; a histogram bucket, not a signal') +
+    kpi(num(b.high_proximity.median_distance_pct, 1) + '%', 'median distance below high') +
+    kpi(shareText(b.roc.positive), 'ROC ' + b.roc.lookback + ' positive', shareSub(b.roc.positive)) + '</div>' + e4Warn(e4);
+  html += '<div class="grid2"><div class="card"><h3>Distance below ' + b.high_proximity.window + '-bar high</h3>' +
+    histogram(b.high_proximity.buckets, '#b57bee', i => i.hi === null ? '≥ ' + i.lo + '%' : i.lo + '–' + i.hi + '%') + '</div>' +
+    '<div class="card"><h3>RSI ' + b.rsi.period + ' distribution</h3>' + histogram(b.rsi.histogram, '#4f8cff', i => i.lo + '–' + i.hi) + '</div></div>';
+
+  const cols = [['sector', 'sector'], ['n', 'symbols'], ['pct', '% above EMA ' + a.medium.period], ['median_roc', 'median ROC ' + b.roc.lookback + ' %'],
+    ['median_relative_return', 'median rel. return (pp)'], ['median_distance_from_high', 'median % below high']];
+  const rows = strength.map(s => ({ ...s, pct: s.above_ema_medium.pct, share: s.above_ema_medium }));
+  const { key, dir } = heatState;
+  rows.sort((x, y) => {
+    const p = x[key], q = y[key];
+    if (p === null || p === undefined) return 1;
+    if (q === null || q === undefined) return -1;
+    return (p < q ? -1 : p > q ? 1 : 0) * dir;
+  });
+  const maxRoc = Math.max(0.0001, ...strength.map(s => Math.abs(s.median_roc || 0)));
+  const maxRel = Math.max(0.0001, ...strength.map(s => Math.abs(s.median_relative_return || 0)));
+  html += '<div class="card"><h3>Sector breakdown <span class="note" style="text-transform:none;letter-spacing:0">descriptive medians; alphabetical until you click a column header</span></h3><div class="tablewrap"><table class="heat"><thead><tr>' +
+    cols.map(([k, label]) => '<th class="sortable' + (k === 'sector' ? '' : ' num') + '" data-k="' + k + '">' + esc(label) + (k === key ? (dir > 0 ? ' ▲' : ' ▼') : '') + '</th>').join('') + '</tr></thead><tbody>' +
+    rows.map(s => '<tr><td style="text-align:left">' + esc(s.sector) + '</td><td>' + s.n + '</td>' +
+      (s.pct === null ? '<td style="color:var(--mut)">–</td>' : heatCell(s.pct, 'pct').replace('</td>', ' <span class="note">(' + s.share.count + '/' + s.share.of + ')</span></td>')) +
+      heatCell(s.median_roc, 'sign', maxRoc) + heatCell(s.median_relative_return, 'sign', maxRel) + heatCell(s.median_distance_from_high, 'dist') + '</tr>').join('') +
+    '</tbody></table></div><p class="note">Colour intensity only shades the size of each number (green/red = above/below zero); it is not a score or a ranking.</p></div>';
+  box.innerHTML = html;
+  box.querySelectorAll('th.sortable').forEach(th => th.addEventListener('click', () => {
+    if (heatState.key === th.dataset.k) heatState.dir *= -1; else { heatState.key = th.dataset.k; heatState.dir = 1; }
+    renderXray(strength, b, e4);
+  }));
+}
+async function loadXray() {
+  const box = document.getElementById('xray-content');
+  const res = await fetch('/api/equity/summary');
+  const sum = await res.json();
+  if (isMsg(sum) || !sum.run) { box.textContent = sum.message || 'no data'; return; }
+  const sres = await fetch('/api/equity/sectors?run_id=' + encodeURIComponent(sum.run.run_id));
+  const sdata = await sres.json();
+  renderXray(sdata.strength, sum.breadth, sum.e4_scan);
+  const sel = document.getElementById('explorer-sector');
+  (sdata.sectors || []).map(s => s.sector).sort().forEach(name => sel.appendChild(el('option', {value: name}, [name])));
+}
+
+// ---------- Scanner ----------
 function e4Cell(features, key, digits) {
   const v = features ? features[key] : null;
-  const td = el('td', {class: 'num'}, [v === null || v === undefined ? '–' : Number(v).toFixed(digits)]);
+  if (v === null || v === undefined) return el('td', {class: 'num'}, ['–']);
+  const n = Number(v);
+  const td = el('td', {class: 'num'}, [n.toFixed(digits)]);
+  if (key === 'roc' || key === 'relative_return') td.className = 'num ' + (n >= 0 ? 'up' : 'down');
   return td;
 }
-function e4NoteText(e4) {
-  if (!e4) return null;
-  return 'E4 indicators: scan ' + e4.scan_id + ', as of ' + e4.asof_date + ' (provisional, not B2-authoritative; calendar ' +
-    e4.calendar_status + '). Missing values are shown as –, never zero.';
+function emaDistCell(f) {
+  // close vs the long EMA, both stored values; blank if either is missing (never zero)
+  if (!f || f.close === null || f.close === undefined || f.ema_long === null || f.ema_long === undefined) return el('td', {class: 'num'}, ['–']);
+  const d = (Number(f.close) / Number(f.ema_long) - 1) * 100;
+  return el('td', {class: 'num ' + (d >= 0 ? 'up' : 'down')}, [(d >= 0 ? '+' : '') + d.toFixed(1) + '%']);
 }
-
-function renderCandidatesTable(rows, e4) {
+function renderSortChips() {
+  const box = document.getElementById('sort-chips');
+  const items = [['symbol', 'Symbol'], ['rsi', 'RSI'], ['relative_volume', 'RVOL'], ['distance_from_high', '52W distance'], ['roc', 'ROC']];
+  box.innerHTML = '<span class="note">Sort:</span> ' + items.map(([k, l]) => '<span class="chip' + (explorerState.sort === k ? ' on' : '') + '" data-k="' + k + '">' + l +
+    (explorerState.sort === k ? (explorerState.sort_dir === 'asc' ? ' ▲' : ' ▼') : '') + '</span>').join('');
+  box.querySelectorAll('.chip').forEach(c => c.addEventListener('click', () => {
+    const k = c.dataset.k;
+    if (explorerState.sort === k) explorerState.sort_dir = explorerState.sort_dir === 'asc' ? 'desc' : 'asc';
+    else { explorerState.sort = k; explorerState.sort_dir = k === 'symbol' ? 'asc' : 'desc'; }
+    explorerState.page = 1; loadExplorer();
+  }));
+}
+function renderCandidatesTable() {
+  renderSortChips();
   const container = document.getElementById('explorer-table');
   container.innerHTML = '';
-  const table = el('table');
-  const cols = e4 ? e4Columns(e4.config) : [];
-  const head = el('tr', {}, [
-    ...['symbol', 'company', 'sector', 'status', 'reason', 'flags'].map(h => el('th', {}, [h])),
-    ...cols.map(c => el('th', {class: 'num'}, [c[1]])),
-  ]);
-  table.appendChild(head);
-  rows.forEach(r => {
-    const flags = ['history_gaps_flag', 'corporate_action_review_flag', 'price_break_detected_flag', 'non_eq_series_flag']
-      .filter(f => r[f])
-      .map(f => f.replace('_flag', ''));
-    const flagCell = el('td', {}, flags.map(f => el('span', {class: 'flag'}, [f])));
-    table.appendChild(el('tr', {}, [
-      el('td', {}, [r.symbol]),
-      el('td', {}, [r.company_name || '']),
-      el('td', {}, [r.sector || '']),
-      el('td', {}, [r.symbol_data_status]),
-      el('td', {}, [r.status_reason || '']),
-      flagCell,
-      ...cols.map(c => e4Cell(r.e4, c[0], c[2])),
-    ]));
+  const e4 = explorerState.e4, cols = e4 ? e4Columns(e4.config) : [];
+  const heads = [['symbol', 'symbol', false], ['company_name', 'company', false], ['sector', 'sector', false], ['symbol_data_status', 'status', false], [null, 'flags', false]]
+    .concat(e4 ? [[null, 'close', true], [null, 'vs EMA ' + (e4.config.ema_long || '') + ' %', true]] : [])
+    .concat(cols.map(c => [c[0], c[1], true]));
+  const tr = el('tr');
+  heads.forEach(([k, label, isNum]) => {
+    const arrow = k && k === explorerState.sort ? (explorerState.sort_dir === 'asc' ? ' ▲' : ' ▼') : '';
+    const th = el('th', {class: (isNum ? 'num ' : '') + (k ? 'sortable' : '')}, [label + arrow]);
+    if (k) th.addEventListener('click', () => {
+      if (explorerState.sort === k) explorerState.sort_dir = explorerState.sort_dir === 'asc' ? 'desc' : 'asc';
+      else { explorerState.sort = k; explorerState.sort_dir = 'asc'; }
+      explorerState.page = 1; loadExplorer();
+    });
+    tr.appendChild(th);
   });
+  const table = el('table'), thead = el('thead'), tbody = el('tbody');
+  thead.appendChild(tr); table.appendChild(thead); table.appendChild(tbody);
+  explorerState.rows.forEach(r => {
+    const flags = ['history_gaps_flag', 'corporate_action_review_flag', 'price_break_detected_flag', 'non_eq_series_flag'].filter(f => r[f]).map(f => f.replace('_flag', ''));
+    const row = el('tr', {class: 'click', title: 'Open Stock Intelligence'}, [
+      el('td', {}, [el('b', {}, [r.symbol])]), el('td', {}, [r.company_name || '']), el('td', {}, [r.sector || '']),
+      el('td', {}, [el('span', {class: 'pill ' + r.symbol_data_status}, [r.symbol_data_status])]),
+      el('td', {}, flags.map(f => el('span', {class: 'flag'}, [f]))),
+      ...(e4 ? [el('td', {class: 'num'}, [num(r.e4 && r.e4.close)]), emaDistCell(r.e4)] : []),
+      ...cols.map(c => e4Cell(r.e4, c[0], c[2])),
+    ]);
+    row.addEventListener('click', () => goDetails(r.symbol));
+    tbody.appendChild(row);
+  });
+  if (!explorerState.rows.length) tbody.appendChild(el('tr', {}, [el('td', {colspan: String(heads.length)}, ['No matching symbols.'])]));
   container.appendChild(table);
 }
-
+function goToPage(p) { explorerState.page = Math.min(Math.max(p, 1), explorerState.total_pages || 1); loadExplorer(); }
+function renderPager(data) {
+  const pager = document.getElementById('explorer-pager');
+  pager.innerHTML = '';
+  const tp = data.total_pages || 1;
+  explorerState.total_pages = tp;
+  const mk = (label, page, disabled) => { const b = el('button', {class: 'btn ghost'}, [label]); b.disabled = disabled; b.addEventListener('click', () => goToPage(page)); return b; };
+  pager.appendChild(mk('« First', 1, data.page <= 1));
+  pager.appendChild(mk('‹ Prev', data.page - 1, data.page <= 1));
+  pager.appendChild(el('span', {}, ['page ' + data.page + ' of ' + tp]));
+  pager.appendChild(mk('Next ›', data.page + 1, data.page >= tp));
+  pager.appendChild(mk('Last »', tp, data.page >= tp));
+  const jump = el('input', {type: 'number', min: '1', max: String(tp), placeholder: 'go to'});
+  jump.addEventListener('keydown', e => { if (e.key === 'Enter' && jump.value) goToPage(parseInt(jump.value, 10)); });
+  pager.appendChild(jump);
+  const first = (data.page - 1) * data.page_size + 1, last = Math.min(data.page * data.page_size, data.total);
+  pager.appendChild(el('span', {}, [data.total ? 'showing ' + first + '–' + last + ' of ' + data.total : '']));
+}
 async function loadExplorer() {
   const params = new URLSearchParams({
-    page: explorerState.page,
-    page_size: explorerState.page_size,
-    q: document.getElementById('explorer-q').value,
-    status: document.getElementById('explorer-status').value,
-    flag: document.getElementById('explorer-flag').value,
+    page: explorerState.page, page_size: explorerState.page_size,
+    q: document.getElementById('explorer-q').value, status: document.getElementById('explorer-status').value,
+    flag: document.getElementById('explorer-flag').value, sector: document.getElementById('explorer-sector').value,
   });
+  FILTER_IDS.forEach(id => { const v = document.getElementById('f-' + id).value.trim(); if (v) params.set(id, v); });
+  if (explorerState.sort) { params.set('sort', explorerState.sort); params.set('sort_dir', explorerState.sort_dir); }
   const res = await fetch('/api/equity/candidates?' + params.toString());
   const data = await res.json();
-  if (data.status === 'no_scans_yet' || data.status === 'version_mismatch' || data.status === 'database_error') {
-    document.getElementById('explorer-note').textContent = data.message;
-    renderCandidatesTable([]);
-    document.getElementById('explorer-pager').textContent = '';
-    return;
-  }
   const note = document.getElementById('explorer-note');
-  note.textContent = 'SCORING_STATUS=' + data.scoring_status + ' (' + data.note + ') - total ' + data.total;
-  const e4Text = e4NoteText(data.e4_scan);
-  if (e4Text) {
-    note.appendChild(el('br'));
-    note.appendChild(el('span', {class: 'e4-note'}, [e4Text]));
-    if (!data.e4_scan.as_of_matches_run) {
-      note.appendChild(el('br'));
-      note.appendChild(el('span', {class: 'e4-warn'}, ['E4 indicators are as of ' + data.e4_scan.asof_date +
-        ', but the latest closed session of this scan run is ' + (data.e4_scan.run_latest_closed_session || 'unknown') + '.']));
-    }
-  } else {
-    note.appendChild(el('br'));
-    note.appendChild(el('span', {class: 'e4-note'}, ['No COMPLETE E4 indicator scan found; run scripts/equity_e4_scan.py or the E4 feature scan.']));
+  if (!res.ok) { note.innerHTML = '<span class="err">' + esc(data.error || 'error') + '</span>'; return; }
+  if (isMsg(data)) {
+    note.textContent = data.message; explorerState.rows = []; explorerState.e4 = null;
+    renderCandidatesTable(); document.getElementById('explorer-pager').textContent = ''; return;
   }
-  renderCandidatesTable(data.results, data.e4_scan);
-  const pager = document.getElementById('explorer-pager');
-  pager.textContent = 'page ' + data.page + ' of ' + (data.total_pages || 1);
+  const filtered = FILTER_IDS.some(id => document.getElementById('f-' + id).value.trim());
+  note.innerHTML = esc('SCORING_STATUS=' + data.scoring_status + ' (' + data.note + ') - total ' + data.total) + '<br>' +
+    esc(e4NoteText(data.e4_scan) || 'No COMPLETE E4 indicator scan found; run scripts/equity_e4_scan.py or the E4 feature scan.') + e4Warn(data.e4_scan) +
+    (filtered ? '<br>Indicator filters exclude symbols that have no stored value for that indicator (see Data Quality for why).' : '');
+  explorerState.rows = data.results; explorerState.e4 = data.e4_scan;
+  renderCandidatesTable(); renderPager(data);
 }
-
-document.getElementById('explorer-search').addEventListener('click', () => {
-  explorerState.page = 1;
-  loadExplorer();
+const applyFilters = () => { explorerState.page = 1; loadExplorer(); };
+document.getElementById('explorer-search').addEventListener('click', applyFilters);
+document.getElementById('explorer-reset').addEventListener('click', () => {
+  ['explorer-q', 'explorer-status', 'explorer-flag', 'explorer-sector', ...FILTER_IDS.map(i => 'f-' + i)].forEach(id => { document.getElementById(id).value = ''; });
+  explorerState.sort = null; explorerState.sort_dir = 'asc'; applyFilters();
 });
+document.querySelectorAll('#explorer input').forEach(i => i.addEventListener('keydown', e => { if (e.key === 'Enter') applyFilters(); }));
+['explorer-status', 'explorer-flag', 'explorer-sector'].forEach(id => document.getElementById(id).addEventListener('change', applyFilters));
+document.getElementById('explorer-size').addEventListener('change', e => { explorerState.page_size = parseInt(e.target.value, 10); applyFilters(); });
 
+// ---------- Stock Intelligence ----------
+function priceChart(chart) {
+  const bars = chart.bars, n = bars.length;
+  const W = 980, PH = 300, VH = 70, L = 52, R = 10, T = 10, GAP = 18, H = T + PH + GAP + VH + 20;
+  const closes = bars.map(b => Number(b.close));
+  const allVals = closes.concat(...['short', 'medium', 'long'].map(k => (chart.ema[k].values || []).filter(v => v !== null)));
+  const min = Math.min(...allVals), max = Math.max(...allVals), span = (max - min) || 1;
+  const x = i => L + (i / Math.max(1, n - 1)) * (W - L - R);
+  const y = v => T + PH - ((v - min) / span) * PH;
+  const vmax = Math.max(1, ...bars.map(b => Number(b.volume) || 0));
+  const bw = Math.max(1, (W - L - R) / n - 1);
+  let svg = '<svg id="pchart" viewBox="0 0 ' + W + ' ' + H + '" style="width:100%">';
+  for (let g = 0; g <= 4; g++) {
+    const v = min + span * g / 4;
+    svg += '<line x1="' + L + '" x2="' + (W - R) + '" y1="' + y(v) + '" y2="' + y(v) + '" stroke="#2a2f38"/><text x="4" y="' + (y(v) + 3) + '">' + v.toFixed(1) + '</text>';
+  }
+  svg += '<path d="' + closes.map((v, i) => (i ? 'L' : 'M') + x(i).toFixed(1) + ' ' + y(v).toFixed(1)).join(' ') + '" fill="none" stroke="#dfe3ea" stroke-width="1.6"/>';
+  ['short', 'medium', 'long'].forEach(k => {
+    const vals = chart.ema[k].values;
+    if (!vals) return;
+    let d = '', started = false;
+    vals.forEach((v, i) => { if (v === null) return; d += (started ? 'L' : 'M') + x(i).toFixed(1) + ' ' + y(v).toFixed(1) + ' '; started = true; });
+    svg += '<path d="' + d + '" fill="none" stroke="' + EMA_COLORS[k] + '" stroke-width="1.3"/>';
+  });
+  if (chart.break_date) {
+    const bi = bars.findIndex(b => b.trading_date >= chart.break_date);
+    if (bi > 0) svg += '<line x1="' + x(bi) + '" x2="' + x(bi) + '" y1="' + T + '" y2="' + (T + PH) + '" stroke="#e0575b" stroke-dasharray="4 3"/><text x="' + (x(bi) + 4) + '" y="' + (T + 12) + '" style="fill:#e0575b">possible corporate-action break ' + esc(chart.break_date) + '</text>';
+  }
+  const vy = T + PH + GAP;
+  bars.forEach((b, i) => { const h = (Number(b.volume) || 0) / vmax * VH; svg += '<rect x="' + (x(i) - bw / 2).toFixed(1) + '" y="' + (vy + VH - h).toFixed(1) + '" width="' + bw.toFixed(1) + '" height="' + h.toFixed(1) + '" fill="#3b4a66"/>'; });
+  svg += '<text x="' + L + '" y="' + (H - 4) + '">' + esc(bars[0].trading_date) + '</text><text x="' + (W - R) + '" y="' + (H - 4) + '" text-anchor="end">' + esc(bars[n - 1].trading_date) + '</text>';
+  svg += '<line id="xh" y1="' + T + '" y2="' + (vy + VH) + '" stroke="#8a93a3" style="display:none"/><rect id="xo" x="' + L + '" y="' + T + '" width="' + (W - L - R) + '" height="' + (PH + GAP + VH) + '" fill="transparent"/></svg>';
+  return { svg, x, bars, chart, W, L, R };
+}
+function wireChart(c) {
+  const svgEl = document.getElementById('pchart'), ov = document.getElementById('xo'), xh = document.getElementById('xh'), tip = document.getElementById('ctip');
+  if (!svgEl) return;
+  ov.addEventListener('mousemove', e => {
+    const r = svgEl.getBoundingClientRect(), sx = (e.clientX - r.left) / r.width * c.W;
+    const i = Math.max(0, Math.min(c.bars.length - 1, Math.round((sx - c.L) / (c.W - c.L - c.R) * (c.bars.length - 1))));
+    const b = c.bars[i];
+    xh.setAttribute('x1', c.x(i)); xh.setAttribute('x2', c.x(i)); xh.style.display = '';
+    tip.textContent = b.trading_date + '  O ' + num(b.open) + '  H ' + num(b.high) + '  L ' + num(b.low) + '  C ' + num(b.close) + '  Vol ' + (b.volume ?? '–') +
+      ['short', 'medium', 'long'].map(k => { const v = c.chart.ema[k].values; return v && v[i] !== null ? '  EMA' + c.chart.ema[k].period + ' ' + num(v[i]) : ''; }).join('');
+  });
+  ov.addEventListener('mouseleave', () => { xh.style.display = 'none'; });
+}
 async function loadDetails() {
   const symbol = document.getElementById('details-symbol').value.trim();
   if (!symbol) return;
   const res = await fetch('/api/equity/stock/' + encodeURIComponent(symbol));
   const box = document.getElementById('details-content');
-  if (!res.ok) {
-    const err = await res.json();
-    box.textContent = err.error || 'error';
-    return;
-  }
+  if (!res.ok) { const err = await res.json(); box.textContent = err.error || 'error'; return; }
   const data = await res.json();
-  if (data.status === 'no_scans_yet' || data.status === 'version_mismatch' || data.status === 'database_error') {
-    box.textContent = data.message;
-    return;
+  if (isMsg(data)) { box.textContent = data.message; return; }
+  const r = data.result;
+  const cb = data.chart && data.chart.bars.length ? data.chart.bars : [];
+  let priceLine = '';
+  if (cb.length) {
+    const lastB = cb[cb.length - 1], prevB = cb.length > 1 ? cb[cb.length - 2] : null;
+    const chg = prevB ? (Number(lastB.close) / Number(prevB.close) - 1) * 100 : null;
+    priceLine = '<div style="font-size:30px;font-weight:600;font-variant-numeric:tabular-nums;margin:2px 0">' + num(lastB.close) +
+      (chg === null ? '' : ' <span style="font-size:15px" class="' + (chg >= 0 ? 'up' : 'down') + '">' + (chg >= 0 ? '▲ +' : '▼ ') + chg.toFixed(2) + '%</span>') +
+      ' <span class="note">close of ' + esc(lastB.trading_date) + ' (E4 acquisition run), change vs the previous bar</span></div>';
   }
-  let html = '<h3>' + data.symbol + ' (run ' + data.run_id + ')</h3>';
-  html += '<p>status=' + data.result.symbol_data_status + ' reason=' + (data.result.status_reason || '-') + '</p>';
-  html += '<p>sessions available=' + data.result.available_session_count + ' missing=' + data.result.missing_session_count + '</p>';
+  let html = '<h2 style="margin:4px 0">' + esc(data.symbol) + ' <span class="pill ' + esc(r.symbol_data_status) + '">' + esc(r.symbol_data_status) + '</span></h2>' + priceLine +
+    '<p class="note">' + esc(r.company_name || '') + ' &middot; ' + esc(r.sector || 'no sector') + ' &middot; run ' + esc(data.run_id) + ' &middot; reason ' + esc(r.status_reason || '–') +
+    ' &middot; sessions available ' + esc(r.available_session_count) + ', missing ' + esc(r.missing_session_count) + '</p>';
+  let drawn = null;
+  if (data.chart && data.chart.bars.length) {
+    drawn = priceChart(data.chart);
+    html += '<div class="card"><h3>Price, EMA and volume <span class="legend" style="text-transform:none;letter-spacing:0;margin-left:10px"><span><b style="background:#dfe3ea"></b>close</span>' +
+      ['short', 'medium', 'long'].map(k => '<span><b style="background:' + EMA_COLORS[k] + '"></b>EMA ' + data.chart.ema[k].period + '</span>').join('') + '</span></h3>' +
+      '<div id="ctip" class="note" style="min-height:16px;font-variant-numeric:tabular-nums">hover the chart for the bar values</div>' + drawn.svg +
+      '<p class="note">' + data.chart.bars.length + ' daily bars from E4 acquisition run ' + esc(data.chart.acquisition_run_id) + ' (not the scan run ' + esc(data.run_id) + '). EMAs use only bars after a detected break, as in the stored E4 values.</p></div>';
+  } else {
+    html += '<div class="card note">No chart: no E4 scan or no stored acquisition bars for this symbol.</div>';
+  }
   if (data.e4_scan) {
-    const f = data.e4_features;
-    html += '<h4>E4 indicators</h4><p class="e4-note">' + e4NoteText(data.e4_scan).replace(/[<>&]/g, '') + '</p>';
+    const f = data.e4_features, cfg = data.e4_scan.config;
+    html += '<div class="card"><h3>Current evidence &mdash; E4 indicators</h3><p class="note">' + esc(e4NoteText(data.e4_scan)) + '</p>' + e4Warn(data.e4_scan);
     if (f) {
-      html += '<table><tr>' + e4Columns(data.e4_scan.config).map(c => '<th class="num">' + c[1] + '</th>').join('') + '</tr><tr>' +
-        e4Columns(data.e4_scan.config).map(c => '<td class="num">' + (f[c[0]] === null || f[c[0]] === undefined ? '&ndash;' : Number(f[c[0]]).toFixed(c[2])) + '</td>').join('') + '</tr></table>';
-      if (f.break_date) html += '<p>Possible corporate-action break on ' + f.break_date + ' (close ratio ' + Number(f.break_ratio).toFixed(4) + '); indicators use bars after the break only.</p>';
+      const ev = (label, v, digits, suffix) => '<div>' + esc(label) + '</div><div class="num" style="font-variant-numeric:tabular-nums">' + (v === null || v === undefined ? '–' : num(v, digits) + (suffix || '')) + '</div>';
+      const distLong = f.close !== null && f.close !== undefined && f.ema_long ? (Number(f.close) / Number(f.ema_long) - 1) * 100 : null;
+      html += '<div class="grid2" style="margin-top:8px">' +
+        '<div><h3>Trend</h3><div class="kv">' + ev('EMA ' + cfg.ema_short, f.ema_short, 2) + ev('EMA ' + cfg.ema_medium, f.ema_medium, 2) + ev('EMA ' + cfg.ema_long, f.ema_long, 2) +
+          ev('close vs EMA ' + cfg.ema_long, distLong, 1, '%') + '</div></div>' +
+        '<div><h3>Momentum</h3><div class="kv">' + ev('RSI ' + cfg.rsi_period, f.rsi, 1) + ev('ROC ' + cfg.roc_lookback + ' %', f.roc, 2) +
+          ev('relative return ' + cfg.relative_return_lookback + ' (pp)', f.relative_return, 2) + '</div></div>' +
+        '<div><h3>Volume &amp; volatility</h3><div class="kv">' + ev('RVOL ' + cfg.rvol_window, f.relative_volume, 2) + ev('ATR ' + cfg.atr_period + ' %', f.atr_percent, 2) + '</div></div>' +
+        '<div><h3>Structure</h3><div class="kv">' + ev(cfg.high_window + '-bar high', f.window_high, 2) + ev('distance below high', f.distance_from_high, 1, '%') + '</div></div></div>';
     } else {
       html += '<p>No E4 feature row for this symbol.</p>';
     }
+    if (f && f.break_date) html += '<p class="note">Possible corporate-action break on ' + esc(f.break_date) + ' (close ratio ' + num(f.break_ratio, 4) + '); indicators use bars after the break only.</p>';
+    html += '</div>';
   }
-  html += '<h4>Candles</h4><table><tr><th>date</th><th>open</th><th>high</th><th>low</th><th>close</th><th>volume</th></tr>';
-  data.candles.forEach(c => {
-    html += '<tr><td>' + c.trading_date + '</td><td>' + c.open + '</td><td>' + c.high + '</td><td>' + c.low + '</td><td>' + c.close + '</td><td>' + c.volume + '</td></tr>';
-  });
-  html += '</table>';
-  html += '<h4>Fetch history (all runs)</h4><table><tr><th>run</th><th>date</th><th>source</th><th>fetched_at</th><th>validation</th></tr>';
-  data.fetch_history.forEach(h => {
-    html += '<tr><td>' + h.scan_run_id + '</td><td>' + h.trading_date + '</td><td>' + h.source + '</td><td>' + h.fetched_at_ist + '</td><td>' + h.candle_validation_status + '</td></tr>';
-  });
-  html += '</table>';
+  const dq = data.data_quality.issues[0];
+  const p = data.provenance, q = p.e4_quality;
+  const codes = new Set(dq ? dq.warnings.map(w => w.code) : []);
+  const tick = (ok, text) => '<li>' + (ok ? '<span class="up">✓</span> ' : '<span style="color:var(--warn)">⚠</span> ') + esc(text) + '</li>';
+  const checks = [
+    tick(!codes.has('history_gaps') && !codes.has('INSUFFICIENT_HISTORY'), (q ? q.n_bars + ' daily observations' : r.available_session_count + ' sessions available') + (codes.has('history_gaps') ? ', with gaps' : '')),
+    tick(!codes.has('price_break_detected') && !codes.has('e4_break'), codes.has('price_break_detected') || codes.has('e4_break') ? 'possible price break (see below)' : 'no price break detected'),
+    tick(!!data.e4_features, data.e4_features ? 'E4 indicators available' : 'E4 indicators not available'),
+    tick(!codes.has('corporate_action_review'), codes.has('corporate_action_review') ? 'corporate-action review pending' : 'not in the corporate-action review file'),
+  ];
+  html += '<div class="card"><h3>Data quality</h3><ul class="warnlist" style="list-style:none;padding:0">' + checks.join('') + '</ul>' +
+    (dq ? '<h3 style="margin-top:12px">Warnings and reasons</h3>' + warningsHtml(dq.warnings) : '<p class="note">No warnings recorded for this symbol.</p>') + '</div>';
+  html += '<div class="card"><h3>Provenance</h3><div class="kv"><div>run</div><div>' + esc(p.run_id) + '</div><div>universe version</div><div>' + esc(p.universe_version || '–') +
+    '</div><div>corporate-action review</div><div>' + esc(p.corporate_action_review_version || '–') + '</div><div>git commit</div><div>' + esc(p.git_commit || '–') + (p.git_dirty ? ' (dirty tree)' : '') +
+    '</div><div>calendar</div><div>' + esc(p.calendar_source || '–') + ' (' + esc(p.calendar_verification || '–') + ')</div><div>latest closed session</div><div>' + esc(p.latest_closed_session || '–') +
+    '</div><div>price source / benchmark</div><div>' + esc(p.price_source || '–') + ' / ' + esc(p.benchmark || '–') + '</div><div>instrument key / ISIN / series</div><div>' + esc(p.instrument_key || '–') + ' / ' + esc(p.isin || '–') + ' / ' + esc(p.series || '–') +
+    '</div>' + (q ? '<div>E4 quality</div><div>' + esc(q.status) + ', ' + esc(q.n_bars) + ' bars, full high window ' + (q.w52_complete ? 'yes' : 'no') + ', volume usable ' + (q.volume_usable ? 'yes' : 'no') + '</div>' : '') + '</div></div>';
+  html += '<div class="card"><h3>Candles in this run (latest ' + data.candles.length + ')</h3><div class="tablewrap"><table><tr><th>date</th><th class="num">open</th><th class="num">high</th><th class="num">low</th><th class="num">close</th><th class="num">volume</th><th>validation</th><th>content hash</th></tr>' +
+    data.candles.map(c => '<tr><td>' + esc(c.trading_date) + '</td><td class="num">' + esc(c.open) + '</td><td class="num">' + esc(c.high) + '</td><td class="num">' + esc(c.low) + '</td><td class="num">' + esc(c.close) +
+      '</td><td class="num">' + esc(c.volume) + '</td><td>' + esc(c.candle_validation_status) + '</td><td title="' + esc(c.content_hash) + '">' + esc((c.content_hash || '').slice(0, 12)) + '</td></tr>').join('') + '</table></div></div>';
+  html += '<div class="card"><h3>Fetch history (all runs)</h3><div class="tablewrap"><table><tr><th>run</th><th>date</th><th>source</th><th>fetched_at</th><th>validation</th></tr>' +
+    data.fetch_history.map(h => '<tr><td>' + esc(h.scan_run_id) + '</td><td>' + esc(h.trading_date) + '</td><td>' + esc(h.source) + '</td><td>' + esc(h.fetched_at_ist) + '</td><td>' + esc(h.candle_validation_status) + '</td></tr>').join('') + '</table></div></div>';
   box.innerHTML = html;
+  if (drawn) wireChart(drawn);
+}
+document.getElementById('details-load').addEventListener('click', loadDetails);
+document.getElementById('details-symbol').addEventListener('keydown', e => { if (e.key === 'Enter') loadDetails(); });
+
+// ---------- Data Quality ----------
+function renderQuality() {
+  const box = document.getElementById('quality-content');
+  if (!summaryData) return;
+  const dq = summaryData.data_quality, run = summaryData.run;
+  const issues = dq.issues.filter(i => !qualityFilter || i.warnings.some(w => w.code === qualityFilter));
+  let html = '<div class="kpis">' + kpi(dq.symbols_total, 'symbols in run') + kpi(dq.symbols_with_warnings, 'with a warning') + kpi(dq.symbols_without_warning, 'no warning') + '</div>';
+  html += '<div class="card"><h3>Source</h3><div class="kv"><div>price source</div><div>' + esc(run.price_source || '–') + '</div><div>benchmark</div><div>' + esc(run.benchmark || '–') +
+    '</div><div>calendar</div><div>' + esc(run.calendar_source || '–') + ' (' + esc(run.calendar_verification || '–') + ')</div><div>universe</div><div>' + esc(run.universe_version || '–') +
+    '</div><div>corporate-action review</div><div>' + esc(run.corporate_action_review_version || '–') + '</div><div>E4 scan</div><div>' + (summaryData.e4_scan ? esc(summaryData.e4_scan.scan_id) + ' as of ' + esc(summaryData.e4_scan.asof_date) : 'none') + '</div></div></div>';
+  html += '<div class="card"><h3>Warnings</h3><div><span class="chip' + (qualityFilter ? '' : ' on') + '" data-q="">all</span>' +
+    Object.entries(dq.warning_counts).map(([k, v]) => '<span class="chip' + (qualityFilter === k ? ' on' : '') + '" data-q="' + esc(k) + '">' + esc(k) + ' ' + v + '</span>').join('') + '</div>' +
+    '<div class="tablewrap"><table><thead><tr><th>symbol</th><th>company</th><th>sector</th><th>status</th><th>warnings and reasons</th></tr></thead><tbody>' +
+    (issues.length ? issues.map(i => '<tr class="click" data-sym="' + esc(i.symbol) + '"><td><b>' + esc(i.symbol) + '</b></td><td>' + esc(i.company_name || '') + '</td><td>' + esc(i.sector || '') +
+      '</td><td><span class="pill ' + esc(i.status) + '">' + esc(i.status) + '</span></td><td>' + warningsHtml(i.warnings) + '</td></tr>').join('') : '<tr><td colspan="5">No symbols match.</td></tr>') +
+    '</tbody></table></div><p class="note">Every symbol the scan or the E4 scan recorded a problem for is listed; nothing is excluded from this view.</p></div>';
+  box.innerHTML = html;
+  box.querySelectorAll('[data-q]').forEach(c => c.addEventListener('click', () => { qualityFilter = c.dataset.q || null; renderQuality(); }));
+  box.querySelectorAll('tr[data-sym]').forEach(t => t.addEventListener('click', () => goDetails(t.dataset.sym)));
 }
 
-document.getElementById('details-load').addEventListener('click', loadDetails);
-
+// ---------- Audit / Provenance ----------
+async function renderAudit() {
+  const box = document.getElementById('audit-content');
+  if (!summaryData) return;
+  const run = summaryData.run, e4 = summaryData.e4_scan;
+  const kv = (k, v) => '<div>' + esc(k) + '</div><div>' + (v === null || v === undefined || v === '' ? '–' : esc(v)) + '</div>';
+  let html = '<div class="card"><h3>Latest COMPLETE run</h3><div class="kv">' +
+    kv('run id', run.run_id) + kv('scan type', run.scan_label) + kv('started', run.started_at) + kv('finished', run.finished_at) +
+    kv('universe version', run.universe_version) + kv('corporate-action review', run.corporate_action_review_version) +
+    kv('git commit', run.git_commit) + kv('git tree dirty', run.git_dirty ? 'yes' : 'no') +
+    kv('calendar source', run.calendar_source) + kv('calendar verification', run.calendar_verification) + kv('latest closed session', run.latest_closed_session) +
+    kv('price source', run.price_source) + kv('benchmark', run.benchmark) + kv('scoring status', run.scoring_status) +
+    kv('requested / successful / failed', run.requested_symbols + ' / ' + run.successful_symbols + ' / ' + run.failed_symbols) +
+    kv('instrument map provenance', run.instrument_map_provenance_json) + '</div></div>';
+  if (run.excluded_symbols && Object.keys(run.excluded_symbols).length) html += '<div class="card"><h3>Excluded symbols (recorded by the scan)</h3><pre class="note" style="white-space:pre-wrap">' + esc(JSON.stringify(run.excluded_symbols, null, 1)) + '</pre></div>';
+  if (run.errors && (Array.isArray(run.errors) ? run.errors.length : Object.keys(run.errors).length)) html += '<div class="card"><h3>Run errors</h3><pre class="note" style="white-space:pre-wrap">' + esc(JSON.stringify(run.errors, null, 1)) + '</pre></div>';
+  if (e4) html += '<div class="card"><h3>E4 indicator scan</h3><div class="kv">' + kv('scan id', e4.scan_id) + kv('acquisition run', e4.acquisition_run_id) + kv('as of', e4.asof_date) +
+    kv('calendar status', e4.calendar_status) + kv('indicator config', JSON.stringify(e4.config)) + '</div><p class="note">Per-symbol drill-down: open a symbol in Stock Intelligence for its run, source, hashes and quality record.</p></div>';
+  html += '<div class="card"><h3>Scan history</h3><div id="history-content" class="tablewrap">Loading...</div></div>';
+  box.innerHTML = html;
+  loadHistory();
+}
 async function loadHistory() {
   const res = await fetch('/api/equity/scan-history');
   const data = await res.json();
   const box = document.getElementById('history-content');
-  if (data.status === 'no_scans_yet' || data.status === 'version_mismatch' || data.status === 'database_error') {
-    box.textContent = data.message;
-    return;
-  }
-  let html = '<table><tr><th>run</th><th>type</th><th>status</th><th>started</th><th>finished</th><th>abort reason</th><th>counts</th><th>git commit</th><th>universe</th></tr>';
-  data.runs.forEach(r => {
-    const warning = r.running_stale_warning ? '<span class="running-stale"> (RUNNING &gt; 1h)</span>' : '';
-    html += '<tr><td>' + r.run_id + warning + '</td><td>' + (r.scan_label || '-') + '</td><td>' + r.status + '</td><td>' + r.started_at + '</td><td>' + (r.finished_at || '-') +
-      '</td><td>' + (r.abort_reason || '-') + '</td><td>req=' + (r.requested_symbols ?? '-') + ' ok=' + (r.successful_symbols ?? '-') + ' fail=' + (r.failed_symbols ?? '-') +
-      '</td><td>' + (r.git_commit || '-') + '</td><td>' + (r.universe_version || '-') + '</td></tr>';
-  });
-  html += '</table>';
-  box.innerHTML = html;
+  if (!box) return;
+  if (isMsg(data)) { box.textContent = data.message; return; }
+  box.innerHTML = '<table><tr><th>run</th><th>type</th><th>status</th><th>started</th><th>finished</th><th>abort reason</th><th>counts</th><th>git commit</th><th>universe</th></tr>' +
+    data.runs.map(r => '<tr><td>' + esc(r.run_id) + (r.running_stale_warning ? '<span class="running-stale"> (RUNNING &gt; 1h)</span>' : '') + '</td><td>' + esc(r.scan_label || '-') + '</td><td>' + esc(r.status) +
+      '</td><td>' + esc(r.started_at) + '</td><td>' + esc(r.finished_at || '-') + '</td><td>' + esc(r.abort_reason || '-') + '</td><td>req=' + (r.requested_symbols ?? '-') + ' ok=' + (r.successful_symbols ?? '-') +
+      ' fail=' + (r.failed_symbols ?? '-') + '</td><td>' + esc(r.git_commit || '-') + '</td><td>' + esc(r.universe_version || '-') + '</td></tr>').join('') + '</table>';
 }
 
 loadOverview();
+loadXray();
 loadExplorer();
-loadHistory();
 </script>
 </body>
 </html>

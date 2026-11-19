@@ -10,6 +10,12 @@ Explorer's data source: it always reports scoring_status = "BLOCKED_B2"
 and never a rank or composite score, because B2 scoring is not
 implemented anywhere in equity_intel (see
 equity_intel/contracts/scan_run.py).
+
+The dashboard's extra views add NO routes: market breadth and data quality
+ride on /summary, sector strength on /sectors, chart bars and provenance on
+/stock/<symbol>, and the scanner's sector/RSI/RVOL/high-distance filters and
+sorting are optional query parameters on /candidates. All of it is
+descriptive counting of stored E4 values -- no rank, score, band or signal.
 """
 from __future__ import annotations
 
@@ -24,7 +30,8 @@ from typing import Optional, Union
 
 from flask import Flask, jsonify, render_template, request
 
-from dashboard import queries
+from dashboard import aggregates, queries
+from equity_intel.indicators.trend import exponential_moving_average
 from equity_intel.persistence import connection, db_path_guard
 from equity_intel.persistence.schema import SCHEMA_VERSION
 
@@ -51,6 +58,16 @@ def _to_int(value, default):
         return int(value)
     except (TypeError, ValueError):
         return default
+
+
+def _to_float(value):
+    """A finite float, None when absent, ValueError when present but invalid."""
+    if value is None or value == "":
+        return None
+    parsed = float(value)  # ValueError on garbage
+    if not math.isfinite(parsed):
+        raise ValueError(f"not a finite number: {value!r}")
+    return parsed
 
 
 class _DatabaseUnavailable(Exception):
@@ -237,11 +254,26 @@ def create_app(demo: bool = False, db_path: Optional[Union[str, Path]] = None) -
                     "message": "no COMPLETE scan run yet",
                 }
             )
+        e4 = _e4_context(conn, run["run_id"])
+        breadth = None
+        if e4 is not None:
+            breadth = aggregates.get_e4_breadth(aggregates.get_e4_rows(conn, run["run_id"], e4), e4)
         return jsonify(
             {
                 "demo": app.config["DEMO_MODE"],
                 "run": queries.summarize_run(run),
                 "outdated": queries.is_outdated(run),
+                "e4_scan": e4,
+                "breadth": breadth,
+                "history": aggregates.get_history_depth(conn, e4) if e4 else None,
+                "data_quality": aggregates.get_data_quality(conn, run["run_id"], e4),
+                "safety": {
+                    "mode": "PAPER / RESEARCH ONLY",
+                    "broker_execution": "DISABLED",
+                    "order_routes": "NONE",
+                    "write_routes": "NONE",
+                    "scoring": "BLOCKED_B2",
+                },
             }
         )
 
@@ -254,6 +286,7 @@ def create_app(demo: bool = False, db_path: Optional[Union[str, Path]] = None) -
             return None
         run = queries.get_run(conn, run_id) if run_id else None
         run_session = run.get("latest_closed_session") if run else None
+        e4["run_id"] = run_id
         e4["run_latest_closed_session"] = run_session
         e4["as_of_matches_run"] = bool(run_session) and run_session == e4["asof_date"]
         return e4
@@ -280,13 +313,26 @@ def create_app(demo: bool = False, db_path: Optional[Union[str, Path]] = None) -
         q = request.args.get("q") or None
         status = request.args.get("status") or None
         flag = request.args.get("flag") or None
+        sector = request.args.get("sector") or None
+        sort = request.args.get("sort") or None
+        sort_dir = (request.args.get("sort_dir") or "asc").lower()
+        e4 = _e4_context(conn, run_id)
         try:
-            total, rows = queries.get_candidates(conn, run_id, page, page_size, q, status, flag)
+            ranges = {
+                key: (_to_float(request.args.get(f"{key}_min")), _to_float(request.args.get(f"{key}_max")))
+                for key in queries.E4_RANGE_FILTERS
+            }
+            total, rows = queries.get_candidates(
+                conn, run_id, page, page_size, q, status, flag,
+                sector=sector, ranges=ranges, sort=sort, sort_dir=sort_dir,
+                e4_scan_id=e4["scan_id"] if e4 else None,
+            )
         except ValueError as exc:
             return jsonify({"error": str(exc)}), 400
-        e4 = _e4_context(conn, run_id)
         if e4 is not None:
-            features = queries.get_e4_features(conn, e4["scan_id"], [row["symbol"] for row in rows])
+            features = queries.get_e4_features(
+                conn, e4["scan_id"], [row["symbol"] for row in rows], e4["acquisition_run_id"]
+            )
             for row in rows:
                 row["e4"] = features.get(row["symbol"])
         return jsonify(
@@ -310,13 +356,38 @@ def create_app(demo: bool = False, db_path: Optional[Union[str, Path]] = None) -
         run_id = _resolve_run_id(conn, request.args.get("run_id"))
         if run_id is None:
             return jsonify({"demo": app.config["DEMO_MODE"], "run_id": None, "sectors": []})
+        e4 = _e4_context(conn, run_id)
+        strength = None
+        if e4 is not None:
+            strength = aggregates.get_sector_strength(aggregates.get_e4_rows(conn, run_id, e4))
         return jsonify(
             {
                 "demo": app.config["DEMO_MODE"],
                 "run_id": run_id,
                 "sectors": queries.get_sectors(conn, run_id),
+                "e4_scan": e4,
+                "strength": strength,
             }
         )
+
+    def _chart(conn, e4, symbol, e4_quality):
+        """Daily bars plus EMA series for the price chart. EMAs use the E4
+        scan's periods and, like the stored E4 values, only bars from the
+        detected break onward (earlier bars are drawn but have no EMA)."""
+        if e4 is None:
+            return None
+        bars = aggregates.get_chart_bars(conn, e4, symbol)
+        if not bars:
+            return None
+        break_date = e4_quality.get("break_date") if e4_quality else None
+        start = next((i for i, b in enumerate(bars) if break_date and b["trading_date"] >= break_date), 0)
+        closes = [float(b["close"]) for b in bars[start:]]
+        emas = {}
+        for label, key in (("short", "ema_short"), ("medium", "ema_medium"), ("long", "ema_long")):
+            period = e4["config"].get(key)
+            series = exponential_moving_average(closes, period) if period else None
+            emas[label] = {"period": period, "values": ([None] * start + series) if series else None}
+        return {"bars": bars, "break_date": break_date, "ema": emas, "acquisition_run_id": e4["acquisition_run_id"]}
 
     @app.get("/api/equity/stock/<symbol>")
     @_guarded
@@ -328,7 +399,11 @@ def create_app(demo: bool = False, db_path: Optional[Union[str, Path]] = None) -
         if result is None:
             return jsonify({"error": f"{symbol!r} not found in run {run_id!r}"}), 404
         e4 = _e4_context(conn, run_id)
-        e4_features = queries.get_e4_features(conn, e4["scan_id"], [symbol]).get(symbol) if e4 else None
+        e4_features = (
+            queries.get_e4_features(conn, e4["scan_id"], [symbol], e4["acquisition_run_id"]).get(symbol) if e4 else None
+        )
+        run = queries.summarize_run(queries.get_run(conn, run_id))
+        e4_quality = aggregates.get_e4_quality_row(conn, e4, symbol) if e4 else None
         return jsonify(
             {
                 "demo": app.config["DEMO_MODE"],
@@ -339,6 +414,24 @@ def create_app(demo: bool = False, db_path: Optional[Union[str, Path]] = None) -
                 "e4_features": e4_features,
                 "candles": queries.get_candles(conn, run_id, symbol),
                 "fetch_history": queries.get_fetch_history(conn, symbol),
+                "chart": _chart(conn, e4, symbol, e4_quality),
+                "data_quality": aggregates.get_data_quality(conn, run_id, e4, symbol),
+                "provenance": {
+                    "run_id": run_id,
+                    "universe_version": run.get("universe_version"),
+                    "corporate_action_review_version": run.get("corporate_action_review_version"),
+                    "git_commit": run.get("git_commit"),
+                    "git_dirty": run.get("git_dirty"),
+                    "calendar_source": run.get("calendar_source"),
+                    "calendar_verification": run.get("calendar_verification"),
+                    "latest_closed_session": run.get("latest_closed_session"),
+                    "price_source": run.get("price_source"),
+                    "benchmark": run.get("benchmark"),
+                    "instrument_key": result.get("instrument_key"),
+                    "isin": result.get("isin"),
+                    "series": result.get("series"),
+                    "e4_quality": e4_quality,
+                },
             }
         )
 
