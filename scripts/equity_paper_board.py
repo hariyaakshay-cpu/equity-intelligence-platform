@@ -15,6 +15,10 @@ dashboard) and data/paper_board/trades.csv. Read-only on NSE and Upstox.
 Telegram (signals only, never orders): with TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID in
 .env it also sends the start, fade-alert, new-surge, warning, holiday and 15:31 summary
 messages (equity_intel/paper_board/notify.py); data/paper_board/<date>.sent.json stops repeats.
+
+Surge test (frozen rule, docs/architecture/paper_board_surge_preregistration.md, commit e033872):
+up to 5 paper longs a day from the surge list, kept in data/paper_board/surge_trades.csv. Scored
+only while the frozen document's sha256 and the surge constants match (equity_intel/paper_board/surge.py).
 """
 from __future__ import annotations
 
@@ -43,10 +47,12 @@ from equity_intel.config import IST  # noqa: E402
 from equity_intel.paper_board import daily_update as du  # noqa: E402
 from equity_intel.paper_board import logic as pb  # noqa: E402
 from equity_intel.paper_board import notify as nt  # noqa: E402
+from equity_intel.paper_board import surge as sv  # noqa: E402
 
 DAILY = ROOT / "data" / "daily_live"
 OUT = ROOT / "data" / "paper_board"
 TRADES = OUT / "trades.csv"
+SURGE_TRADES = OUT / "surge_trades.csv"
 SHARES = ROOT / "research" / "announcements" / "order_wins" / "shares_mcap17112026" / "shares.csv"
 QUOTE_URL = "https://api.upstox.com/v2/market-quote/quotes"
 INDEX = "NIFTY500_INDEX"
@@ -94,6 +100,36 @@ def write_trades(rows: list[dict]) -> None:
         w.writeheader()
         w.writerows({k: r.get(k, "") for k in TRADE_FIELDS} for r in rows)
     os.replace(tmp, TRADES)
+
+
+def read_surge_trades() -> list[dict]:
+    if not SURGE_TRADES.exists():
+        return []
+    with open(SURGE_TRADES, encoding="utf-8", newline="") as f:
+        return list(csv.DictReader(f))
+
+
+def write_surge_trades(rows: list[dict]) -> None:
+    tmp = SURGE_TRADES.with_suffix(".tmp")
+    with open(tmp, "w", encoding="utf-8", newline="") as f:
+        w = csv.DictWriter(f, fieldnames=sv.FIELDS)
+        w.writeheader()
+        w.writerows({k: r.get(k, "") for k in sv.FIELDS} for r in rows)
+    os.replace(tmp, SURGE_TRADES)
+
+
+def load_sectors() -> dict:
+    """symbol -> Industry from the newest NIFTY 500 constituent CSV (the R2.3 sector); {} if there is none."""
+    files = sorted((ROOT / "data" / "reference").glob("nifty500_constituents_*.csv"))
+    if not files:
+        return {}
+    with open(files[-1], encoding="utf-8-sig", newline="") as f:
+        return {r["Symbol"].strip(): (r.get("Industry") or "").strip() for r in csv.DictReader(f) if r.get("Symbol")}
+
+
+def surge_state(strades: list[dict], today: date, ok: bool, note: str, sectors: dict) -> dict:
+    return {"intact": ok, "note": note, "trades_today": [t for t in strades if t["date"] == str(today)],
+            "scorecard": sv.scorecard(strades), "review": sv.review(strades, sectors)}
 
 
 def reconcile(trades: list[dict], daily: dict) -> int:
@@ -241,6 +277,10 @@ def main(argv=None) -> int:
     trades = read_trades()
     if reconcile(trades, daily):
         write_trades(trades)
+    surge_ok, surge_note = sv.rule_intact()             # surge test: scored only while the frozen rule is unchanged
+    strades, sectors = read_surge_trades(), load_sectors()
+    if surge_ok and sv.reconcile(strades, daily, today):
+        write_surge_trades(strades)
     base = pb.baselines({s: p for s, p in daily.items() if s != INDEX}, today, sessions)
     liquid = sorted(s for s, (_, val) in base.items() if val >= pb.SURGE_MIN_VALUE_CR and s in keys)
     settings = Settings()
@@ -259,6 +299,9 @@ def main(argv=None) -> int:
     tg = Telegram(settings, OUT / f"{today}.sent.json", err)
     if not tg.on:
         print("Telegram off: add TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID to .env to get the messages.")
+    state["surge_test"] = surge_state(strades, today, surge_ok, surge_note, sectors)
+    if not surge_ok:
+        print(surge_note)
 
     while True:
         now = datetime.now(IST)
@@ -282,7 +325,8 @@ def main(argv=None) -> int:
         if token and now.time() >= FIRST_QUOTES:
             try:
                 today_trades = [t for t in trades if t["date"] == str(today)]
-                syms = sorted(set(liquid) | {t["symbol"] for t in today_trades})
+                syms = sorted(set(liquid) | {t["symbol"] for t in today_trades}
+                              | {t["symbol"] for t in strades if t["date"] == str(today)})
                 quotes = fetch_quotes(token, [keys[s] for s in syms if s in keys], key_to_symbol)
                 quotes = {s: q for s, q in quotes.items() if q.get("last_trade_date") == today}
                 if not quotes and now.time() >= HOLIDAY_CHECK:
@@ -301,6 +345,17 @@ def main(argv=None) -> int:
                     return 0
                 state["surges"] = pb.surges(quotes, base, now.replace(tzinfo=None))
                 state["surges_asof"] = now.strftime("%H:%M:%S")
+                if surge_ok:
+                    try:                                         # surge test (frozen rule): S2-S5 on this check
+                        s_today = [t for t in strades if t["date"] == str(today)]
+                        strades += sv.step(s_today, state["surges"], quotes, now.replace(tzinfo=None))
+                        for t in strades:
+                            q = quotes.get(t["symbol"])
+                            if t["date"] == str(today) and t["status"] == "OPEN" and q and q.get("ltp"):
+                                t["live_net_pct"] = round((q["ltp"] / float(t["entry_price"]) - 1) * 100 - sv.COST_PCT, 3)
+                        write_surge_trades(strades)
+                    except Exception as exc:  # recorded, never hidden; the fade and the watchlist keep running
+                        err("surge test", exc)
                 for t in today_trades:
                     q = quotes.get(t["symbol"])
                     if not q:
@@ -318,6 +373,7 @@ def main(argv=None) -> int:
                 err("quotes", exc)
         state["trades_today"] = [t for t in trades if t["date"] == str(today)]
         state["scorecard"] = pb.scorecard(trades)
+        state["surge_test"] = surge_state(strades, today, surge_ok, surge_note, sectors)
         state["updated"] = datetime.now(IST).strftime("%H:%M:%S")
         notify(tg, state, today, quotes_on=bool(token), closing=now.time() >= CLOSE_MARK)
         write_state(state, today)

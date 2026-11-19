@@ -113,6 +113,38 @@
           {% else %}<p class="empty" id="no-surges">{{ 'No surges yet (starts 09:30).' if bd.is_today else 'Shown during market hours.' }}</p>{% endif %}
         </div>
       </div>
+      {% set stt = bd.surge_test %}
+      {% if stt %}
+      <div class="box" id="surge-test" style="margin-top:16px">
+        <h3 class="purple">Surge test: paper long, frozen rule (up to 5 a day, sell at 15:15, 0.18% costs)</h3>
+        {% if not stt.intact %}<p class="warn" id="surge-test-off">{{ stt.note }}</p>{% endif %}
+        {% set sc2 = stt.scorecard or {} %}{% set rv = stt.review or {} %}
+        <div class="cards">
+          <div class="card"><div class="label">Closed trades</div><div class="value">{{ sc2.trades or 0 }} / 300</div><div class="small">{{ sc2.sessions or 0 }} / 60 sessions</div></div>
+          <div class="card"><div class="label">Average per trade</div><div class="value {{ 'green' if (sc2.avg_net_pct or 0) > 0 else 'red' if sc2.trades else '' }}">{{ ("%+.2f"|format(sc2.avg_net_pct) ~ "%") if sc2.trades else "-" }}</div><div class="small">{{ ("after costs; before " ~ "%+.2f"|format(sc2.avg_gross_pct) ~ "%") if sc2.trades else "after 0.18% costs" }}</div></div>
+          <div class="card"><div class="label">Win rate</div><div class="value">{{ ("%.0f"|format(sc2.win_rate * 100) ~ "%") if sc2.trades else "-" }}</div><div class="small">after costs</div></div>
+          <div class="card"><div class="label">Drawdown</div><div class="value {{ 'red' if (sc2.max_drawdown_pts or 0) > 20 else '' }}">{{ "%.1f"|format(sc2.max_drawdown_pts or 0) }} pts</div><div class="small">fails above 20</div></div>
+          <div class="card"><div class="label">Verdict</div><div class="value {{ {'PASS': 'green', 'FAIL': 'red'}.get(rv.verdict, '') }}" id="surge-verdict">{{ {'NOT_YET': 'Not judged yet', 'PASS': 'PASS', 'FAIL': 'FAIL'}.get(rv.verdict, '-') }}</div><div class="small">{{ rv.reason or "" }}</div></div>
+        </div>
+        {% if stt.trades_today and bd.is_today %}
+        <div class="tablewrap"><table>
+          <thead><tr><th>Stock</th><th>Triggered</th><th class="num">Volume vs normal</th><th>Status</th><th class="num">Entry</th><th class="num">Result</th></tr></thead>
+          <tbody>
+          {% for t in stt.trades_today %}
+            {% set res = t.net_pct if t.status == 'CLOSED' else t.live_net_pct %}
+            <tr><td class="sym"><a href="/equity/stock/{{ t.symbol }}">{{ t.symbol }}</a></td>
+              <td>{{ (t.trigger_at or "")[11:16] }}</td>
+              <td class="num">{{ "%.1f"|format(t.ratio|float) }}x</td>
+              <td>{{ {'WAITING_ENTRY': 'waiting for next check', 'OPEN': 'paper long open', 'CLOSED': 'closed', 'VOID': 'void'}.get(t.status, t.status) }}</td>
+              <td class="num">{{ ("₹" ~ "{:,.2f}".format(t.entry_price|float)) if t.entry_price not in (none, "") else "-" }}</td>
+              <td class="num {{ 'green' if res not in (none, '') and res|float > 0 else 'red' if res not in (none, '') else '' }}">{{ ("%+.2f"|format(res|float) ~ "%") if res not in (none, "") else "-" }}</td></tr>
+          {% endfor %}
+          </tbody>
+        </table></div>
+        {% else %}<p class="empty" id="no-surge-trades">{{ 'No surge test trade yet today (triggers 09:30 to 13:00).' if bd.is_today else 'Shown during market hours.' }}</p>{% endif %}
+        <p class="foot">Frozen rule (docs/architecture/paper_board_surge_preregistration.md): buy the first 5 up-on-the-day stocks on the surge list between 09:30 and 13:00 at the next check, sell at the first check from 15:15. Judged once there are 300 trades over 60 sessions. A close cousin failed its backtest, so expect a FAIL.</p>
+      </div>
+      {% endif %}
       <p class="foot">Fade rule: order win &ge; 5% of market cap filed before 09:00, liquid, EQ series. It failed its test (55% of the profit came from one stock), so this board measures it live on paper; it is not a recommendation.
         Volume surge = volume so far &divide; (20-day median daily volume &times; share of the session elapsed), liquid stocks only &ndash; a watchlist, not a buy/sell call.</p>
     {% endif %}

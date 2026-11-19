@@ -48,6 +48,7 @@ def env(tmp_path, monkeypatch, messages):
     monkeypatch.setattr(run, "DAILY", daily)
     monkeypatch.setattr(run, "OUT", out)
     monkeypatch.setattr(run, "TRADES", out / "trades.csv")
+    monkeypatch.setattr(run, "SURGE_TRADES", out / "surge_trades.csv")
     monkeypatch.setattr(run, "SHARES", shares)
     monkeypatch.setattr(run, "instrument_keys", lambda: {"KEC": "NSE_EQ|K", "BEL": "NSE_EQ|B"})
     monkeypatch.setattr(run.Settings, "UPSTOX_ACCESS_TOKEN", "tok", raising=False)
@@ -205,3 +206,50 @@ def test_telegram_test_flag(env, monkeypatch, messages):
     assert len(messages) == 1 and "Test message" in messages[0]
     monkeypatch.setenv("TELEGRAM_BOT_TOKEN", "")
     assert run.main(["--telegram-test"]) == 1 and len(messages) == 1
+
+
+def test_surge_test_trades_follow_the_frozen_rule(env, monkeypatch):
+    _at(monkeypatch, 10, 0)
+    run.main(["--once"])                                     # BEL surging and up on the day: trigger (KEC is down)
+    _at(monkeypatch, 10, 5)
+    run.main(["--once"])                                     # next check: BEL fills at its last price
+    t = json.loads((env / "2026-11-19.json").read_text())["surge_test"]["trades_today"]
+    assert [(x["symbol"], x["status"]) for x in t] == [("BEL", "OPEN")] and float(t[0]["entry_price"]) == 401.0
+    assert t[0]["trigger_at"] == "2026-11-19T10:00:00" and t[0]["live_net_pct"] == pytest.approx(-0.18)
+    _at(monkeypatch, 15, 16)
+    run.main(["--once"])                                     # first check from 15:15: exit
+    rows = list(csv.DictReader(open(env / "surge_trades.csv")))
+    assert len(rows) == 1 and rows[0]["status"] == "CLOSED" and rows[0]["exit_source"] == "last_price_1515"
+    assert float(rows[0]["net_pct"]) == pytest.approx(-0.18)
+    st = json.loads((env / "2026-11-19.json").read_text())["surge_test"]
+    assert st["intact"] and st["scorecard"]["trades"] == 1 and st["review"]["verdict"] == "NOT_YET"
+
+
+def test_surge_trade_without_an_exit_check_takes_the_official_close_next_morning(env, monkeypatch):
+    _at(monkeypatch, 10, 0)
+    run.main(["--once"])
+    _at(monkeypatch, 10, 5)
+    run.main(["--once"])                                     # BEL open at 401; no check between 15:15 and 15:30
+    d = pd.read_csv(run.DAILY / "BEL.csv")
+    d.loc[len(d)] = ["2026-11-19", 400.0, 405.0, 398.0, 404.0, 3e7]
+    d.to_csv(run.DAILY / "BEL.csv", index=False)
+
+    class Next(datetime):
+        @classmethod
+        def now(cls, tz=None):
+            return datetime(2026, 11, 20, 8, 50, tzinfo=IST)
+    monkeypatch.setattr(run, "datetime", Next)
+    run.main(["--once"])
+    row = list(csv.DictReader(open(env / "surge_trades.csv")))[0]
+    assert row["status"] == "CLOSED" and row["exit_source"] == "official_close"
+    assert float(row["net_pct"]) == pytest.approx((404 / 401 - 1) * 100 - 0.18, abs=1e-3)
+
+
+def test_a_changed_frozen_rule_stops_surge_scoring(env, monkeypatch):
+    monkeypatch.setattr(run.sv, "rule_intact", lambda: (False, "surge pre-registration changed (sha256 mismatch): surge trades not scored"))
+    _at(monkeypatch, 10, 0)
+    run.main(["--once"])
+    st = json.loads((env / "2026-11-19.json").read_text())
+    assert st["surge_test"]["intact"] is False and "sha256 mismatch" in st["surge_test"]["note"]
+    assert st["surge_test"]["trades_today"] == [] and not (env / "surge_trades.csv").exists()
+    assert [s["symbol"] for s in st["surges"]] == ["BEL", "KEC"]   # the watchlist itself still runs
