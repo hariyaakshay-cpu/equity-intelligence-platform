@@ -155,11 +155,12 @@ def main(argv=None) -> int:
         write_trades(trades)
     base = pb.baselines({s: p for s, p in daily.items() if s != INDEX}, today, sessions)
     liquid = sorted(s for s, (_, val) in base.items() if val >= pb.SURGE_MIN_VALUE_CR and s in keys)
-    token = Settings().UPSTOX_ACCESS_TOKEN
+    settings = Settings()
+    token = settings.UPSTOX_ANALYTICS_TOKEN or settings.UPSTOX_ACCESS_TOKEN
     state = {"date": today, "mode": "PAPER - NOT VALIDATED - no orders", "data_asof": data_asof,
              "prices_stale": data_asof < prev, "fade": {"alerts": [], "considered": [], "final": False},
              "surges": [], "surges_asof": None, "liquid_watched": len(liquid), "errors": [],
-             "notes": [] if token else ["No Upstox token: run scripts/upstox_auth.py; quotes disabled."]}
+             "notes": [] if token else ["No Upstox token: set UPSTOX_ANALYTICS_TOKEN in .env (or run scripts/upstox_auth.py); quotes disabled."]}
     if state["prices_stale"]:
         state["notes"].append(f"daily_live ends {data_asof}, previous session {prev}: refresh prices; "
                               "fade alerts need the previous close.")

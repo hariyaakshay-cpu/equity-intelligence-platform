@@ -26,9 +26,12 @@ SYMBOLS = ["KEC", "BEL", "INFY"]
 
 
 def main() -> None:
-    token = Settings().UPSTOX_ACCESS_TOKEN
+    settings = Settings()
+    token = settings.UPSTOX_ANALYTICS_TOKEN or settings.UPSTOX_ACCESS_TOKEN
+    which = "UPSTOX_ANALYTICS_TOKEN" if settings.UPSTOX_ANALYTICS_TOKEN else "UPSTOX_ACCESS_TOKEN"
     if not token:
-        raise SystemExit("UPSTOX_ACCESS_TOKEN missing: run scripts/upstox_auth.py first")
+        raise SystemExit("No Upstox token: set UPSTOX_ANALYTICS_TOKEN in .env or run scripts/upstox_auth.py")
+    print(f"using {which}")
     newest = sorted((ROOT / "data" / "reference").glob("upstox_NSE_instruments_*.json.gz"))[-1]
     keys = {r["trading_symbol"]: r["instrument_key"] for r in json.load(gzip.open(newest))
             if r.get("segment") == "NSE_EQ"}

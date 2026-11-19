@@ -25,3 +25,6 @@ class Settings(BaseSettings):
     LOG_LEVEL: str = "INFO"
 
     UPSTOX_ACCESS_TOKEN: str | None = None
+    # Read-only Upstox Analytics Token (Developer Apps > Analytics tab, valid one year, cannot place orders).
+    # Used by the paper board for live quotes so no daily login is needed; falls back to UPSTOX_ACCESS_TOKEN.
+    UPSTOX_ANALYTICS_TOKEN: str | None = None
