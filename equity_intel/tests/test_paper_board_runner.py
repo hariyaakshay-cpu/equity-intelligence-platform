@@ -128,3 +128,14 @@ def test_holiday_no_trades_today_voids_the_alert_and_stops(env, monkeypatch):
     st = json.loads((env / "2026-11-19.json").read_text())
     assert st["trades_today"][0]["status"] == "VOID" and "holiday" in st["notes"][-1]
     assert st["surges"] == []
+
+
+def test_stale_daily_prices_are_flagged_and_block_fade_alerts(env, monkeypatch):
+    for f in run.DAILY.glob("*.csv"):                      # drop the last session (18 Nov) from every file
+        d = pd.read_csv(f)
+        d.iloc[:-1].to_csv(f, index=False)
+    _at(monkeypatch, 9, 5)
+    run.main(["--once"])
+    st = json.loads((env / "2026-11-19.json").read_text())
+    assert st["prices_stale"] and st["data_asof"] == "2026-11-17" and "previous session 2026-11-18" in st["notes"][0]
+    assert st["fade"]["alerts"] == [] and st["fade"]["considered"][0]["reason"] == "no close for the previous session"

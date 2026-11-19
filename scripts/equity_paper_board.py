@@ -34,6 +34,7 @@ from announcement_coverage_fetch import NSE_API, nse_session  # noqa: E402
 from config.settings import Settings  # noqa: E402
 from equity_intel.announcements import event_study as es  # noqa: E402
 from equity_intel.config import IST  # noqa: E402
+from equity_intel.paper_board import daily_update as du  # noqa: E402
 from equity_intel.paper_board import logic as pb  # noqa: E402
 
 DAILY = ROOT / "data" / "daily_live"
@@ -146,8 +147,8 @@ def main(argv=None) -> int:
     daily = load_daily()
     if INDEX not in daily:
         raise SystemExit(f"{DAILY / (INDEX + '.csv')} missing: run the daily refresh first")
-    sessions = [d for d in daily[INDEX].index if d < today] + [today]
-    prev, data_asof = sessions[-2], max(daily[INDEX].index)
+    sessions, inferred = du.session_calendar(list(daily[INDEX].index), today)
+    prev, data_asof = sessions[-2], max(d for d in daily[INDEX].index if d < today)
     shares, keys = load_shares(), instrument_keys()
     key_to_symbol = {v: k for k, v in keys.items()}
     trades = read_trades()
@@ -162,8 +163,8 @@ def main(argv=None) -> int:
              "surges": [], "surges_asof": None, "liquid_watched": len(liquid), "errors": [],
              "notes": [] if token else ["No Upstox token: set UPSTOX_ANALYTICS_TOKEN in .env (or run scripts/upstox_auth.py); quotes disabled."]}
     if state["prices_stale"]:
-        state["notes"].append(f"daily_live ends {data_asof}, previous session {prev}: refresh prices; "
-                              "fade alerts need the previous close.")
+        state["notes"].append(f"Daily prices end {data_asof}; previous session {prev} is missing. Run "
+                              "scripts/equity_daily_live_update.py - stocks without the previous close get no fade alert.")
 
     def err(where, exc):
         state["errors"] = (state["errors"] + [f"{datetime.now(IST):%H:%M:%S} {where}: {type(exc).__name__}: {str(exc)[:160]}"])[-10:]

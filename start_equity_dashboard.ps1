@@ -8,8 +8,8 @@ Set-Location $PSScriptRoot
 $py = Join-Path $PSScriptRoot ".venv\Scripts\python.exe"
 
 if (-not $NoRefresh) {
-    Write-Host "1/3 Refreshing daily prices (a few minutes)..."
-    & $py scripts\equity_daily_history_fetch.py --start 2025-06-01 --out-dir data\daily_live --refresh
+    Write-Host "1/3 Updating daily prices (only new days, a few minutes)..."
+    & $py scripts\equity_daily_live_update.py
     if ($LASTEXITCODE -ne 0) { Write-Host "Refresh failed - is the Upstox token fresh? Starting dashboard with the last list."; }
     else {
         Write-Host "2/3 Building today's momentum list..."
